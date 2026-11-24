@@ -61,9 +61,9 @@ src/data/
 
 ## Mapa de recorridos
 
-Las calles salen de OpenStreetMap y se procesan con `scripts/mapa-osm.py`, que deja `src/data/mapa.json`. Las avenidas de cada ruta (Independencia, Vía de Evitamiento, carretera a Baños del Inca) son las reales; los tramos punteados son aproximados. El crédito «© colaboradores de OpenStreetMap» debe quedar visible bajo el mapa.
+Las calles salen de OpenStreetMap y se procesan con `scripts/mapa-osm.py`, que deja `src/data/mapa.json`. Las avenidas de cada ruta (Independencia, Vía de Evitamiento, carretera a Baños del Inca) son las reales; los tramos punteados son aproximados. El crédito «© colaboradores de OpenStreetMap» es obligatorio (licencia ODbL) y va en la esquina del mapa; el 3D muestra sus créditos en su propia esquina.
 
-Para cambiar una ruta, edita `src/data/recorridos.ts`: el mapa plano y el 3D leen de ahí.
+Para cambiar una ruta, edita `src/data/recorridos.ts`: el mapa plano y el 3D leen de ahí. Cada día es una lista de tramos en el orden en que avanza el desfile, porque al elegir un día su ruta se dibuja desde donde sale. Las avenidas de OpenStreetMap vienen en pedazos (cada sentido por separado); `avenidaDesde(trazo, punto)` las une en una sola línea que empieza en ese punto, y los huecos sin datos quedan punteados. El sentido del Gran Corso (de norte a sur) es una suposición: cuando salga el programa oficial, cambia su punto de salida si hace falta.
 
 **Mapa 3D:** el botón «Ver en 3D» carga MapLibre (`src/lib/mapa3d.ts`) solo cuando alguien lo toca, así la página no pesa más para quien no lo usa. Usa calles y edificios de [OpenFreeMap](https://openfreemap.org), relieve de [Mapterhorn](https://mapterhorn.com) y las rutas de `/mapa/recorridos.geojson`, que se genera en el build desde `recorridos.ts` con la misma proyección del mapa plano. Ninguno de los tres pide clave ni cuenta. Si el navegador no puede abrir el 3D (sin WebGL, por ejemplo), se queda el mapa plano con un aviso.
 

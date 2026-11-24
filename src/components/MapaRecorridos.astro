@@ -3,13 +3,27 @@
  * Mapa de recorridos del carnaval sobre las calles reales de Cajamarca
  * (datos de OpenStreetMap procesados en src/data/mapa.json).
  * Las avenidas de cada ruta son las reales; los tramos punteados son aproximados.
- * Las rutas se dibujan solas cuando el mapa entra en pantalla.
- * El botón «Ver en 3D» carga MapLibre solo cuando se pide (src/lib/mapa3d.ts).
+ *
+ * Al elegir un día, su ruta se dibuja desde donde sale y las demás se atenúan.
+ * El botón «Ver en 3D» carga MapLibre solo cuando se pide (src/lib/mapa3d.ts);
+ * el día elegido sirve para los dos mapas.
  */
 import mapa from '../data/mapa.json';
-import { diasMapa as dias, etiquetasMapa } from '../data/recorridos';
+import { diasMapa as dias, etiquetasMapa, trazoDe } from '../data/recorridos';
 
 const { ancho, alto } = mapa;
+
+// El anillo de salida, con su cartel encima, tiene que caber en el mapa. Si la ruta
+// sale de más allá del borde, el anillo va donde entra al mapa y dice de dónde viene.
+const MARGEN = 30;
+const cabe = ([x, y]: number[]) => x >= MARGEN && x <= ancho - MARGEN && y >= MARGEN + 40 && y <= alto - MARGEN;
+const salidas = dias.map((d) => {
+  const inicio = d.tramos[0].puntos[0];
+  if (cabe(inicio)) return { punto: inicio, cartel: 'Sale' };
+  const entrada = d.tramos.flatMap((t) => t.puntos).find(cabe) ?? inicio;
+  return { punto: entrada, cartel: d.vieneDe ? `Viene de ${d.vieneDe}` : 'Entra' };
+});
+
 const etiquetas = etiquetasMapa.map((e) => ({
   texto: e.texto,
   x: e.punto[0] + e.dx,
@@ -19,80 +33,114 @@ const etiquetas = etiquetasMapa.map((e) => ({
 ---
 
 <figure class="mapa" data-mapa>
-  <div class="mapa__barra">
-    <button type="button" class="boton" data-ver-3d>Ver en 3D</button>
-    <div class="mapa__dias" data-dias-3d hidden>
-      <span class="mapa__dias-titulo">Ir al recorrido:</span>
+  <!-- Sin JavaScript los botones no harían nada: el script muestra la barra -->
+  <div class="mapa__barra" data-barra hidden>
+    <div class="mapa__dias" role="group" aria-labelledby="mapa-elegir">
+      <span class="mapa__dias-titulo" id="mapa-elegir">Ver el recorrido:</span>
       {
         dias.map((d) => (
-          <button type="button" class="mapa__dia" style={`--color:${d.color}`} data-dia={d.id}>
+          <button
+            type="button"
+            class="mapa__dia"
+            style={`--color:${d.color}`}
+            data-dia={d.id}
+            data-nombre={`${d.dia}: ${d.titulo}`}
+            aria-pressed="false"
+          >
             {d.dia}
           </button>
         ))
       }
-      <button type="button" class="mapa__dia" data-vista-general>Ver todo</button>
-      <button type="button" class="boton boton--hueco" data-ver-plano>Volver al plano</button>
+      <button type="button" class="mapa__dia" data-todos aria-pressed="true">Todos</button>
     </div>
-    <p class="mapa__estado" aria-live="polite" data-estado-3d></p>
+    <button type="button" class="boton" data-ver-3d>Ver en 3D</button>
+    <button type="button" class="boton boton--hueco" data-ver-plano hidden>Volver al plano</button>
+    <p class="mapa__estado" aria-live="polite" data-estado></p>
   </div>
 
   <div class="mapa__3d" data-contenedor-3d hidden></div>
 
-  <div class="mapa__marco" tabindex="0" aria-label="Mapa de recorridos; se puede desplazar hacia los lados" data-mapa-plano>
-    <svg viewBox={`0 0 ${ancho} ${alto}`} role="img" aria-labelledby="mapa-titulo mapa-desc">
-      <title id="mapa-titulo">Mapa de recorridos del Carnaval de Cajamarca</title>
-      <desc id="mapa-desc">
-        Calles de Cajamarca con las rutas de cada día: la avenida Independencia, la Plaza de Armas, la Vía de
-        Evitamiento, Santa Apolonia y la carretera a Baños del Inca.
-      </desc>
-      <rect width={ancho} height={alto} fill="var(--tinta)"></rect>
-      <path d={mapa.rios} class="mapa__rios"></path>
-      <path d={mapa.menores} class="mapa__menores"></path>
-      <path d={mapa.mayores} class="mapa__mayores"></path>
-      <path d={mapa.plaza} fill="var(--verde)"></path>
+  <div class="mapa__plano" data-mapa-plano>
+    <div class="mapa__marco" tabindex="0" aria-label="Mapa de recorridos; se puede desplazar hacia los lados">
+      <svg viewBox={`0 0 ${ancho} ${alto}`} role="img" aria-labelledby="mapa-titulo mapa-desc">
+        <title id="mapa-titulo">Mapa de recorridos del Carnaval de Cajamarca</title>
+        <desc id="mapa-desc">
+          Calles de Cajamarca con las rutas de cada día: la avenida Independencia, la Plaza de Armas, la Vía de
+          Evitamiento, Santa Apolonia y la carretera a Baños del Inca.
+        </desc>
+        <rect width={ancho} height={alto} fill="var(--tinta)"></rect>
+        <path d={mapa.rios} class="mapa__rios"></path>
+        <path d={mapa.menores} class="mapa__menores"></path>
+        <path d={mapa.mayores} class="mapa__mayores"></path>
+        <path d={mapa.plaza} fill="var(--verde)"></path>
 
-      {
-        dias.map((d, i) => (
-          <g class="mapa__ruta" style={`--color:${d.color};--orden:${i}`}>
-            {d.aprox && <path d={d.aprox} class="ruta ruta--aprox" />}
-            {d.exacto && <path d={d.exacto} class="ruta ruta--exacta" pathLength="1" />}
-          </g>
-        ))
-      }
-
-      <g class="mapa__etiquetas" aria-hidden="true">
         {
-          etiquetas.map((e) => (
-            <text x={e.x} y={e.y} text-anchor={e.ancla}>
-              {e.texto}
-            </text>
-          ))
-        }
-      </g>
-
-      <g class="mapa__sellos" aria-hidden="true">
-        {
-          dias.map((d, i) => (
-            <g class="sello-dia" transform={`translate(${d.marca[0]} ${d.marca[1]})`} style={`--color:${d.color};--orden:${i}`}>
-              <circle r="19" />
-              <text y="5">{d.corto}</text>
+          dias.map((d) => (
+            <g class="mapa__ruta" data-de={d.id} style={`--color:${d.color}`}>
+              {d.tramos.map((t) => (
+                <path d={trazoDe(t)} class={`ruta ruta--${t.tipo}`} />
+              ))}
             </g>
           ))
         }
-      </g>
 
-      <g class="mapa__norte" transform="translate(48 56)" aria-hidden="true">
-        <path d="M0 -24 L10 8 L0 2 L-10 8 Z"></path>
-        <text y="28">N</text>
-      </g>
-    </svg>
+        <g class="mapa__etiquetas" aria-hidden="true">
+          {
+            etiquetas.map((e) => (
+              <text x={e.x} y={e.y} text-anchor={e.ancla}>
+                {e.texto}
+              </text>
+            ))
+          }
+        </g>
+
+        <g class="mapa__sellos" aria-hidden="true">
+          {
+            dias.map((d) => (
+              <g class="sello-dia" data-de={d.id} transform={`translate(${d.marca[0]} ${d.marca[1]})`} style={`--color:${d.color}`}>
+                <circle r="19" />
+                <text y="5">{d.corto}</text>
+              </g>
+            ))
+          }
+        </g>
+
+        <!-- Punto de salida de cada día: se ve solo el del día elegido -->
+        <g aria-hidden="true">
+          {
+            dias.map((d, i) => {
+              const [x, y] = salidas[i].punto;
+              return (
+                <g class="salida" data-de={d.id} transform={`translate(${x} ${y})`} style={`--color:${d.color}`}>
+                  <circle r="24" class="salida__borde" />
+                  <circle r="24" />
+                  <text y="-34">{salidas[i].cartel}</text>
+                </g>
+              );
+            })
+          }
+        </g>
+
+        <!-- Cabeza del desfile mientras se dibuja la ruta -->
+        <circle class="mapa__cabeza" r="11" data-cabeza aria-hidden="true"></circle>
+
+        <g class="mapa__norte" transform="translate(48 56)" aria-hidden="true">
+          <path d="M0 -24 L10 8 L0 2 L-10 8 Z"></path>
+          <text y="28">N</text>
+        </g>
+      </svg>
+    </div>
+    <!-- Fuera del marco que se desplaza: así queda siempre en la esquina, también en el teléfono -->
+    <p class="mapa__credito">
+      <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>
+    </p>
   </div>
 
   <figcaption class="mapa__leyenda">
     <ol>
       {
         dias.map((d) => (
-          <li style={`--color:${d.color}`}>
+          <li data-de={d.id} style={`--color:${d.color}`}>
             <span class="mapa__muestra" aria-hidden="true" />
             <p>
               <strong>{d.dia}: {d.titulo}.</strong> {d.texto}
@@ -103,9 +151,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
     </ol>
     <p class="mapa__nota">
       Las avenidas en trazo lleno son las reales; los tramos punteados son aproximados. El recorrido exacto sale en el
-      programa oficial. Calles: <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>.
-      En 3D: teselas de <a href="https://openfreemap.org">OpenFreeMap</a> y relieve de
-      <a href="https://mapterhorn.com/attribution">Mapterhorn</a>.
+      programa oficial.
     </p>
   </figcaption>
 </figure>
@@ -115,6 +161,30 @@ const etiquetas = etiquetasMapa.map((e) => ({
     display: grid;
     gap: 1.6rem;
     margin: 0;
+  }
+
+  .mapa__plano {
+    position: relative;
+    /* Sin esto, el ancho mínimo del SVG ensancha toda la figura en el teléfono */
+    min-width: 0;
+  }
+
+  /* Crédito obligatorio de OpenStreetMap, chiquito en la esquina como en cualquier mapa.
+     Arriba: abajo taparía la entrada de la avenida Independencia, donde sale el sábado */
+  .mapa__credito {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    margin: 0;
+    padding: 0.15rem 0.5rem;
+    background: rgb(19 24 90 / 0.85);
+    color: var(--blanco);
+    font-size: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .mapa__credito a {
+    color: inherit;
   }
 
   .mapa__marco {
@@ -166,43 +236,49 @@ const etiquetas = etiquetasMapa.map((e) => ({
     stroke-width: 7;
   }
 
+  /* El script repite este punteado (10 9) al dibujar la ruta: si cambia aquí, cambia allá */
   .ruta--aprox {
     stroke-width: 5;
     stroke-dasharray: 10 9;
   }
 
-  /* Las rutas se trazan solas cuando el mapa aparece (si no se pide menos movimiento) */
-  [data-animar] .ruta--exacta {
-    stroke-dasharray: 1 1;
-    stroke-dashoffset: 1;
+  /* Día elegido: las demás rutas y sus sellos quedan de fondo */
+  .mapa__ruta,
+  .sello-dia,
+  .mapa__leyenda li {
+    transition: opacity 0.3s ease;
   }
 
-  [data-animar] .ruta--aprox {
-    opacity: 0;
+  .mapa--un-dia .mapa__ruta:not(.activa),
+  .mapa--un-dia .sello-dia:not(.activa) {
+    opacity: 0.2;
   }
 
-  [data-animar].dibujado .ruta--exacta {
-    animation: trazar 1.4s ease-out forwards;
-    animation-delay: calc(var(--orden) * 0.45s);
+  .mapa--un-dia .mapa__leyenda li:not(.activa) {
+    opacity: 0.45;
   }
 
-  [data-animar].dibujado .ruta--aprox {
-    animation: aparecer 0.5s ease-out forwards;
-    animation-delay: calc(var(--orden) * 0.45s + 0.6s);
+  .salida {
+    display: none;
   }
 
-  @keyframes trazar {
-    to {
-      stroke-dashoffset: 0;
-    }
+  .mapa--un-dia .salida.activa {
+    display: inline;
   }
 
-  @keyframes aparecer {
-    to {
-      opacity: 1;
-    }
+  .salida circle {
+    fill: none;
+    stroke: var(--color);
+    stroke-width: 5;
   }
 
+  /* Borde oscuro del anillo, para que se lea sobre las calles */
+  .salida .salida__borde {
+    stroke: var(--tinta);
+    stroke-width: 11;
+  }
+
+  .salida text,
   .mapa__etiquetas text {
     fill: #fff;
     font-family: var(--display);
@@ -214,6 +290,23 @@ const etiquetas = etiquetasMapa.map((e) => ({
     stroke: var(--tinta);
     stroke-width: 5px;
     stroke-linejoin: round;
+  }
+
+  .salida text {
+    fill: var(--color);
+    font-size: 21px;
+    text-anchor: middle;
+  }
+
+  .mapa__cabeza {
+    fill: var(--color, #fff);
+    stroke: var(--tinta);
+    stroke-width: 4;
+    opacity: 0;
+  }
+
+  .mapa__cabeza.visible {
+    opacity: 1;
   }
 
   .sello-dia circle {
@@ -276,12 +369,18 @@ const etiquetas = etiquetasMapa.map((e) => ({
     font-size: 0.92rem;
   }
 
-  /* ---------- Mapa 3D ---------- */
+  /* ---------- Barra: días y 3D ---------- */
   .mapa__barra {
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-    gap: 0.8rem 1rem;
+    gap: 0.8rem 1.2rem;
+  }
+
+  /* .boton trae su propio display: sin esto, hidden no lo escondería */
+  .mapa__barra[hidden],
+  .mapa__barra [hidden] {
+    display: none;
   }
 
   .mapa__dias {
@@ -289,11 +388,6 @@ const etiquetas = etiquetasMapa.map((e) => ({
     flex-wrap: wrap;
     align-items: center;
     gap: 0.5rem;
-  }
-
-  /* .boton trae su propio display: sin esto, hidden no lo escondería */
-  .mapa__barra [hidden] {
-    display: none;
   }
 
   .mapa__dias-titulo {
@@ -306,6 +400,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
     border: 3px solid var(--tinta);
     border-bottom: 8px solid var(--color, var(--tinta));
     background: var(--blanco);
+    color: var(--tinta);
     font-family: var(--display);
     font-weight: 800;
     font-size: 1.2rem;
@@ -315,6 +410,10 @@ const etiquetas = etiquetasMapa.map((e) => ({
   }
 
   .mapa__dia:hover {
+    background: color-mix(in srgb, var(--color, var(--amarillo)) 35%, var(--blanco));
+  }
+
+  .mapa__dia[aria-pressed='true'] {
     background: var(--color, var(--amarillo));
   }
 
@@ -331,11 +430,12 @@ const etiquetas = etiquetasMapa.map((e) => ({
     /* En el teléfono, no más alto que ancho y un poco: si no, sobra cerro vacío */
     height: min(78vh, 680px, 125vw);
     border: 4px solid var(--tinta);
-    background: #0f1450;
+    /* El mismo fondo del terreno en src/lib/mapa3d.ts, mientras cargan las teselas */
+    background: #0a1a36;
   }
 
   .mapa__3d[hidden],
-  .mapa__marco[hidden] {
+  .mapa__plano[hidden] {
     display: none;
   }
 
@@ -372,94 +472,247 @@ const etiquetas = etiquetasMapa.map((e) => ({
   :global(.marca3d--oculta) {
     visibility: hidden;
   }
+
+  /* MapLibre usa la opacidad de los marcadores para el relieve: se atenúa con filter */
+  :global(.marca3d--tenue) {
+    filter: opacity(0.3);
+  }
+
+  :global(.salida3d) {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: 5px solid var(--blanco);
+    box-shadow:
+      0 0 0 3px var(--tinta),
+      inset 0 0 0 3px var(--tinta);
+    pointer-events: none;
+  }
+
+  :global(.salida3d span) {
+    position: absolute;
+    bottom: calc(100% + 6px);
+    left: 50%;
+    translate: -50% 0;
+    padding: 0.1rem 0.45rem 0;
+    background: var(--blanco);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 15px;
+    text-transform: uppercase;
+  }
+
+  :global(.cabeza3d) {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 4px solid var(--tinta);
+    background: var(--blanco);
+    pointer-events: none;
+  }
+
+  :global(.salida3d[hidden]),
+  :global(.cabeza3d[hidden]) {
+    display: none;
+  }
 </style>
 
 <script>
-  /* Las rutas del mapa plano se trazan solas al entrar en pantalla */
-  const mapas = document.querySelectorAll<HTMLElement>('[data-mapa]');
-  const tranquilo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-  if (!tranquilo && 'IntersectionObserver' in window) {
-    const observador = new IntersectionObserver(
-      (entradas) => {
-        entradas.forEach((entrada) => {
-          if (entrada.isIntersecting) {
-            entrada.target.classList.add('dibujado');
-            observador.unobserve(entrada.target);
-          }
-        });
-      },
-      { threshold: 0.35 },
-    );
-    mapas.forEach((m) => {
-      m.setAttribute('data-animar', '');
-      observador.observe(m);
-    });
-  }
-</script>
-
-<script>
-  /* Mapa 3D: se carga solo al tocar «Ver en 3D» */
   import type { Mapa3D } from '../lib/mapa3d';
 
-  const figura = document.querySelector<HTMLElement>('[data-mapa]');
-  const botonVer = figura?.querySelector<HTMLButtonElement>('[data-ver-3d]');
-  const dias = figura?.querySelector<HTMLElement>('[data-dias-3d]');
-  const plano = figura?.querySelector<HTMLElement>('[data-mapa-plano]');
-  const contenedor = figura?.querySelector<HTMLElement>('[data-contenedor-3d]');
-  const estado = figura?.querySelector<HTMLElement>('[data-estado-3d]');
-  const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  /** Punteado de los tramos aproximados: el mismo que .ruta--aprox en CSS. */
+  const PUNTEADO = [10, 9];
+  const suave = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
-  let mapa3d: Mapa3D | null = null;
+  /**
+   * stroke-dasharray que muestra solo los primeros `visible` px de un trazo,
+   * lleno o punteado; el resto queda en un hueco largo.
+   */
+  function rayas(punteado: boolean, visible: number, largo: number) {
+    if (!punteado) return `${visible} ${largo}`;
+    const partes: number[] = [];
+    for (let usado = 0, k = 0; usado < visible; k++) {
+      const parte = Math.min(PUNTEADO[k % 2], visible - usado);
+      partes.push(parte);
+      usado += parte;
+    }
+    // Si terminó en raya, se agrega el hueco; si terminó en hueco, se alarga
+    if (partes.length % 2) partes.push(largo);
+    else partes[partes.length - 1] += largo;
+    return partes.join(' ');
+  }
 
-  function mostrarPlano() {
-    mapa3d?.cerrar();
-    mapa3d = null;
-    if (contenedor) {
+  function iniciar(figura: HTMLElement) {
+    const uno = <T extends Element>(selector: string) => figura.querySelector<T>(selector)!;
+    const barra = uno<HTMLElement>('[data-barra]');
+    const botonesDia = [...figura.querySelectorAll<HTMLButtonElement>('[data-dia]')];
+    const botonTodos = uno<HTMLButtonElement>('[data-todos]');
+    const botonVer3d = uno<HTMLButtonElement>('[data-ver-3d]');
+    const botonPlano = uno<HTMLButtonElement>('[data-ver-plano]');
+    const plano = uno<HTMLElement>('[data-mapa-plano]');
+    const contenedor = uno<HTMLElement>('[data-contenedor-3d]');
+    const estado = uno<HTMLElement>('[data-estado]');
+    const cabeza = uno<SVGCircleElement>('[data-cabeza]');
+    const tranquilo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    let activo: string | null = null;
+    let mapa3d: Mapa3D | null = null;
+    /** Turno del dibujo de cada ruta: empezar otro corta el anterior. */
+    const turnos = new Map<string, number>();
+
+    const trazosDe = (dia: string) => [...figura.querySelectorAll<SVGPathElement>(`.mapa__ruta[data-de="${dia}"] .ruta`)];
+
+    /** Pinta los primeros `s` px de la ruta (todos sus tramos, en orden) y devuelve dónde va la punta. */
+    function pintar(trazos: SVGPathElement[], largos: number[], s: number) {
+      let inicio = 0;
+      let punta: DOMPoint | null = null;
+      trazos.forEach((t, i) => {
+        const visible = Math.max(0, Math.min(largos[i], s - inicio));
+        if (visible >= largos[i]) {
+          t.style.removeProperty('stroke-dasharray');
+          t.style.removeProperty('opacity');
+        } else {
+          // Con puntas redondas, una raya de largo 0 igual se ve como un punto
+          t.style.opacity = visible > 0 ? '' : '0';
+          t.style.strokeDasharray = rayas(t.classList.contains('ruta--aprox'), visible, largos[i]);
+        }
+        if (visible > 0) punta = t.getPointAtLength(visible);
+        inicio += largos[i];
+      });
+      return punta as DOMPoint | null;
+    }
+
+    /** Dibuja la ruta de un día desde donde sale. */
+    function dibujar(dia: string, { conCabeza = false, retraso = 0 } = {}) {
+      const turno = (turnos.get(dia) ?? 0) + 1;
+      turnos.set(dia, turno);
+      const trazos = trazosDe(dia);
+      const largos = trazos.map((t) => t.getTotalLength());
+      const total = largos.reduce((a, b) => a + b, 0);
+      // Las rutas cortas no pasan volando y las largas no se hacen eternas
+      const duracion = Math.min(4000, Math.max(1600, 1200 + total * 4));
+      pintar(trazos, largos, 0);
+      if (conCabeza) cabeza.style.setProperty('--color', getComputedStyle(trazos[0]).stroke);
+      const comienzo = performance.now() + retraso;
+      const paso = (ahora: number) => {
+        if (turnos.get(dia) !== turno) return;
+        const t = Math.min(1, Math.max(0, (ahora - comienzo) / duracion));
+        const punta = pintar(trazos, largos, suave(t) * total);
+        if (conCabeza && punta) {
+          cabeza.setAttribute('cx', String(punta.x));
+          cabeza.setAttribute('cy', String(punta.y));
+          cabeza.classList.toggle('visible', t < 1);
+        }
+        if (t < 1) requestAnimationFrame(paso);
+      };
+      requestAnimationFrame(paso);
+    }
+
+    /** Corta todos los dibujos en curso y deja las rutas completas. */
+    function completarTodo() {
+      for (const b of botonesDia) {
+        const dia = b.dataset.dia!;
+        turnos.set(dia, (turnos.get(dia) ?? 0) + 1);
+        for (const t of trazosDe(dia)) {
+          t.style.removeProperty('stroke-dasharray');
+          t.style.removeProperty('opacity');
+        }
+      }
+      cabeza.classList.remove('visible');
+    }
+
+    function elegir(dia: string | null) {
+      activo = dia;
+      for (const b of botonesDia) b.setAttribute('aria-pressed', String(b.dataset.dia === dia));
+      botonTodos.setAttribute('aria-pressed', String(dia === null));
+      figura.classList.toggle('mapa--un-dia', dia !== null);
+      figura.querySelectorAll<HTMLElement | SVGElement>('[data-de]').forEach((el) => {
+        el.classList.toggle('activa', el.dataset.de === dia);
+      });
+
+      const nombre = botonesDia.find((b) => b.dataset.dia === dia)?.dataset.nombre;
+      estado.textContent = nombre ? `${nombre}. El círculo marca por dónde sale.` : 'Se ven todos los recorridos.';
+
+      completarTodo();
+      if (!plano.hidden && dia && !tranquilo) dibujar(dia, { conCabeza: true });
+      if (mapa3d) {
+        if (dia) mapa3d.recorrer(dia);
+        else mapa3d.vistaGeneral();
+      }
+    }
+
+    function mostrarPlano() {
+      mapa3d?.cerrar();
+      mapa3d = null;
       contenedor.hidden = true;
       contenedor.replaceChildren();
+      plano.hidden = false;
+      botonPlano.hidden = true;
+      botonVer3d.hidden = false;
+      botonVer3d.disabled = false;
+      botonVer3d.textContent = 'Ver en 3D';
+      if (activo && !tranquilo) dibujar(activo, { conCabeza: true });
     }
-    if (plano) plano.hidden = false;
-    if (dias) dias.hidden = true;
-    if (botonVer) {
-      botonVer.hidden = false;
-      botonVer.disabled = false;
-      botonVer.textContent = 'Ver en 3D';
+
+    for (const b of botonesDia) b.addEventListener('click', () => elegir(b.dataset.dia!));
+    botonTodos.addEventListener('click', () => elegir(null));
+
+    botonVer3d.addEventListener('click', async () => {
+      botonVer3d.disabled = true;
+      botonVer3d.textContent = 'Cargando el 3D…';
+      estado.textContent = '';
+      try {
+        const [{ abrirMapa3D }, rutas] = await Promise.all([
+          import('../lib/mapa3d'),
+          fetch('/mapa/recorridos.geojson').then((r) => {
+            if (!r.ok) throw new Error(`No se pudo leer las rutas (${r.status})`);
+            return r.json();
+          }),
+        ]);
+        completarTodo();
+        contenedor.hidden = false;
+        plano.hidden = true;
+        mapa3d = await abrirMapa3D(contenedor, rutas, tranquilo);
+        botonVer3d.hidden = true;
+        botonPlano.hidden = false;
+        estado.textContent = 'Mapa 3D listo. Arrastra para moverlo; en el teléfono, usa dos dedos.';
+        if (activo) mapa3d.recorrer(activo);
+      } catch (error) {
+        console.error(error);
+        mostrarPlano();
+        estado.textContent = 'Este navegador no pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
+      }
+    });
+
+    botonPlano.addEventListener('click', () => {
+      mostrarPlano();
+      estado.textContent = '';
+      botonVer3d.focus();
+    });
+
+    barra.hidden = false;
+
+    // Al entrar en pantalla, todas las rutas se trazan desde donde salen, una tras otra
+    if (!tranquilo && 'IntersectionObserver' in window) {
+      for (const b of botonesDia) {
+        const trazos = trazosDe(b.dataset.dia!);
+        pintar(trazos, trazos.map((t) => t.getTotalLength()), 0);
+      }
+      const observador = new IntersectionObserver(
+        ([entrada]) => {
+          if (!entrada.isIntersecting) return;
+          observador.disconnect();
+          // Si ya eligieron un día, no se vuelve a dibujar todo encima
+          if (activo) return;
+          botonesDia.forEach((b, i) => dibujar(b.dataset.dia!, { retraso: i * 450 }));
+        },
+        { threshold: 0.35 },
+      );
+      observador.observe(plano);
     }
   }
 
-  botonVer?.addEventListener('click', async () => {
-    if (!contenedor || !plano || !dias || !estado) return;
-    botonVer.disabled = true;
-    botonVer.textContent = 'Cargando el 3D…';
-    estado.textContent = '';
-    try {
-      const [{ abrirMapa3D }, rutas] = await Promise.all([
-        import('../lib/mapa3d'),
-        fetch('/mapa/recorridos.geojson').then((r) => r.json()),
-      ]);
-      contenedor.hidden = false;
-      plano.hidden = true;
-      mapa3d = await abrirMapa3D(contenedor, rutas, sinMovimiento);
-      botonVer.hidden = true;
-      dias.hidden = false;
-      estado.textContent = 'Mapa 3D listo. Arrastra para moverlo; en el teléfono, usa dos dedos.';
-    } catch (error) {
-      console.error(error);
-      mostrarPlano();
-      estado.textContent = 'Este navegador no pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
-    }
-  });
-
-  figura?.querySelector('[data-ver-plano]')?.addEventListener('click', () => {
-    mostrarPlano();
-    if (estado) estado.textContent = '';
-    botonVer?.focus();
-  });
-
-  figura?.querySelector('[data-vista-general]')?.addEventListener('click', () => mapa3d?.vistaGeneral());
-
-  figura?.querySelectorAll<HTMLButtonElement>('[data-dia]').forEach((b) =>
-    b.addEventListener('click', () => mapa3d?.recorrer(b.dataset.dia ?? '')),
-  );
+  const figura = document.querySelector<HTMLElement>('[data-mapa]');
+  if (figura) iniciar(figura);
 </script>

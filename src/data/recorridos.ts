@@ -2,11 +2,145 @@
  * Recorridos del carnaval: lo comparten el mapa plano (SVG) y el mapa 3D.
  * Las coordenadas están en el sistema del SVG (src/data/mapa.json); para el
  * mapa 3D se convierten a longitud y latitud con la misma proyección.
+ *
+ * Cada día es una lista de tramos en el orden en que avanza el desfile, para
+ * poder dibujarlo desde donde sale.
  */
 import mapa from './mapa.json';
 
+export type Punto = [number, number];
+
+export interface Tramo {
+  /** «exacta»: avenida real de OpenStreetMap. «aprox»: tramo aproximado (punteado). */
+  tipo: 'exacta' | 'aprox';
+  puntos: Punto[];
+}
+
 const { lugares: L, extremos: E } = mapa;
 const p = (punto: number[]) => `${punto[0]} ${punto[1]}`;
+const dist = (a: number[], b: number[]) => Math.hypot(a[0] - b[0], a[1] - b[1]);
+
+/* ---------- Lectura de trazos SVG ---------- */
+
+/** Lee un trazo con M, L y Q y devuelve sus líneas como listas de puntos. */
+export function lineasDeTrazo(d: string): Punto[][] {
+  const lineas: Punto[][] = [];
+  const fichas = d.match(/[MLQ]|-?\d+(?:\.\d+)?/g) ?? [];
+  let comando = 'M';
+  let actual: Punto[] = [];
+  let i = 0;
+  const num = () => Number(fichas[i++]);
+  while (i < fichas.length) {
+    if (/[MLQ]/.test(fichas[i])) comando = fichas[i++];
+    if (comando === 'M') {
+      if (actual.length > 1) lineas.push(actual);
+      actual = [[num(), num()]];
+      comando = 'L';
+    } else if (comando === 'L') {
+      actual.push([num(), num()]);
+    } else {
+      // Curva cuadrática: se muestrea en 20 tramos
+      const [x0, y0] = actual[actual.length - 1];
+      const cx = num();
+      const cy = num();
+      const x1 = num();
+      const y1 = num();
+      for (let k = 1; k <= 20; k++) {
+        const t = k / 20;
+        const u = 1 - t;
+        actual.push([u * u * x0 + 2 * u * t * cx + t * t * x1, u * u * y0 + 2 * u * t * cy + t * t * y1]);
+      }
+    }
+  }
+  if (actual.length > 1) lineas.push(actual);
+  return lineas;
+}
+
+/* ---------- De pedazos de OpenStreetMap a una sola línea ---------- */
+
+/** Distancia de un punto a una línea quebrada. */
+function distanciaALinea(q: Punto, linea: Punto[]): number {
+  let menor = Infinity;
+  for (let i = 1; i < linea.length; i++) {
+    const [a, b] = [linea[i - 1], linea[i]];
+    const dx = b[0] - a[0];
+    const dy = b[1] - a[1];
+    const largo2 = dx * dx + dy * dy || 1;
+    const t = Math.max(0, Math.min(1, ((q[0] - a[0]) * dx + (q[1] - a[1]) * dy) / largo2));
+    menor = Math.min(menor, dist(q, [a[0] + t * dx, a[1] + t * dy]));
+  }
+  return menor;
+}
+
+/**
+ * Un pedazo que vuelve a su punto de partida es una avenida doble cuyos dos
+ * sentidos quedaron unidos al final: se queda solo con la ida.
+ */
+function soloIda(pedazo: Punto[]): Punto[] {
+  if (pedazo.length < 5 || dist(pedazo[0], pedazo[pedazo.length - 1]) > 15) return pedazo;
+  let lejano = 0;
+  pedazo.forEach((q, i) => {
+    if (dist(q, pedazo[0]) > dist(pedazo[lejano], pedazo[0])) lejano = i;
+  });
+  return pedazo.slice(0, lejano + 1);
+}
+
+/** Hueco máximo que se une con una recta; si es mayor, el hueco va punteado. */
+const UNIR = 30;
+/** Hueco a partir del cual se deja de seguir la avenida. */
+const SALTO = 120;
+/** Un pedazo que corre a menos de esto de lo ya recorrido es el otro sentido de la avenida. */
+const PEGADO = 9;
+
+/**
+ * Une los pedazos de una avenida en una línea que empieza en `sale`.
+ * OpenStreetMap trae cada sentido de una avenida doble por separado y en
+ * pedazos: se sigue siempre el pedazo más cercano y se saltan los que corren
+ * pegados a lo ya recorrido.
+ */
+function avenidaDesde(trazo: string, sale: Punto): Tramo[] {
+  let pedazos = lineasDeTrazo(trazo).map(soloIda);
+  const tramos: Tramo[] = [];
+  const recorrido: Punto[] = [];
+  let actual = sale;
+  while (pedazos.length) {
+    let mejor = { pedazo: pedazos[0], invertir: false, d: Infinity };
+    for (const pedazo of pedazos) {
+      const alInicio = dist(actual, pedazo[0]);
+      const alFinal = dist(actual, pedazo[pedazo.length - 1]);
+      if (alInicio < mejor.d) mejor = { pedazo, invertir: false, d: alInicio };
+      if (alFinal < mejor.d) mejor = { pedazo, invertir: true, d: alFinal };
+    }
+    if (mejor.d > SALTO) break;
+    pedazos = pedazos.filter((x) => x !== mejor.pedazo);
+    const puntos = mejor.invertir ? [...mejor.pedazo].reverse() : mejor.pedazo;
+    if (recorrido.length > 1) {
+      const media = puntos.reduce((s, q) => s + distanciaALinea(q, recorrido), 0) / puntos.length;
+      if (media < PEGADO) continue;
+    }
+    const ultimo = tramos[tramos.length - 1];
+    if (!ultimo || mejor.d > UNIR) {
+      if (ultimo) tramos.push({ tipo: 'aprox', puntos: [actual, puntos[0]] });
+      tramos.push({ tipo: 'exacta', puntos: [...puntos] });
+    } else {
+      ultimo.puntos.push(...puntos);
+    }
+    recorrido.push(...puntos);
+    actual = puntos[puntos.length - 1];
+  }
+  return tramos;
+}
+
+/** El extremo de una avenida más alejado de un punto (su otra punta). */
+function otraPunta(trazo: string, desde: number[]): Punto {
+  const extremos = lineasDeTrazo(trazo).flatMap((l) => [l[0], l[l.length - 1]]);
+  return extremos.reduce((a, b) => (dist(b, desde) > dist(a, desde) ? b : a));
+}
+
+const aprox = (d: string): Tramo => ({ tipo: 'aprox', puntos: lineasDeTrazo(d)[0] });
+const alReves = (t: Tramo): Tramo => ({ ...t, puntos: [...t.puntos].reverse() });
+
+/* ---------- Los días ---------- */
 
 export interface DiaMapa {
   id: string;
@@ -18,10 +152,10 @@ export interface DiaMapa {
   color: string;
   /** El mismo color en hexadecimal, para MapLibre. */
   hex: string;
-  /** Avenidas reales (trazo SVG). */
-  exacto: string;
-  /** Tramos aproximados (trazo SVG con curvas). */
-  aprox: string;
+  /** Tramos en el orden en que avanza el desfile: el primer punto es la salida. */
+  tramos: Tramo[];
+  /** De dónde viene, si sale de fuera del mapa plano. */
+  vieneDe?: string;
   /** Dónde va el sello del día. */
   marca: number[];
 }
@@ -35,9 +169,14 @@ export const diasMapa: DiaMapa[] = [
     texto: 'Entra por la avenida Independencia, desde Santa Elena, y sigue hacia el centro.',
     color: 'var(--fucsia)',
     hex: '#ff2a92',
-    exacto: mapa.rutas.ingreso,
-    aprox: `M${p(E.ingreso)} Q350 395 ${p(L.plaza)}`,
-    marca: [388, 640],
+    // Sube por la Independencia desde el sur (Santa Elena) y llega a la plaza
+    tramos: [
+      ...avenidaDesde(mapa.rutas.ingreso, otraPunta(mapa.rutas.ingreso, E.ingreso)),
+      aprox(`M${p(E.ingreso)} Q350 395 ${p(L.plaza)}`),
+    ],
+    vieneDe: 'Santa Elena',
+    // Más arriba que la entrada al mapa, donde va el anillo de salida
+    marca: [392, 598],
   },
   {
     id: 'domingo',
@@ -48,8 +187,7 @@ export const diasMapa: DiaMapa[] = [
       'En 2025 los grupos fueron del estadio Héroes de San Ramón al Arco del Triunfo; el jurado los espera en la Plaza de Armas.',
     color: 'var(--verde)',
     hex: '#00b35c',
-    exacto: '',
-    aprox: `M${p(L.estadio)} Q372 330 ${p(L.plaza)} Q285 300 ${p(L.arco)}`,
+    tramos: [aprox(`M${p(L.estadio)} Q372 330 ${p(L.plaza)} Q285 300 ${p(L.arco)}`)],
     marca: L.plaza,
   },
   {
@@ -60,8 +198,9 @@ export const diasMapa: DiaMapa[] = [
     texto: 'Los carros alegóricos recorren la Vía de Evitamiento.',
     color: 'var(--amarillo)',
     hex: '#ffe600',
-    exacto: mapa.rutas.corso,
-    aprox: '',
+    // Se dibuja de norte a sur, del extremo noroeste de la Vía de Evitamiento.
+    // El sentido real sale en el programa oficial: para cambiarlo, cambia este punto.
+    tramos: avenidaDesde(mapa.rutas.corso, [224, 188]),
     marca: [640, 533],
   },
   {
@@ -72,8 +211,7 @@ export const diasMapa: DiaMapa[] = [
     texto: 'Las viudas llevan el ataúd hacia Santa Apolonia.',
     color: 'var(--turquesa)',
     hex: '#00b8c8',
-    exacto: '',
-    aprox: `M${p(L.plaza)} Q286 330 ${p(L.santaApolonia)}`,
+    tramos: [aprox(`M${p(L.plaza)} Q286 330 ${p(L.santaApolonia)}`)],
     marca: L.santaApolonia,
   },
   {
@@ -84,11 +222,18 @@ export const diasMapa: DiaMapa[] = [
     texto: 'El último paseo va por la carretera hasta Baños del Inca, donde se lee el testamento.',
     color: 'var(--naranja)',
     hex: '#ff6a00',
-    exacto: mapa.rutas.entierro,
-    aprox: `M${p(E.entierro)} Q402 332 ${p(L.plaza)}`,
+    // Sale del centro y toma la carretera hasta Baños del Inca
+    tramos: [
+      alReves(aprox(`M${p(E.entierro)} Q402 332 ${p(L.plaza)}`)),
+      ...avenidaDesde(mapa.rutas.entierro, E.entierro as Punto),
+    ],
     marca: L.banos,
   },
 ];
+
+/** Trazo SVG de un tramo. */
+export const trazoDe = (t: Tramo) =>
+  t.puntos.map((q, i) => `${i ? 'L' : 'M'}${+q[0].toFixed(1)} ${+q[1].toFixed(1)}`).join(' ');
 
 export const etiquetasMapa = [
   { texto: 'Plaza de Armas', punto: L.plaza, dx: 20, dy: -8, ancla: 'start' },
@@ -105,63 +250,19 @@ export const etiquetasMapa = [
 
 const { lon0, lat0, cos, escala } = mapa.proyeccion;
 
-export const aLonLat = ([x, y]: number[]): [number, number] => [
+export const aLonLat = ([x, y]: number[]): Punto => [
   +(x / (cos * escala) + lon0).toFixed(6),
   +(lat0 - y / escala).toFixed(6),
 ];
 
-/** Lee un trazo con M, L y Q y devuelve sus líneas como listas de puntos SVG. */
-export function lineasDeTrazo(d: string): number[][][] {
-  const lineas: number[][][] = [];
-  const fichas = d.match(/[MLQ]|-?\d+(?:\.\d+)?/g) ?? [];
-  let comando = 'M';
-  let actual: number[][] = [];
-  let i = 0;
-  const num = () => Number(fichas[i++]);
-  while (i < fichas.length) {
-    if (/[MLQ]/.test(fichas[i])) comando = fichas[i++];
-    if (comando === 'M') {
-      if (actual.length > 1) lineas.push(actual);
-      actual = [[num(), num()]];
-      comando = 'L';
-    } else if (comando === 'L') {
-      actual.push([num(), num()]);
-    } else {
-      // Curva cuadrática: se muestrea en 16 tramos
-      const [x0, y0] = actual[actual.length - 1];
-      const cx = num();
-      const cy = num();
-      const x1 = num();
-      const y1 = num();
-      for (let k = 1; k <= 16; k++) {
-        const t = k / 16;
-        const u = 1 - t;
-        actual.push([u * u * x0 + 2 * u * t * cx + t * t * x1, u * u * y0 + 2 * u * t * cy + t * t * y1]);
-      }
-    }
-  }
-  if (actual.length > 1) lineas.push(actual);
-  return lineas;
-}
-
-/** GeoJSON de las rutas y los sellos, para el mapa 3D. */
+/** GeoJSON de las rutas (un tramo por línea, en orden) y los sellos, para el mapa 3D. */
 export function geojsonRecorridos() {
   const rutas = diasMapa.flatMap((d) =>
-    (
-      [
-        ['exacta', d.exacto],
-        ['aprox', d.aprox],
-      ] as const
-    )
-      .filter(([, trazo]) => trazo)
-      .map(([tipo, trazo]) => ({
-        type: 'Feature' as const,
-        properties: { dia: d.id, tipo, color: d.hex },
-        geometry: {
-          type: 'MultiLineString' as const,
-          coordinates: lineasDeTrazo(trazo).map((linea) => linea.map(aLonLat)),
-        },
-      })),
+    d.tramos.map((t, orden) => ({
+      type: 'Feature' as const,
+      properties: { dia: d.id, tipo: t.tipo, color: d.hex, orden },
+      geometry: { type: 'LineString' as const, coordinates: t.puntos.map(aLonLat) },
+    })),
   );
   const sellos = diasMapa.map((d) => ({
     type: 'Feature' as const,
