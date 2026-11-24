@@ -1,0 +1,465 @@
+---
+/**
+ * Mapa de recorridos del carnaval sobre las calles reales de Cajamarca
+ * (datos de OpenStreetMap procesados en src/data/mapa.json).
+ * Las avenidas de cada ruta son las reales; los tramos punteados son aproximados.
+ * Las rutas se dibujan solas cuando el mapa entra en pantalla.
+ * El botón «Ver en 3D» carga MapLibre solo cuando se pide (src/lib/mapa3d.ts).
+ */
+import mapa from '../data/mapa.json';
+import { diasMapa as dias, etiquetasMapa } from '../data/recorridos';
+
+const { ancho, alto } = mapa;
+const etiquetas = etiquetasMapa.map((e) => ({
+  texto: e.texto,
+  x: e.punto[0] + e.dx,
+  y: e.punto[1] + e.dy,
+  ancla: e.ancla,
+}));
+---
+
+<figure class="mapa" data-mapa>
+  <div class="mapa__barra">
+    <button type="button" class="boton" data-ver-3d>Ver en 3D</button>
+    <div class="mapa__dias" data-dias-3d hidden>
+      <span class="mapa__dias-titulo">Ir al recorrido:</span>
+      {
+        dias.map((d) => (
+          <button type="button" class="mapa__dia" style={`--color:${d.color}`} data-dia={d.id}>
+            {d.dia}
+          </button>
+        ))
+      }
+      <button type="button" class="mapa__dia" data-vista-general>Ver todo</button>
+      <button type="button" class="boton boton--hueco" data-ver-plano>Volver al plano</button>
+    </div>
+    <p class="mapa__estado" aria-live="polite" data-estado-3d></p>
+  </div>
+
+  <div class="mapa__3d" data-contenedor-3d hidden></div>
+
+  <div class="mapa__marco" tabindex="0" aria-label="Mapa de recorridos; se puede desplazar hacia los lados" data-mapa-plano>
+    <svg viewBox={`0 0 ${ancho} ${alto}`} role="img" aria-labelledby="mapa-titulo mapa-desc">
+      <title id="mapa-titulo">Mapa de recorridos del Carnaval de Cajamarca</title>
+      <desc id="mapa-desc">
+        Calles de Cajamarca con las rutas de cada día: la avenida Independencia, la Plaza de Armas, la Vía de
+        Evitamiento, Santa Apolonia y la carretera a Baños del Inca.
+      </desc>
+      <rect width={ancho} height={alto} fill="var(--tinta)"></rect>
+      <path d={mapa.rios} class="mapa__rios"></path>
+      <path d={mapa.menores} class="mapa__menores"></path>
+      <path d={mapa.mayores} class="mapa__mayores"></path>
+      <path d={mapa.plaza} fill="var(--verde)"></path>
+
+      {
+        dias.map((d, i) => (
+          <g class="mapa__ruta" style={`--color:${d.color};--orden:${i}`}>
+            {d.aprox && <path d={d.aprox} class="ruta ruta--aprox" />}
+            {d.exacto && <path d={d.exacto} class="ruta ruta--exacta" pathLength="1" />}
+          </g>
+        ))
+      }
+
+      <g class="mapa__etiquetas" aria-hidden="true">
+        {
+          etiquetas.map((e) => (
+            <text x={e.x} y={e.y} text-anchor={e.ancla}>
+              {e.texto}
+            </text>
+          ))
+        }
+      </g>
+
+      <g class="mapa__sellos" aria-hidden="true">
+        {
+          dias.map((d, i) => (
+            <g class="sello-dia" transform={`translate(${d.marca[0]} ${d.marca[1]})`} style={`--color:${d.color};--orden:${i}`}>
+              <circle r="19" />
+              <text y="5">{d.corto}</text>
+            </g>
+          ))
+        }
+      </g>
+
+      <g class="mapa__norte" transform="translate(48 56)" aria-hidden="true">
+        <path d="M0 -24 L10 8 L0 2 L-10 8 Z"></path>
+        <text y="28">N</text>
+      </g>
+    </svg>
+  </div>
+
+  <figcaption class="mapa__leyenda">
+    <ol>
+      {
+        dias.map((d) => (
+          <li style={`--color:${d.color}`}>
+            <span class="mapa__muestra" aria-hidden="true" />
+            <p>
+              <strong>{d.dia}: {d.titulo}.</strong> {d.texto}
+            </p>
+          </li>
+        ))
+      }
+    </ol>
+    <p class="mapa__nota">
+      Las avenidas en trazo lleno son las reales; los tramos punteados son aproximados. El recorrido exacto sale en el
+      programa oficial. Calles: <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>.
+      En 3D: teselas de <a href="https://openfreemap.org">OpenFreeMap</a> y relieve de
+      <a href="https://mapterhorn.com/attribution">Mapterhorn</a>.
+    </p>
+  </figcaption>
+</figure>
+
+<style>
+  .mapa {
+    display: grid;
+    gap: 1.6rem;
+    margin: 0;
+  }
+
+  .mapa__marco {
+    border: 4px solid var(--tinta);
+    background: var(--tinta);
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+  }
+
+  .mapa__marco:focus-visible {
+    outline: 3px solid var(--fucsia);
+    outline-offset: 3px;
+  }
+
+  .mapa__marco svg {
+    width: 100%;
+    min-width: 640px;
+  }
+
+  .mapa__rios {
+    fill: none;
+    stroke: var(--turquesa);
+    stroke-width: 2;
+    opacity: 0.45;
+  }
+
+  .mapa__menores {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 1;
+    opacity: 0.17;
+  }
+
+  .mapa__mayores {
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.2;
+    opacity: 0.42;
+  }
+
+  .ruta {
+    fill: none;
+    stroke: var(--color);
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .ruta--exacta {
+    stroke-width: 7;
+  }
+
+  .ruta--aprox {
+    stroke-width: 5;
+    stroke-dasharray: 10 9;
+  }
+
+  /* Las rutas se trazan solas cuando el mapa aparece (si no se pide menos movimiento) */
+  [data-animar] .ruta--exacta {
+    stroke-dasharray: 1 1;
+    stroke-dashoffset: 1;
+  }
+
+  [data-animar] .ruta--aprox {
+    opacity: 0;
+  }
+
+  [data-animar].dibujado .ruta--exacta {
+    animation: trazar 1.4s ease-out forwards;
+    animation-delay: calc(var(--orden) * 0.45s);
+  }
+
+  [data-animar].dibujado .ruta--aprox {
+    animation: aparecer 0.5s ease-out forwards;
+    animation-delay: calc(var(--orden) * 0.45s + 0.6s);
+  }
+
+  @keyframes trazar {
+    to {
+      stroke-dashoffset: 0;
+    }
+  }
+
+  @keyframes aparecer {
+    to {
+      opacity: 1;
+    }
+  }
+
+  .mapa__etiquetas text {
+    fill: #fff;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 19px;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    paint-order: stroke fill;
+    stroke: var(--tinta);
+    stroke-width: 5px;
+    stroke-linejoin: round;
+  }
+
+  .sello-dia circle {
+    fill: var(--color);
+    stroke: var(--tinta);
+    stroke-width: 4;
+  }
+
+  .sello-dia text {
+    fill: var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 15px;
+    text-anchor: middle;
+    text-transform: uppercase;
+  }
+
+  .mapa__norte path {
+    fill: var(--amarillo);
+  }
+
+  .mapa__norte text {
+    fill: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 20px;
+    text-anchor: middle;
+  }
+
+  .mapa__leyenda ol {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 1.2rem 1.6rem;
+    padding: 0;
+  }
+
+  .mapa__leyenda li {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+
+  .mapa__muestra {
+    width: 3rem;
+    height: 0.6rem;
+    background: var(--color);
+    outline: 2px solid var(--tinta);
+  }
+
+  .mapa__leyenda strong {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+  }
+
+  .mapa__nota {
+    margin-top: 1.4rem;
+    font-size: 0.92rem;
+  }
+
+  /* ---------- Mapa 3D ---------- */
+  .mapa__barra {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.8rem 1rem;
+  }
+
+  .mapa__dias {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  /* .boton trae su propio display: sin esto, hidden no lo escondería */
+  .mapa__barra [hidden] {
+    display: none;
+  }
+
+  .mapa__dias-titulo {
+    font-weight: 700;
+  }
+
+  .mapa__dia {
+    min-height: 44px;
+    padding: 0.35rem 0.85rem 0.25rem;
+    border: 3px solid var(--tinta);
+    border-bottom: 8px solid var(--color, var(--tinta));
+    background: var(--blanco);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+  }
+
+  .mapa__dia:hover {
+    background: var(--color, var(--amarillo));
+  }
+
+  .mapa__estado {
+    flex-basis: 100%;
+    font-weight: 600;
+  }
+
+  .mapa__estado:empty {
+    display: none;
+  }
+
+  .mapa__3d {
+    /* En el teléfono, no más alto que ancho y un poco: si no, sobra cerro vacío */
+    height: min(78vh, 680px, 125vw);
+    border: 4px solid var(--tinta);
+    background: #0f1450;
+  }
+
+  .mapa__3d[hidden],
+  .mapa__marco[hidden] {
+    display: none;
+  }
+
+  /* Marcadores que crea MapLibre: quedan fuera del alcance de los estilos del componente */
+  :global(.sello3d) {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 4px solid var(--tinta);
+    background: var(--color);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 14px;
+    text-transform: uppercase;
+    box-shadow: 0 3px 0 rgb(0 0 0 / 0.35);
+  }
+
+  :global(.lugar3d) {
+    padding: 0.15rem 0.45rem 0.1rem;
+    background: var(--tinta);
+    color: var(--blanco);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 14px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    pointer-events: none;
+  }
+
+  /* Nombre o sello que caería encima de otro: aparece al acercarse */
+  :global(.marca3d--oculta) {
+    visibility: hidden;
+  }
+</style>
+
+<script>
+  /* Las rutas del mapa plano se trazan solas al entrar en pantalla */
+  const mapas = document.querySelectorAll<HTMLElement>('[data-mapa]');
+  const tranquilo = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!tranquilo && 'IntersectionObserver' in window) {
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        entradas.forEach((entrada) => {
+          if (entrada.isIntersecting) {
+            entrada.target.classList.add('dibujado');
+            observador.unobserve(entrada.target);
+          }
+        });
+      },
+      { threshold: 0.35 },
+    );
+    mapas.forEach((m) => {
+      m.setAttribute('data-animar', '');
+      observador.observe(m);
+    });
+  }
+</script>
+
+<script>
+  /* Mapa 3D: se carga solo al tocar «Ver en 3D» */
+  import type { Mapa3D } from '../lib/mapa3d';
+
+  const figura = document.querySelector<HTMLElement>('[data-mapa]');
+  const botonVer = figura?.querySelector<HTMLButtonElement>('[data-ver-3d]');
+  const dias = figura?.querySelector<HTMLElement>('[data-dias-3d]');
+  const plano = figura?.querySelector<HTMLElement>('[data-mapa-plano]');
+  const contenedor = figura?.querySelector<HTMLElement>('[data-contenedor-3d]');
+  const estado = figura?.querySelector<HTMLElement>('[data-estado-3d]');
+  const sinMovimiento = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  let mapa3d: Mapa3D | null = null;
+
+  function mostrarPlano() {
+    mapa3d?.cerrar();
+    mapa3d = null;
+    if (contenedor) {
+      contenedor.hidden = true;
+      contenedor.replaceChildren();
+    }
+    if (plano) plano.hidden = false;
+    if (dias) dias.hidden = true;
+    if (botonVer) {
+      botonVer.hidden = false;
+      botonVer.disabled = false;
+      botonVer.textContent = 'Ver en 3D';
+    }
+  }
+
+  botonVer?.addEventListener('click', async () => {
+    if (!contenedor || !plano || !dias || !estado) return;
+    botonVer.disabled = true;
+    botonVer.textContent = 'Cargando el 3D…';
+    estado.textContent = '';
+    try {
+      const [{ abrirMapa3D }, rutas] = await Promise.all([
+        import('../lib/mapa3d'),
+        fetch('/mapa/recorridos.geojson').then((r) => r.json()),
+      ]);
+      contenedor.hidden = false;
+      plano.hidden = true;
+      mapa3d = await abrirMapa3D(contenedor, rutas, sinMovimiento);
+      botonVer.hidden = true;
+      dias.hidden = false;
+      estado.textContent = 'Mapa 3D listo. Arrastra para moverlo; en el teléfono, usa dos dedos.';
+    } catch (error) {
+      console.error(error);
+      mostrarPlano();
+      estado.textContent = 'Este navegador no pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
+    }
+  });
+
+  figura?.querySelector('[data-ver-plano]')?.addEventListener('click', () => {
+    mostrarPlano();
+    if (estado) estado.textContent = '';
+    botonVer?.focus();
+  });
+
+  figura?.querySelector('[data-vista-general]')?.addEventListener('click', () => mapa3d?.vistaGeneral());
+
+  figura?.querySelectorAll<HTMLButtonElement>('[data-dia]').forEach((b) =>
+    b.addEventListener('click', () => mapa3d?.recorrer(b.dataset.dia ?? '')),
+  );
+</script>

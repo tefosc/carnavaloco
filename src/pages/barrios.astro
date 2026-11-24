@@ -1,0 +1,218 @@
+---
+import Base from '../layouts/Base.astro';
+import CabezaPagina from '../components/CabezaPagina.astro';
+import { barrios, otrosBarrios, centrosPoblados, fuentesBarrios } from '../data/barrios';
+---
+
+<Base
+  og="barrios"
+  title="Barrios"
+  description="Los barrios del Carnaval de Cajamarca: Cumbemayo, La Merced, San Sebastián, San Pedro y los demás, con sus lemas, reinas y rivalidades."
+>
+  <CabezaPagina titulo="Barrios" fondo="var(--turquesa)" relleno="var(--amarillo)" sombra="var(--tinta)">
+    <p>
+      El carnaval se juega por barrio. En 2025 salieron 37, cada uno con sus patrullas, sus comparsas, su reina y un lema
+      que se canta a manera de copla.
+    </p>
+  </CabezaPagina>
+
+  <section class="bloque estandartes" aria-label="Barrios">
+    <ul class="envoltura estandartes__lista">
+      {
+        barrios.map((b) => (
+          <li class="estandarte flecos" data-color={b.color} id={b.id}>
+            <h2 class="estandarte__nombre">{b.nombre}</h2>
+            {b.lema && <p class="estandarte__lema">«{b.lema}»</p>}
+            <ul class="estandarte__hechos">
+              {b.hechos.map((h) => (
+                <li>{h}</li>
+              ))}
+            </ul>
+          </li>
+        ))
+      }
+    </ul>
+  </section>
+
+  <section class="bloque fondo-tinta oscuro tambien" aria-labelledby="titulo-tambien">
+    <div class="envoltura tambien__grid">
+      <div>
+        <h2 id="titulo-tambien" class="titulo-bloque">También salen</h2>
+        <p class="tambien__lista">{otrosBarrios.join(' ✶ ')} ✶ y muchos más</p>
+      </div>
+      <div>
+        <h2 class="tambien__subtitulo">Desde los centros poblados</h2>
+        <dl class="tambien__centros">
+          {
+            centrosPoblados.map((c) => (
+              <div>
+                <dt>{c.nombre}</dt>
+                <dd>{c.texto}</dd>
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque fuentes-barrios" aria-labelledby="titulo-fuentes-barrios">
+    <div class="envoltura">
+      <h2 id="titulo-fuentes-barrios" class="fuentes-barrios__titulo">Fuentes</h2>
+      <ul>
+        {
+          fuentesBarrios.map((f) => (
+            <li>
+              <a href={f.url}>{f.titulo}</a> <span>{f.medio}</span>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Estandartes ---------- */
+  .estandartes__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 4rem 2.5rem;
+  }
+
+  .estandarte {
+    --tinta-e: var(--tinta);
+    display: grid;
+    align-content: start;
+    gap: 1rem;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    background: var(--c);
+    color: var(--tinta-e);
+    border-top: 10px solid var(--tinta);
+    scroll-margin-top: 2rem;
+  }
+
+  .estandarte:nth-child(even) {
+    rotate: 1deg;
+    margin-top: 2.5rem;
+  }
+
+  .estandarte:nth-child(odd) {
+    rotate: -1deg;
+  }
+
+  .estandarte[data-color='azul'] {
+    --tinta-e: var(--blanco);
+  }
+
+  .estandarte__nombre {
+    font-size: clamp(3rem, 6vw, 5rem);
+    text-transform: uppercase;
+  }
+
+  .estandarte__lema {
+    justify-self: start;
+    padding: 0.4rem 0.8rem 0.3rem;
+    background: var(--tinta);
+    color: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .estandarte__hechos {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    font-weight: 500;
+  }
+
+  .estandarte__hechos li {
+    position: relative;
+    padding-left: 1.6rem;
+  }
+
+  .estandarte__hechos li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.3em;
+    width: 1rem;
+    aspect-ratio: 1;
+    background: currentColor;
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+
+  /* ---------- También salen ---------- */
+  .tambien__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem 4rem;
+  }
+
+  .tambien__lista {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2rem, 4vw, 3rem);
+    line-height: 1.1;
+    text-transform: uppercase;
+    color: var(--amarillo);
+  }
+
+  .tambien__subtitulo {
+    margin-bottom: 1.4rem;
+    font-size: clamp(2rem, 3.6vw, 2.8rem);
+    text-transform: uppercase;
+  }
+
+  .tambien__centros {
+    display: grid;
+    gap: 1.4rem;
+    margin: 0;
+  }
+
+  .tambien__centros dt {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2rem;
+    text-transform: uppercase;
+    color: var(--fucsia);
+  }
+
+  .tambien__centros dd {
+    margin: 0.2rem 0 0;
+  }
+
+  /* ---------- Fuentes ---------- */
+  .fuentes-barrios__titulo {
+    margin-bottom: 1.2rem;
+    font-size: 2rem;
+    text-transform: uppercase;
+  }
+
+  .fuentes-barrios ul {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+  }
+
+  .fuentes-barrios span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.75;
+  }
+
+  @media (max-width: 860px) {
+    .estandartes__lista,
+    .tambien__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .estandarte:nth-child(even) {
+      margin-top: 0;
+    }
+  }
+</style>

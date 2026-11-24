@@ -1,0 +1,72 @@
+---
+import Base from '../layouts/Base.astro';
+import Chicha from '../components/Chicha.astro';
+import Pintura from '../components/Pintura.astro';
+---
+
+<Base title="Página no encontrada" description="Esta página no existe. Vuelve a la portada del Carnaval de Cajamarca.">
+  <section class="perdido bloque fondo-turquesa" data-pintura aria-labelledby="titulo-perdido">
+    <div class="capa-pintura" data-capa-pintura aria-hidden="true"></div>
+    <div class="envoltura perdido__grid">
+      <h1 id="titulo-perdido" class="perdido__titulo">
+        <span class="visualmente-oculto">Error 404: página no encontrada</span>
+        <Chicha texto="404" relleno="var(--amarillo)" relleno2="var(--naranja)" sombra="var(--fucsia)" class="perdido__numero" />
+      </h1>
+      <div class="perdido__texto">
+        <p class="perdido__frase">¡Te mojaron!</p>
+        <p class="entrada">
+          Esta página no existe, ni aquisito. Puede que el enlace esté mal escrito o que la página se haya mudado de barrio.
+        </p>
+        <div class="perdido__acciones">
+          <a class="boton" href="/">Volver a la portada</a>
+          <a class="boton boton--hueco" href="/2027/">Ver el programa 2027</a>
+        </div>
+      </div>
+    </div>
+    <Pintura />
+  </section>
+</Base>
+
+<style>
+  .perdido {
+    min-height: 70vh;
+    display: grid;
+    align-items: center;
+    cursor: crosshair;
+  }
+
+  .perdido__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 2rem 4rem;
+    align-items: center;
+  }
+
+  .perdido :global(.perdido__numero) {
+    font-size: clamp(8rem, 24vw, 18rem);
+  }
+
+  .perdido__frase {
+    margin-bottom: 1rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2.6rem, 6vw, 4.5rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .perdido__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 2rem;
+  }
+
+  @media (max-width: 760px) {
+    .perdido__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

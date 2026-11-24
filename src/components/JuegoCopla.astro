@@ -1,0 +1,305 @@
+---
+/**
+ * Juego "Completa la copla": a cada copla le falta la última palabra y hay que
+ * elegir, entre tres, la que rima con el segundo verso. Las opciones falsas
+ * salen de otras coplas con otra rima.
+ */
+import { getCollection } from 'astro:content';
+
+const partir = (verso: string) => {
+  const m = verso.match(/^(.*?)([\p{L}]+)([^\p{L}]*)$/u);
+  return m ? { antes: m[1], palabra: m[2], despues: m[3] } : null;
+};
+
+/**
+ * Rima asonante: las vocales desde la sílaba con acento hasta el final.
+ * Junta los diptongos (medio → e-o) y aplica las reglas de acentuación:
+ * tilde escrita, llana si termina en vocal, n o s; aguda en lo demás.
+ */
+function claveRima(palabra: string) {
+  const p = palabra.toLowerCase();
+  const nucleos: { vocal: string; tilde: boolean }[] = [];
+  const fuerte = (v: string) => 'aeo'.includes(v);
+  let previo = false;
+  for (const ch of p) {
+    const base = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
+    const esVocal = 'aeiou'.includes(base) && ch !== 'ü';
+    const tilde = /[áéíóú]/.test(ch);
+    if (!esVocal) {
+      previo = false;
+      continue;
+    }
+    const ultimo = nucleos.at(-1);
+    // Diptongo: vocal débil sin tilde junto a otra vocal, en la misma sílaba
+    if (previo && ultimo && !tilde && !ultimo.tilde && (!fuerte(base) || !fuerte(ultimo.vocal))) {
+      if (fuerte(base) || (!fuerte(base) && !fuerte(ultimo.vocal))) ultimo.vocal = base;
+    } else {
+      nucleos.push({ vocal: base, tilde });
+    }
+    previo = true;
+  }
+  if (nucleos.length === 0) return '';
+  let tonica = nucleos.findIndex((n) => n.tilde);
+  if (tonica === -1) tonica = /[aeiouns]$/.test(p) && nucleos.length > 1 ? nucleos.length - 2 : nucleos.length - 1;
+  return nucleos
+    .slice(tonica)
+    .map((n) => n.vocal)
+    .join('');
+}
+
+const rondas = (await getCollection('coplas'))
+  .map((c) => c.data)
+  .filter((c) => c.versos.length === 4)
+  .flatMap((c) => {
+    const ultimo = partir(c.versos[3]);
+    if (!ultimo) return [];
+    return [
+      {
+        versos: c.versos.slice(0, 3),
+        antes: ultimo.antes,
+        palabra: ultimo.palabra,
+        despues: ultimo.despues,
+        clave: claveRima(ultimo.palabra),
+      },
+    ];
+  });
+---
+
+<section class="juego bloque fondo-fucsia" aria-labelledby="titulo-juego" data-juego>
+  <div class="envoltura juego__grid">
+    <div class="juego__intro">
+      <h2 id="titulo-juego" class="titulo-bloque">Completa la copla</h2>
+      <p class="lectura">
+        Le falta la última palabra. Elige la que rima con el segundo verso, como en un contrapunto donde no hay tiempo
+        para pensar.
+      </p>
+      <p class="juego__marcador" aria-live="polite">
+        <span data-juego-aciertos>0</span> de <span data-juego-total>0</span>
+      </p>
+    </div>
+
+    <div class="juego__mesa oscuro">
+      <blockquote class="juego__copla" data-juego-copla></blockquote>
+      <div class="juego__opciones" role="group" aria-label="Elige la palabra que falta" data-juego-opciones></div>
+      <p class="juego__aviso" aria-live="polite" data-juego-aviso></p>
+      <button type="button" class="boton juego__siguiente" data-juego-siguiente hidden>Siguiente copla</button>
+    </div>
+  </div>
+
+  <script type="application/json" data-juego-rondas set:html={JSON.stringify(rondas)} />
+</section>
+
+<style>
+  .juego__grid {
+    display: grid;
+    grid-template-columns: 0.8fr 1.2fr;
+    gap: 2.5rem 4rem;
+    align-items: start;
+  }
+
+  .juego__marcador {
+    margin-top: 1.5rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2.6rem, 5vw, 4rem);
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .juego__mesa {
+    display: grid;
+    gap: 1.4rem;
+    padding: clamp(1.4rem, 3vw, 2.2rem);
+    background: var(--tinta);
+    rotate: -1deg;
+  }
+
+  .juego__copla {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.7rem, 3.2vw, 2.6rem);
+    line-height: 1.05;
+    text-transform: uppercase;
+    min-height: 4.4em;
+  }
+
+  .juego__copla :global(p:nth-child(even)) {
+    color: var(--amarillo);
+  }
+
+  .juego__copla :global(.hueco) {
+    display: inline-block;
+    min-width: 4.5em;
+    border-bottom: 0.08em dashed var(--fucsia);
+    color: var(--fucsia);
+  }
+
+  .juego__opciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .juego__opciones :global(button) {
+    min-height: 48px;
+    padding: 0.5rem 1.2rem 0.4rem;
+    border: 3px solid var(--blanco);
+    background: transparent;
+    color: var(--blanco);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  .juego__opciones :global(button:hover:not(:disabled)) {
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+
+  .juego__opciones :global(button[data-estado='bien']) {
+    background: var(--verde);
+    border-color: var(--verde);
+    color: var(--tinta);
+  }
+
+  .juego__opciones :global(button[data-estado='mal']) {
+    background: var(--fucsia);
+    border-color: var(--fucsia);
+    color: var(--tinta);
+  }
+
+  .juego__opciones :global(button:disabled) {
+    cursor: default;
+  }
+
+  .juego__aviso {
+    min-height: 1.6em;
+    font-weight: 700;
+    font-size: 1.15rem;
+  }
+
+  .juego__siguiente {
+    justify-self: start;
+  }
+
+  @media (max-width: 860px) {
+    .juego__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  interface Ronda {
+    versos: string[];
+    antes: string;
+    palabra: string;
+    despues: string;
+    clave: string;
+  }
+
+  const raiz = document.querySelector<HTMLElement>('[data-juego]');
+  const datos = raiz?.querySelector<HTMLScriptElement>('[data-juego-rondas]');
+  const rondas: Ronda[] = datos ? JSON.parse(datos.textContent ?? '[]') : [];
+
+  const copla = raiz?.querySelector<HTMLElement>('[data-juego-copla]');
+  const opciones = raiz?.querySelector<HTMLElement>('[data-juego-opciones]');
+  const aviso = raiz?.querySelector<HTMLElement>('[data-juego-aviso]');
+  const siguiente = raiz?.querySelector<HTMLButtonElement>('[data-juego-siguiente]');
+  const aciertosEl = raiz?.querySelector<HTMLElement>('[data-juego-aciertos]');
+  const totalEl = raiz?.querySelector<HTMLElement>('[data-juego-total]');
+
+  const FELICITACIONES = ['¡Eso, cholasho!', '¡Ñañau, qué rima!', '¡Ya pues, maestro!', '¡Esa patrulla canta!'];
+  const RONDAS_POR_JUEGO = 6;
+
+  const mezclar = <T,>(lista: T[]) => lista.map((v) => [Math.random(), v] as const).sort((a, b) => a[0] - b[0]).map(([, v]) => v);
+
+  let mazo: Ronda[] = [];
+  let actual = 0;
+  let aciertos = 0;
+
+  function parrafo(texto: string) {
+    const p = document.createElement('p');
+    p.textContent = texto;
+    return p;
+  }
+
+  function mostrar() {
+    if (!copla || !opciones || !aviso || !siguiente) return;
+    const ronda = mazo[actual];
+    const ultimo = document.createElement('p');
+    ultimo.append(ronda.antes);
+    const hueco = document.createElement('span');
+    hueco.className = 'hueco';
+    hueco.textContent = ' ';
+    hueco.setAttribute('aria-label', 'palabra que falta');
+    ultimo.append(hueco, ronda.despues);
+    copla.replaceChildren(...ronda.versos.map(parrafo), ultimo);
+
+    const falsas = mezclar(rondas.filter((r) => r.clave !== ronda.clave && r.palabra !== ronda.palabra))
+      .map((r) => r.palabra)
+      .filter((p, i, todas) => todas.indexOf(p) === i)
+      .slice(0, 2);
+    opciones.replaceChildren(
+      ...mezclar([ronda.palabra, ...falsas]).map((palabra) => {
+        const b = document.createElement('button');
+        b.type = 'button';
+        b.textContent = palabra;
+        b.addEventListener('click', () => responder(b, palabra, ronda, hueco));
+        return b;
+      }),
+    );
+    aviso.textContent = '';
+    siguiente.hidden = true;
+  }
+
+  function responder(boton: HTMLButtonElement, palabra: string, ronda: Ronda, hueco: HTMLElement) {
+    if (!opciones || !aviso || !siguiente || !aciertosEl || !totalEl) return;
+    const bien = palabra === ronda.palabra;
+    if (bien) aciertos++;
+    opciones.querySelectorAll('button').forEach((b) => {
+      b.disabled = true;
+      if (b.textContent === ronda.palabra) b.dataset.estado = 'bien';
+    });
+    if (!bien) boton.dataset.estado = 'mal';
+    hueco.textContent = ronda.palabra;
+    aviso.textContent = bien
+      ? FELICITACIONES[Math.floor(Math.random() * FELICITACIONES.length)]
+      : `Casi. Era «${ronda.palabra}», que rima con el segundo verso.`;
+    aciertosEl.textContent = String(aciertos);
+    totalEl.textContent = String(actual + 1);
+    const fin = actual + 1 >= mazo.length;
+    siguiente.textContent = fin ? 'Jugar otra vez' : 'Siguiente copla';
+    siguiente.hidden = false;
+    if (fin) {
+      aviso.textContent += ` Terminaste: ${aciertos} de ${mazo.length}.`;
+    }
+    siguiente.focus();
+  }
+
+  function empezar() {
+    mazo = mezclar(rondas).slice(0, RONDAS_POR_JUEGO);
+    actual = 0;
+    aciertos = 0;
+    if (aciertosEl) aciertosEl.textContent = '0';
+    if (totalEl) totalEl.textContent = '0';
+    mostrar();
+  }
+
+  siguiente?.addEventListener('click', () => {
+    if (actual + 1 >= mazo.length) {
+      empezar();
+    } else {
+      actual++;
+      mostrar();
+    }
+    opciones?.querySelector('button')?.focus();
+  });
+
+  if (rondas.length > 2) empezar();
+</script>

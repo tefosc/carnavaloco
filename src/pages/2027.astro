@@ -3,6 +3,7 @@ import Base from '../layouts/Base.astro';
 import Chicha from '../components/Chicha.astro';
 import Sello from '../components/Sello.astro';
 import Pintura from '../components/Pintura.astro';
+import MapaRecorridos from '../components/MapaRecorridos.astro';
 import { ANIO, programaOficial, dias, previas, consejos } from '../data/carnaval2027';
 import { diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
 
@@ -18,9 +19,19 @@ const programa = dias.map((d) => {
 const inicio = diaDeCarnaval(ANIO, -4);
 const fin = diaDeCarnaval(ANIO, 0);
 const faltan = Math.max(0, Math.ceil((inicioEnPeru(inicio) - Date.now()) / 86_400_000));
+
+// Google Calendar: un solo evento de día completo; la fecha final no se incluye.
+const aIcs = (d: Date) => d.toISOString().slice(0, 10).replaceAll('-', '');
+const googleCalendar = new URL('https://calendar.google.com/calendar/render');
+googleCalendar.searchParams.set('action', 'TEMPLATE');
+googleCalendar.searchParams.set('text', `Carnaval de Cajamarca ${ANIO}`);
+googleCalendar.searchParams.set('dates', `${aIcs(inicio)}/${aIcs(diaDeCarnaval(ANIO, 1))}`);
+googleCalendar.searchParams.set('location', 'Cajamarca, Perú');
+googleCalendar.searchParams.set('details', `Programa día por día: ${new URL(`/${ANIO}/`, Astro.site)}`);
 ---
 
 <Base
+  og="2027"
   title={`Carnaval ${ANIO}`}
   description={`Carnaval de Cajamarca ${ANIO}: del sábado 6 al miércoles 10 de febrero. Programa día por día, horarios, lugares, actividades previas y consejos para ir.`}
 >
@@ -53,6 +64,10 @@ const faltan = Math.max(0, Math.ceil((inicioEnPeru(inicio) - Date.now()) / 86_40
               : 'Las horas salen en el programa oficial, que la Municipalidad presenta a inicios de enero.'
           }
         </p>
+        <div class="agendar">
+          <a class="boton" href={googleCalendar.toString()} target="_blank" rel="noopener">Agregar a Google Calendar</a>
+          <a class="boton boton--hueco" href={`/carnaval-${ANIO}.ics`} download>Descargar calendario</a>
+        </div>
       </div>
       <Sello anillo="Carnaval de Cajamarca ✶ Carnaval de Cajamarca ✶ " color="var(--fucsia)" giro={10} class="portada-2027__sello">
         <span class="cuenta__numero" data-cuenta-dias>{faltan}</span>
@@ -93,6 +108,13 @@ const faltan = Math.max(0, Math.ceil((inicioEnPeru(inicio) - Date.now()) / 86_40
           ))
         }
       </ol>
+    </div>
+  </section>
+
+  <section class="bloque fondo-blanco recorridos" aria-labelledby="titulo-recorridos">
+    <div class="envoltura">
+      <h2 id="titulo-recorridos" class="titulo-bloque">Por dónde pasa</h2>
+      <MapaRecorridos />
     </div>
   </section>
 
@@ -193,6 +215,13 @@ const faltan = Math.max(0, Math.ceil((inicioEnPeru(inicio) - Date.now()) / 86_40
     border: 3px dashed var(--amarillo);
     font-weight: 700;
     max-width: 52ch;
+  }
+
+  .agendar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.6rem;
   }
 
   .estado--oficial {

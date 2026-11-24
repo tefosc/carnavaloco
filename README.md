@@ -18,13 +18,16 @@ Astro 7 pide Node ≥ 22.23.4. El `package.json` declara `devEngines.runtime` (N
 | Ruta                  | Contenido                                                         |
 | :-------------------- | :---------------------------------------------------------------- |
 | `/`                   | Portada: cuenta regresiva, los cinco días, copla, muro de ediciones |
-| `/2027/`              | Carnaval 2027: día por día con hora y lugar, previas y consejos   |
+| `/2027/`              | Carnaval 2027: día por día, mapa de recorridos, calendario, previas y consejos |
 | `/la-fiesta/`         | Programa, personajes, costumbres, música y comida                 |
 | `/ediciones/`         | Muro de afiches de 2017 a 2026                                    |
 | `/ediciones/[año]/`   | Ficha de cada año: reina, cifras, hechos y fuentes                |
-| `/coplas/`            | Cómo se arma una copla, el contrapunto y el cancionero            |
+| `/coplas/`            | Cómo se arma una copla, el contrapunto, el juego «Completa la copla» y el cancionero |
+| `/barrios/`           | Lemas, reinas y rivalidades de los barrios y centros poblados     |
 | `/habla/`             | El dejo cajamarquino, «dilo así» y glosario con buscador          |
 | `/historia/`          | Línea de tiempo y todas las fuentes                               |
+| `/carnaval-2027.ics`  | Calendario descargable con los cinco días                         |
+| `/og/<página>.png`    | Imágenes para compartir (se generan en el build)                  |
 
 ## Dónde está el contenido
 
@@ -35,6 +38,11 @@ src/data/
 ├── glosario.json    # Palabras del habla, exclamaciones y de la fiesta
 ├── frases.json      # Gritos, dichos, lemas de barrio
 ├── carnaval.ts      # Historia, programa, personajes, costumbres, música, comida
+├── carnaval2027.ts  # Programa 2027: horas, lugares, previas, consejos
+├── barrios.ts       # Barrios y centros poblados
+├── og.ts            # Texto y color de la imagen para compartir de cada página
+├── mapa.json        # Calles y rutas del mapa (generado desde OpenStreetMap)
+├── recorridos.ts    # Rutas de cada día, compartidas por el mapa plano y el 3D
 └── fotos.ts         # Fotos y sus créditos
 ```
 
@@ -46,6 +54,19 @@ src/data/
 
 **Agregar una copla:** en `coplas.json`, con `origen: "tradicional"` y `fuente` si la sacaste de algún lado, o `"inedita"` si es nueva. Entre 3 y 6 versos.
 
+## Despliegue en Vercel
+
+- **Dominio:** en Vercel el sitio toma solo su dominio de `VERCEL_PROJECT_PRODUCTION_URL` (para el sitemap, `robots.txt` y las imágenes al compartir). Para un dominio propio, define la variable `SITIO_URL` (por ejemplo `https://carnavaldecajamarca.pe`).
+- **Estadísticas:** el componente de Vercel Analytics ya está en el layout; falta activarlo en el panel del proyecto (pestaña Analytics).
+
+## Mapa de recorridos
+
+Las calles salen de OpenStreetMap y se procesan con `scripts/mapa-osm.py`, que deja `src/data/mapa.json`. Las avenidas de cada ruta (Independencia, Vía de Evitamiento, carretera a Baños del Inca) son las reales; los tramos punteados son aproximados. El crédito «© colaboradores de OpenStreetMap» debe quedar visible bajo el mapa.
+
+Para cambiar una ruta, edita `src/data/recorridos.ts`: el mapa plano y el 3D leen de ahí.
+
+**Mapa 3D:** el botón «Ver en 3D» carga MapLibre (`src/lib/mapa3d.ts`) solo cuando alguien lo toca, así la página no pesa más para quien no lo usa. Usa calles y edificios de [OpenFreeMap](https://openfreemap.org), relieve de [Mapterhorn](https://mapterhorn.com) y las rutas de `/mapa/recorridos.geojson`, que se genera en el build desde `recorridos.ts` con la misma proyección del mapa plano. Ninguno de los tres pide clave ni cuenta. Si el navegador no puede abrir el 3D (sin WebGL, por ejemplo), se queda el mapa plano con un aviso.
+
 ## Diseño
 
 Afiche chicha + raso de clon:
@@ -53,7 +74,7 @@ Afiche chicha + raso de clon:
 - Colores planos del satín de los disfraces: fucsia, amarillo, verde loro, azul rey, naranja y turquesa; el texto en azul noche.
 - Titulares en Big Shoulders Display con contorno y sombra dura (`src/components/Chicha.astro`); texto en Bricolage Grotesque.
 - Bordes en zigzag de gola, flecos, banderolas, sellos redondos y afiches pegados (`src/styles/global.css` y `src/components/`).
-- El movimiento respeta `prefers-reduced-motion`; la cinta de gritos tiene botón de pausa.
+- El movimiento respeta `prefers-reduced-motion`; la cinta de gritos se detiene al pasar el mouse.
 
 ## Fotos
 

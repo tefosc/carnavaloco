@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import CabezaPagina from '../components/CabezaPagina.astro';
+import JuegoCopla from '../components/JuegoCopla.astro';
 
 const ORDEN = ['invitación', 'picardía', 'contrapunto', 'amor', 'cajamarca', 'despedida'];
 const coplas = (await getCollection('coplas'))
@@ -23,6 +24,7 @@ const rimaPar = (verso: string) => {
 ---
 
 <Base
+  og="coplas"
   title="Coplas"
   description="Coplas del carnaval de Cajamarca: tradicionales con su fuente, cómo se arma una copla, el contrapunto y coplas nuevas al estilo cajamarquino."
 >
@@ -107,6 +109,8 @@ const rimaPar = (verso: string) => {
       </div>
     </div>
   </section>
+
+  <JuegoCopla />
 
   <section class="bloque cancionero" aria-labelledby="titulo-cancionero">
     <div class="envoltura">

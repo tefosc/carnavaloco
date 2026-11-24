@@ -11,13 +11,14 @@ const realizadas = ediciones.filter((e) => e.estado === 'realizado').length;
 ---
 
 <Base
+  og="ediciones"
   title="Carnavales de años anteriores"
   description="Las ediciones del Carnaval de Cajamarca desde 2017: fechas, reinas, cifras y lo que pasó cada año, con sus fuentes."
 >
   <CabezaPagina titulo="Ediciones" fondo="var(--naranja)" relleno="var(--blanco)" sombra="var(--tinta)">
     <p>
-      {realizadas} carnavales y dos febreros en silencio, de 2017 a hoy. Cada afiche lleva a lo que pasó ese año: la reina,
-      las cifras y lo que pasó. El de 2027 ya está pegado: trae el programa día por día.
+      {realizadas} carnavales y dos febreros en silencio, de 2017 a hoy. Cada afiche lleva a su año: la reina, las cifras y
+      lo que pasó. El de 2027 ya está pegado y trae el programa día por día.
     </p>
   </CabezaPagina>
 
