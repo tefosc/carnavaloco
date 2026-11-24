@@ -208,6 +208,26 @@ a:hover {
   border: 0;
 }
 
+/* «bis» de las coplas: el verso se canta dos veces (src/lib/coplas.ts).
+   Va en todas las coplas del sitio, sea cual sea la letra de alrededor. */
+.bis {
+  display: inline-block;
+  margin-inline-start: 0.45em;
+  padding: 0.05em 0.5em 0.1em;
+  border: 2px solid currentColor;
+  border-radius: 1em;
+  font-family: var(--texto);
+  font-size: max(0.55em, 0.72rem);
+  font-style: normal;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.02em;
+  text-transform: none;
+  vertical-align: 0.2em;
+  white-space: nowrap;
+  -webkit-text-stroke: 0;
+}
+
 /* ---------- Fondos de raso ---------- */
 
 /* --zz-color: el color de los dientes del zigzag, el mismo del fondo */

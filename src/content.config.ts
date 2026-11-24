@@ -19,6 +19,8 @@ const coplas = defineCollection({
     id: z.string(),
     tema: z.enum(['invitación', 'picardía', 'contrapunto', 'amor', 'despedida', 'cajamarca']),
     versos: z.array(z.string()).min(3).max(6),
+    /** Cómo se canta: cada verso dos veces (lo normal) o cada par de versos. Marca el «bis». */
+    repite: z.enum(['verso', 'par']).default('verso'),
     /** tradicional: recogida de una fuente; inedita: escrita para este sitio. */
     origen: z.enum(['tradicional', 'inedita']),
     fuente: fuente.optional(),

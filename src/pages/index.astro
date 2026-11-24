@@ -11,6 +11,7 @@ import CartelProximo from '../components/CartelProximo.astro';
 import Pintura from '../components/Pintura.astro';
 import { fotos } from '../data/fotos';
 import { anioProximoCarnaval, diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
+import { conBis } from '../lib/coplas';
 
 const frases = (await getCollection('frases')).map((f) => f.data);
 const gritos = frases.filter((f) => f.tipo === 'grito' || f.tipo === 'dicho').map((f) => f.frase.replace(/[.]$/, ''));
@@ -101,7 +102,14 @@ const palabras = [
       <h2 id="titulo-pancarta" class="visualmente-oculto">Una copla</h2>
       <div class="pancarta__marco">
         <blockquote class="pancarta__copla">
-          {pancarta.versos.map((v) => <p>{v}</p>)}
+          {
+            conBis(pancarta.versos, pancarta.repite).map((v) => (
+              <p>
+                {v.texto}
+                {v.bis && <span class="bis">bis</span>}
+              </p>
+            ))
+          }
         </blockquote>
       </div>
       <div class="pancarta__lado">
@@ -317,7 +325,7 @@ const palabras = [
     line-height: 1;
     /* Un verso por línea, como en una pancarta: la letra se mide contra
        el ancho de su columna, no de la ventana, así nunca se parte */
-    font-size: min(5.6rem, 8.4cqi);
+    font-size: min(5.6rem, 8cqi);
     white-space: nowrap;
   }
 
@@ -333,6 +341,13 @@ const palabras = [
 
   .pancarta__copla {
     display: grid;
+  }
+
+  /* En la pancarta la letra es enorme: el bis va más chico para que el verso siga en una línea */
+  .pancarta__copla .bis {
+    font-size: max(0.26em, 0.65rem);
+    border-width: 3px;
+    vertical-align: 0.9em;
   }
 
   .pancarta__lado {

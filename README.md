@@ -52,7 +52,7 @@ src/data/
 
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 
-**Agregar una copla:** en `coplas.json`, con `origen: "tradicional"` y `fuente` si la sacaste de algún lado, o `"inedita"` si es nueva. Entre 3 y 6 versos.
+**Agregar una copla:** en `coplas.json`, con `origen: "tradicional"` y `fuente` si la sacaste de algún lado, o `"inedita"` si es nueva. Entre 3 y 6 versos. Cada verso se muestra con «bis», porque al cantar se dice dos veces; si la copla se canta repitiendo cada par de versos, agrega `"repite": "par"` y el «bis» va al final de cada par.
 
 ## Despliegue en Vercel
 

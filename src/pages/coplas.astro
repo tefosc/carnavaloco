@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import CabezaPagina from '../components/CabezaPagina.astro';
 import JuegoCopla from '../components/JuegoCopla.astro';
+import { conBis } from '../lib/coplas';
 
 const ORDEN = ['invitación', 'picardía', 'contrapunto', 'amor', 'cajamarca', 'despedida'];
 const coplas = (await getCollection('coplas'))
@@ -10,6 +11,7 @@ const coplas = (await getCollection('coplas'))
   .sort((a, b) => (a.origen === b.origen ? ORDEN.indexOf(a.tema) - ORDEN.indexOf(b.tema) : a.origen === 'tradicional' ? -1 : 1));
 const tradicionales = coplas.filter((c) => c.origen === 'tradicional');
 const temas = ORDEN.filter((t) => coplas.some((c) => c.tema === t));
+const primera = tradicionales.find((c) => c.id === 'no-te-vayas') ?? tradicionales[0];
 
 const ejemplo = coplas.find((c) => c.id === 'lima-trujillo')!;
 const desafio = coplas.find((c) => c.id === 'patrulla-la-merced')!;
@@ -36,7 +38,14 @@ const rimaPar = (verso: string) => {
     </p>
     <div slot="lado" class="azar oscuro" data-azar>
       <blockquote class="azar__copla" aria-live="polite" data-azar-copla>
-        {(tradicionales.find((c) => c.id === 'no-te-vayas') ?? tradicionales[0]).versos.map((v) => <p>{v}</p>)}
+        {
+          conBis(primera.versos, primera.repite).map((v) => (
+            <p>
+              {v.texto}
+              {v.bis && <span class="bis">bis</span>}
+            </p>
+          ))
+        }
       </blockquote>
       <button class="boton" type="button" data-azar-boton>Otra copla</button>
     </div>
@@ -85,6 +94,11 @@ const rimaPar = (verso: string) => {
           Se cantan con guitarra en la calle y en las comparsas, de día o de noche, con lluvia o con sol. Se burlan de las
           suegras, de las autoridades, de los amantes y del barrio rival. La sátira es el punto.
         </p>
+        <p>
+          Al cantarla, cada verso se dice dos veces: «Lima, ciudad de los reyes, Lima, ciudad de los reyes». En los
+          cancioneros eso se marca con <span class="bis">bis</span> al final del verso. Si el bis va al final de un par,
+          se repiten los dos versos juntos.
+        </p>
       </div>
     </div>
   </section>
@@ -99,12 +113,26 @@ const rimaPar = (verso: string) => {
       <div class="duelo__ring">
         <blockquote class="duelo__copla duelo__copla--a claro">
           <p class="duelo__quien">Barrio de acá</p>
-          {desafio.versos.map((v) => <p>{v}</p>)}
+          {
+            conBis(desafio.versos, desafio.repite).map((v) => (
+              <p>
+                {v.texto}
+                {v.bis && <span class="bis">bis</span>}
+              </p>
+            ))
+          }
         </blockquote>
         <p class="duelo__vs" aria-hidden="true">vs</p>
         <blockquote class="duelo__copla duelo__copla--b claro">
           <p class="duelo__quien">Barrio de allá</p>
-          {respuesta.versos.map((v) => <p>{v}</p>)}
+          {
+            conBis(respuesta.versos, respuesta.repite).map((v) => (
+              <p>
+                {v.texto}
+                {v.bis && <span class="bis">bis</span>}
+              </p>
+            ))
+          }
         </blockquote>
       </div>
     </div>
@@ -146,8 +174,11 @@ const rimaPar = (verso: string) => {
                 <span>{c.tema}</span>
               </p>
               <blockquote>
-                {c.versos.map((v) => (
-                  <p>{v}</p>
+                {conBis(c.versos, c.repite).map((v) => (
+                  <p>
+                    {v.texto}
+                    {v.bis && <span class="bis">bis</span>}
+                  </p>
                 ))}
               </blockquote>
               {c.nota && <p class="copla__nota">{c.nota}</p>}
@@ -159,12 +190,18 @@ const rimaPar = (verso: string) => {
     </div>
   </section>
 
-  <script type="application/json" data-coplas-json set:html={JSON.stringify(coplas.map((c) => c.versos))} />
+  <script
+    type="application/json"
+    data-coplas-json
+    set:html={JSON.stringify(coplas.map((c) => conBis(c.versos, c.repite)))}
+  />
 </Base>
 
 <script>
+  import type { VersoCantado } from '../lib/coplas';
+
   const datos = document.querySelector<HTMLScriptElement>('[data-coplas-json]');
-  const coplas: string[][] = datos ? JSON.parse(datos.textContent ?? '[]') : [];
+  const coplas: VersoCantado[][] = datos ? JSON.parse(datos.textContent ?? '[]') : [];
   const caja = document.querySelector<HTMLElement>('[data-azar-copla]');
   let actual = 0;
 
@@ -176,7 +213,13 @@ const rimaPar = (verso: string) => {
     caja.replaceChildren(
       ...coplas[actual].map((verso) => {
         const p = document.createElement('p');
-        p.textContent = verso;
+        p.textContent = verso.texto;
+        if (verso.bis) {
+          const bis = document.createElement('span');
+          bis.className = 'bis';
+          bis.textContent = 'bis';
+          p.append(bis);
+        }
         return p;
       }),
     );
@@ -234,7 +277,8 @@ const rimaPar = (verso: string) => {
     min-height: 4.2em;
   }
 
-  .azar__copla p:nth-child(even) {
+  /* :global porque «Otra copla» crea los versos desde el script, sin el alcance del componente */
+  .azar__copla :global(p:nth-child(even)) {
     color: var(--amarillo);
   }
 
