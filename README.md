@@ -50,6 +50,8 @@ src/data/
 
 **Horarios del 2027:** cuando la Municipalidad publique el programa oficial (a inicios de enero), edita `src/data/carnaval2027.ts`: pon la `hora` de cada día (por ejemplo `'10:00 a. m.'`), corrige `lugar` si cambia, llena la `fecha` de las actividades previas y cambia `programaOficial` a `true`. Mientras `hora` sea `null`, la página muestra «Por confirmar».
 
+**Hoy en el carnaval:** del sábado al miércoles, el inicio y `/2027/` cambian solos la cuenta regresiva por lo que toca ese día (hora, lugar, qué viene mañana y su ruta en el mapa), con la fecha de Perú. Lo hace `src/lib/hoy.ts` al abrir la página, así que no hace falta volver a publicar cada día. Para ver cómo queda un día antes de tiempo, agrega `?fecha=` a la dirección: por ejemplo `/?fecha=2027-02-08` o `/2027/?fecha=2027-02-09`.
+
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 
 **Agregar una copla:** en `coplas.json`, con `origen: "tradicional"` y `fuente` si la sacaste de algún lado, o `"inedita"` si es nueva. Entre 3 y 6 versos. Cada verso se muestra con «bis», porque al cantar se dice dos veces; si la copla se canta repitiendo cada par de versos, agrega `"repite": "par"` y el «bis» va al final de cada par.

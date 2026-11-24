@@ -1,0 +1,201 @@
+---
+/**
+ * Franja «Hoy en el carnaval»: qué toca hoy, a qué hora, dónde y qué viene mañana.
+ * Se genera un día por cada día del carnaval, todos escondidos; src/lib/hoy.ts
+ * muestra el de hoy (solo del sábado al miércoles). Sin JavaScript no aparece.
+ */
+import Chicha from './Chicha.astro';
+import { ANIO, dias, previas } from '../data/carnaval2027';
+import { diaDeCarnaval } from '../lib/fechas';
+
+interface Props {
+  /** En la página del programa, los enlaces llevan a sus propias secciones. */
+  enPrograma?: boolean;
+}
+
+const { enPrograma = false } = Astro.props;
+// «lunes 8 de febrero», sin la coma que pone Intl después del día de la semana
+const parte = (opciones: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('es-PE', { ...opciones, timeZone: 'UTC' });
+const fecha = {
+  format: (d: Date) =>
+    // El mes suelto sale con mayúscula («Febrero»)
+    `${parte({ weekday: 'long' }).format(d)} ${parte({ day: 'numeric' }).format(d)} de ${parte({ month: 'long' }).format(d).toLowerCase()}`,
+};
+const yunzas = previas.find((p) => p.cuando === 'Después del miércoles');
+---
+
+<section class="hoy bloque zigzag-abajo" data-hoy hidden aria-label="Hoy en el carnaval">
+  {
+    dias.map((d, i) => {
+      const manana = dias[i + 1];
+      return (
+        <article class="hoy__dia" data-hoy-dia={d.id} aria-labelledby={`hoy-${d.id}`} hidden>
+          <div class="envoltura hoy__grid">
+            <div class="hoy__que">
+              <p class="hoy__cuando">Hoy, {fecha.format(diaDeCarnaval(ANIO, d.offset))}</p>
+              <Chicha
+                como="h2"
+                id={`hoy-${d.id}`}
+                texto={d.titulo}
+                class="hoy__titulo"
+                relleno="var(--blanco)"
+                sombra="var(--tinta)"
+              />
+              <p class="entrada hoy__texto">{d.texto}</p>
+              <p class="hoy__acciones">
+                <a class="boton boton--tinta" href={enPrograma ? '#recorridos' : `/${ANIO}/?dia=${d.id}#recorridos`}>
+                  Ver por dónde pasa
+                </a>
+                {!enPrograma && (
+                  <a class="boton boton--hueco" href={`/${ANIO}/#programa`}>
+                    Programa completo
+                  </a>
+                )}
+              </p>
+            </div>
+            <dl class="hoy__datos claro">
+              <div>
+                <dt>Hora</dt>
+                <dd class:list={{ 'hoy__por-confirmar': !d.hora }}>{d.hora ?? 'Por confirmar'}</dd>
+              </div>
+              <div>
+                <dt>Dónde</dt>
+                <dd>{d.lugar}</dd>
+              </div>
+              {manana ? (
+                <div>
+                  <dt>Mañana</dt>
+                  <dd>{manana.titulo}</dd>
+                </div>
+              ) : (
+                yunzas && (
+                  <div>
+                    <dt>Después</dt>
+                    <dd>
+                      {yunzas.titulo}: {yunzas.texto.charAt(0).toLowerCase() + yunzas.texto.slice(1)}
+                    </dd>
+                  </div>
+                )
+              )}
+            </dl>
+          </div>
+        </article>
+      );
+    })
+  }
+</section>
+
+<style>
+  .hoy {
+    background: var(--c, var(--amarillo));
+    --zz-color: var(--c, var(--amarillo));
+    color: var(--tinta);
+    /* Línea oscura arriba: el sábado la franja es fucsia como la portada del inicio,
+       y sin ella las dos se funden */
+    box-shadow: inset 0 8px 0 var(--tinta);
+  }
+
+  .hoy[hidden],
+  .hoy__dia[hidden] {
+    display: none;
+  }
+
+  .hoy__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    gap: 2rem 3.5rem;
+    align-items: center;
+  }
+
+  .hoy__que {
+    display: grid;
+    gap: 1.1rem;
+    justify-items: start;
+  }
+
+  .hoy__cuando {
+    padding: 0.3rem 0.7rem 0.15rem;
+    background: var(--tinta);
+    color: var(--c, var(--amarillo));
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.4rem, 2.6vw, 2rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .hoy :global(.hoy__titulo) {
+    font-size: clamp(3rem, 7.5vw, 6.2rem);
+    line-height: 0.92;
+  }
+
+  .hoy__texto {
+    max-width: 46ch;
+    font-weight: 600;
+  }
+
+  .hoy__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 0.4rem;
+  }
+
+  /* El botón amarillo de siempre se perdería en la franja amarilla del lunes */
+  .boton--tinta {
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  .boton--tinta:hover {
+    background: var(--blanco);
+    color: var(--tinta);
+  }
+
+  /* Tarjeta de datos: un papel pegado encima de la franja */
+  .hoy__datos {
+    display: grid;
+    gap: 1.1rem;
+    margin: 0;
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--blanco);
+    border: 4px solid var(--tinta);
+    box-shadow: 8px 8px 0 var(--tinta);
+    rotate: 1.5deg;
+  }
+
+  .hoy__datos dt {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .hoy__datos dd {
+    margin: 0.15rem 0 0;
+    font-weight: 600;
+  }
+
+  .hoy__datos div:first-child dd {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .hoy__por-confirmar {
+    display: inline-block;
+    padding: 0.25rem 0.5rem 0.15rem;
+    background: repeating-linear-gradient(-45deg, var(--amarillo) 0 10px, var(--blanco) 10px 20px);
+    border: 3px solid var(--tinta);
+  }
+
+  @media (max-width: 860px) {
+    .hoy__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .hoy__datos {
+      rotate: 0deg;
+    }
+  }
+</style>

@@ -51,6 +51,41 @@ export function inicioEnPeru(fecha: Date): number {
   return fecha.getTime() + OFFSET_PERU_MS;
 }
 
+/** El día de hoy en Perú, como fecha UTC a medianoche (comparable con diaDeCarnaval). */
+export function hoyEnPeru(ahora: Date = new Date()): Date {
+  const peru = new Date(ahora.getTime() - OFFSET_PERU_MS);
+  return new Date(Date.UTC(peru.getUTCFullYear(), peru.getUTCMonth(), peru.getUTCDate()));
+}
+
+export type Momento =
+  | { fase: 'antes'; faltan: number }
+  | { fase: 'durante'; offset: number }
+  | { fase: 'despues' };
+
+/**
+ * En qué momento del carnaval de `anio` estamos, contando días de calendario en Perú:
+ * antes (y cuántos días faltan para el sábado), durante (qué día, relativo al
+ * Miércoles de Ceniza, como en diaDeCarnaval) o después.
+ */
+export function momentoDelCarnaval(anio: number, ahora: Date = new Date()): Momento {
+  const hoy = hoyEnPeru(ahora).getTime();
+  const inicio = diaDeCarnaval(anio, -4).getTime();
+  const fin = diaDeCarnaval(anio, 0).getTime();
+  if (hoy < inicio) return { fase: 'antes', faltan: Math.round((inicio - hoy) / DIA_MS) };
+  if (hoy <= fin) return { fase: 'durante', offset: Math.round((hoy - fin) / DIA_MS) };
+  return { fase: 'despues' };
+}
+
+/**
+ * La hora actual en el navegador. Con ?fecha=AAAA-MM-DD en la dirección usa ese día
+ * (a mediodía en Perú): sirve para ver cómo se ve la web un día de carnaval.
+ */
+export function ahoraEnNavegador(): Date {
+  const prueba = new URLSearchParams(location.search).get('fecha');
+  const m = prueba?.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12) + OFFSET_PERU_MS) : new Date();
+}
+
 const formato = new Intl.DateTimeFormat('es-PE', {
   day: 'numeric',
   month: 'long',

@@ -9,8 +9,9 @@ import Banderolas from '../components/Banderolas.astro';
 import CartelEdicion from '../components/CartelEdicion.astro';
 import CartelProximo from '../components/CartelProximo.astro';
 import Pintura from '../components/Pintura.astro';
+import HoyEnElCarnaval from '../components/HoyEnElCarnaval.astro';
 import { fotos } from '../data/fotos';
-import { anioProximoCarnaval, diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
+import { anioProximoCarnaval, momentoDelCarnaval } from '../lib/fechas';
 import { conBis } from '../lib/coplas';
 
 const frases = (await getCollection('frases')).map((f) => f.data);
@@ -22,8 +23,9 @@ const pancarta = coplas.find((c) => c.id === 'lima-trujillo')!;
 const ediciones = (await getCollection('ediciones')).map((e) => e.data).sort((a, b) => b.anio - a.anio);
 const giros = [-3, 2, -1.5, 3.5, -2.5, 1, -3.5, 2.5, -1, 3];
 
-const anio = anioProximoCarnaval();
-const faltan = Math.max(0, Math.ceil((inicioEnPeru(diaDeCarnaval(anio, -4)) - Date.now()) / 86_400_000));
+// Valor del día del build; en el navegador lo corrige src/lib/hoy.ts
+const momento = momentoDelCarnaval(anioProximoCarnaval());
+const faltan = momento.fase === 'antes' ? momento.faltan : 0;
 
 const palabras = [
   { palabra: '¡Alalau!', dice: '¡qué frío!', color: 'var(--amarillo)' },
@@ -71,13 +73,22 @@ const palabras = [
           class="portada__afiche"
         />
         <Sello anillo="Próximo carnaval ✶ Próximo carnaval ✶ " color="var(--verde)" class="portada__sello">
-          <span class="cuenta__numero" data-cuenta-dias>{faltan}</span>
-          <span class="cuenta__texto">días para el ingreso del Ño</span>
+          <span class="cuenta__numero" data-cuenta-dias data-anio="proximo">{faltan}</span>
+          <span
+            class="cuenta__texto"
+            data-cuenta-texto
+            data-uno="día para el ingreso del Ño"
+            data-varios="días para el ingreso del Ño"
+          >
+            {faltan === 1 ? 'día' : 'días'} para el ingreso del Ño
+          </span>
         </Sello>
       </div>
     </div>
     <Pintura />
   </section>
+
+  <HoyEnElCarnaval />
 
   <section class="bloque fondo-azul oscuro dias" aria-labelledby="titulo-dias">
     <Cinta items={gritos} />
@@ -181,14 +192,10 @@ const palabras = [
 </Base>
 
 <script>
-  import { anioProximoCarnaval, diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
+  // Cuenta regresiva o, del sábado al miércoles, lo que toca hoy
+  import { aplicarHoy } from '../lib/hoy';
 
-  const el = document.querySelector<HTMLElement>('[data-cuenta-dias]');
-  if (el) {
-    const anio = anioProximoCarnaval();
-    const faltan = Math.ceil((inicioEnPeru(diaDeCarnaval(anio, -4)) - Date.now()) / 86_400_000);
-    el.textContent = faltan > 0 ? String(faltan) : '¡Hoy!';
-  }
+  aplicarHoy();
 </script>
 
 <style>

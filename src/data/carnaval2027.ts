@@ -14,8 +14,12 @@ export const ANIO = 2027;
 export const programaOficial = false;
 
 export interface Dia {
+  /** El mismo id que usa el mapa de recorridos (src/data/recorridos.ts). */
+  id: string;
   offset: number;
   titulo: string;
+  /** Para el sello redondo de la portada, donde cabe poco. */
+  corto: string;
   texto: string;
   hora: string | null;
   lugar: string;
@@ -26,8 +30,10 @@ export interface Dia {
 
 export const dias: Dia[] = [
   {
+    id: 'sabado',
     offset: -4,
     titulo: 'Ingreso del Ño Carnavalón',
+    corto: 'Entra el Ño',
     texto: 'El rey de la fiesta entra a la ciudad y empieza el juego. Es el único día con pintura permitida.',
     hora: null,
     lugar: 'Entra por el barrio Santa Elena, la portada de la ciudad, por la avenida Independencia.',
@@ -35,8 +41,10 @@ export const dias: Dia[] = [
     color: 'fucsia',
   },
   {
+    id: 'domingo',
     offset: -3,
     titulo: 'Concurso de patrullas y comparsas',
+    corto: 'Comparsas',
     texto: 'Los barrios desfilan y compiten en damas, varones, mixta, infantil y vestimenta típica.',
     hora: null,
     lugar: 'Por las calles del centro; el jurado califica en la Plaza de Armas.',
@@ -44,8 +52,10 @@ export const dias: Dia[] = [
     color: 'verde',
   },
   {
+    id: 'lunes',
     offset: -2,
     titulo: 'Gran Corso de Carnaval',
+    corto: 'Gran Corso',
     texto: 'Carros alegóricos, reinas, clones y comparsas. Termina en guerra de globos entre palcos.',
     hora: null,
     lugar: 'Por la Vía de Evitamiento.',
@@ -53,8 +63,10 @@ export const dias: Dia[] = [
     color: 'amarillo',
   },
   {
+    id: 'martes',
     offset: -1,
     titulo: 'Velorio del Ño Carnavalón',
+    corto: 'Velorio del Ño',
     texto: 'Las viudas de cada barrio llegan a llorarlo, con todo el teatro posible.',
     hora: null,
     lugar: 'Camino al barrio Santa Apolonia.',
@@ -62,8 +74,10 @@ export const dias: Dia[] = [
     color: 'turquesa',
   },
   {
+    id: 'miercoles',
     offset: 0,
     titulo: 'Testamento y entierro',
+    corto: 'Entierro del Ño',
     texto: 'Se lee su testamento burlón para las autoridades, se quema el muñeco y todos se despiden bailando.',
     hora: null,
     lugar: 'Baños del Inca.',

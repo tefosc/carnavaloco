@@ -520,6 +520,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
 
 <script>
   import type { Mapa3D } from '../lib/mapa3d';
+  import { diaDeHoy } from '../lib/hoy';
 
   /** Punteado de los tramos aproximados: el mismo que .ruta--aprox en CSS. */
   const PUNTEADO = [10, 9];
@@ -622,7 +623,8 @@ const etiquetas = etiquetasMapa.map((e) => ({
       cabeza.classList.remove('visible');
     }
 
-    function elegir(dia: string | null) {
+    /** Elige un día (o todos, con null). Con animar = false solo lo deja marcado. */
+    function elegir(dia: string | null, animar = true) {
       activo = dia;
       for (const b of botonesDia) b.setAttribute('aria-pressed', String(b.dataset.dia === dia));
       botonTodos.setAttribute('aria-pressed', String(dia === null));
@@ -635,7 +637,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
       estado.textContent = nombre ? `${nombre}. El círculo marca por dónde sale.` : 'Se ven todos los recorridos.';
 
       completarTodo();
-      if (!plano.hidden && dia && !tranquilo) dibujar(dia, { conCabeza: true });
+      if (animar && !plano.hidden && dia && !tranquilo) dibujar(dia, { conCabeza: true });
       if (mapa3d) {
         if (dia) mapa3d.recorrer(dia);
         else mapa3d.vistaGeneral();
@@ -655,8 +657,17 @@ const etiquetas = etiquetasMapa.map((e) => ({
       if (activo && !tranquilo) dibujar(activo, { conCabeza: true });
     }
 
-    for (const b of botonesDia) b.addEventListener('click', () => elegir(b.dataset.dia!));
-    botonTodos.addEventListener('click', () => elegir(null));
+    /** Si ya tocaron un día, el dibujo de entrada no se repite encima. */
+    let tocado = false;
+    for (const b of botonesDia)
+      b.addEventListener('click', () => {
+        tocado = true;
+        elegir(b.dataset.dia!);
+      });
+    botonTodos.addEventListener('click', () => {
+      tocado = true;
+      elegir(null);
+    });
 
     botonVer3d.addEventListener('click', async () => {
       botonVer3d.disabled = true;
@@ -693,19 +704,26 @@ const etiquetas = etiquetasMapa.map((e) => ({
 
     barra.hidden = false;
 
-    // Al entrar en pantalla, todas las rutas se trazan desde donde salen, una tras otra
+    // Día marcado al abrir: el de la dirección (?dia=lunes, desde «Hoy en el carnaval»)
+    // o, del sábado al miércoles, el de hoy
+    const pedido = new URLSearchParams(location.search).get('dia');
+    const inicial = botonesDia.some((b) => b.dataset.dia === pedido) ? pedido : (diaDeHoy()?.id ?? null);
+    if (inicial) elegir(inicial, false);
+
+    // Al entrar en pantalla, las rutas se trazan desde donde salen: todas, una tras otra,
+    // o solo la del día marcado
     if (!tranquilo && 'IntersectionObserver' in window) {
-      for (const b of botonesDia) {
-        const trazos = trazosDe(b.dataset.dia!);
+      const porDibujar = inicial ? [inicial] : botonesDia.map((b) => b.dataset.dia!);
+      for (const dia of porDibujar) {
+        const trazos = trazosDe(dia);
         pintar(trazos, trazos.map((t) => t.getTotalLength()), 0);
       }
       const observador = new IntersectionObserver(
         ([entrada]) => {
           if (!entrada.isIntersecting) return;
           observador.disconnect();
-          // Si ya eligieron un día, no se vuelve a dibujar todo encima
-          if (activo) return;
-          botonesDia.forEach((b, i) => dibujar(b.dataset.dia!, { retraso: i * 450 }));
+          if (tocado) return;
+          porDibujar.forEach((dia, i) => dibujar(dia, { conCabeza: inicial !== null, retraso: i * 450 }));
         },
         { threshold: 0.35 },
       );
