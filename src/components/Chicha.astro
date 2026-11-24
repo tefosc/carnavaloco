@@ -1,0 +1,91 @@
+---
+/**
+ * Letra de afiche chicha: relleno plano (o partido en dos colores),
+ * contorno grueso y sombra dura desplazada. Tres capas apiladas;
+ * solo la del frente la lee un lector de pantalla.
+ */
+interface Props {
+  texto: string;
+  como?: 'h1' | 'h2' | 'h3' | 'p' | 'span';
+  relleno?: string;
+  /** Segundo color del relleno: la mitad de abajo de cada línea. */
+  relleno2?: string;
+  contorno?: string;
+  sombra?: string;
+  class?: string;
+  id?: string;
+}
+
+const {
+  texto,
+  como: Etiqueta = 'span',
+  relleno = 'var(--amarillo)',
+  relleno2,
+  contorno = 'var(--tinta)',
+  sombra = 'var(--fucsia)',
+  class: clase,
+  id,
+} = Astro.props;
+
+const estilo = [
+  `--relleno:${relleno}`,
+  `--relleno2:${relleno2 ?? relleno}`,
+  `--contorno:${contorno}`,
+  `--sombra:${sombra}`,
+].join(';');
+---
+
+<Etiqueta class:list={['chicha', clase]} style={estilo} id={id}>
+  <span class="chicha__capa chicha__sombra" aria-hidden="true">{texto}</span>
+  <span class="chicha__capa chicha__contorno" aria-hidden="true">{texto}</span>
+  <span class="chicha__capa chicha__frente">{texto}</span>
+</Etiqueta>
+
+<style>
+  .chicha {
+    display: grid;
+    font-family: var(--display);
+    font-weight: 900;
+    line-height: 0.86;
+    text-transform: uppercase;
+    letter-spacing: 0.01em;
+  }
+
+  .chicha__capa {
+    grid-area: 1 / 1;
+    /* Todas posicionadas: así se apilan en el orden del HTML aunque la sombra tenga translate */
+    position: relative;
+  }
+
+  .chicha__sombra {
+    color: var(--sombra);
+    -webkit-text-stroke: 0.13em var(--sombra);
+    translate: 0.07em 0.08em;
+  }
+
+  .chicha__contorno {
+    color: var(--contorno);
+    -webkit-text-stroke: 0.13em var(--contorno);
+  }
+
+  .chicha__frente {
+    color: var(--relleno);
+    /* Relleno partido, como los afiches serigrafiados */
+    background: linear-gradient(var(--relleno) 52%, var(--relleno2) 52%) 0 0 / 100% 0.86em repeat-y;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+
+  @media (forced-colors: active) {
+    .chicha__sombra,
+    .chicha__contorno {
+      display: none;
+    }
+
+    .chicha__frente {
+      -webkit-text-fill-color: CanvasText;
+      background: none;
+    }
+  }
+</style>

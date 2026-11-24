@@ -1,0 +1,132 @@
+---
+/**
+ * Una edición del carnaval como afiche de evento pegado en la pared.
+ * Las ediciones suspendidas llevan la franja cruzada de "suspendido".
+ */
+import type { CollectionEntry } from 'astro:content';
+import Chicha from './Chicha.astro';
+import { diaDeCarnaval } from '../lib/fechas';
+
+interface Props {
+  edicion: CollectionEntry<'ediciones'>['data'];
+  giro?: number;
+  oscuro?: boolean;
+}
+
+const { edicion, giro = 0, oscuro = false } = Astro.props;
+const fmt = new Intl.DateTimeFormat('es-PE', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+const inicio = diaDeCarnaval(edicion.anio, -4);
+const fin = diaDeCarnaval(edicion.anio, 0);
+const fechas = `${fmt.format(inicio)} al ${fmt.format(fin)}`;
+const suspendido = edicion.estado === 'suspendido';
+
+const paleta = oscuro
+  ? { fondo: 'var(--tinta)', relleno: 'var(--c)', relleno2: 'var(--amarillo)', sombra: 'var(--fucsia)', texto: 'var(--blanco)' }
+  : { fondo: 'var(--c)', relleno: 'var(--blanco)', relleno2: 'var(--blanco)', sombra: 'var(--tinta)', texto: 'var(--tinta)' };
+---
+
+<a
+  href={`/ediciones/${edicion.anio}/`}
+  class:list={['cartel', { 'cartel--suspendido': suspendido }]}
+  data-color={edicion.color}
+  style={`--giro:${giro}deg;--fondo:${paleta.fondo};--texto:${paleta.texto}`}
+>
+  <span class="cartel__arriba">Carnaval de Cajamarca</span>
+  <Chicha
+    texto={String(edicion.anio)}
+    class="cartel__anio"
+    relleno={paleta.relleno}
+    relleno2={paleta.relleno2}
+    contorno="var(--tinta)"
+    sombra={paleta.sombra}
+  />
+  {edicion.nombre && <span class="cartel__nombre">{edicion.nombre}</span>}
+  <span class="cartel__fechas">{suspendido ? 'No hubo fiesta' : fechas}</span>
+  {suspendido && (
+    <span class="cartel__franja" aria-hidden="true">
+      Suspendido
+    </span>
+  )}
+  {suspendido && <span class="visualmente-oculto">, edición suspendida</span>}
+</a>
+
+<style>
+  .cartel {
+    position: relative;
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    padding: 1.1rem 1.1rem 1.3rem;
+    min-height: 100%;
+    background: var(--fondo);
+    color: var(--texto);
+    text-decoration: none;
+    rotate: var(--giro);
+    overflow: hidden;
+    container-type: inline-size;
+  }
+
+  /* Al pasar el mouse el afiche se endereza; sin movimiento si así lo pide el sistema */
+  @media (prefers-reduced-motion: no-preference) {
+    .cartel {
+      transition:
+        rotate 0.2s ease,
+        translate 0.2s ease;
+    }
+
+    .cartel:hover {
+      rotate: 0deg;
+      translate: 0 -4px;
+    }
+  }
+
+  .cartel:hover .cartel__arriba {
+    text-decoration: underline;
+    text-decoration-thickness: 0.12em;
+  }
+
+  .cartel__arriba {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .cartel :global(.cartel__anio) {
+    /* El año llena el ancho del afiche, sea cual sea la columna */
+    font-size: clamp(2.6rem, 38cqi, 9rem);
+  }
+
+  .cartel__nombre {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.1rem, 11cqi, 1.6rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .cartel__fechas {
+    font-weight: 600;
+    font-size: 0.98rem;
+  }
+
+  .cartel--suspendido {
+    filter: grayscale(0.55);
+  }
+
+  .cartel__franja {
+    position: absolute;
+    left: -20%;
+    right: -20%;
+    top: 62%;
+    padding-block: 0.35rem;
+    background: var(--amarillo);
+    color: var(--tinta);
+    border-block: 3px solid var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.7rem;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    rotate: -14deg;
+  }
+</style>

@@ -1,0 +1,219 @@
+[
+  {
+    "id": "2026",
+    "anio": 2026,
+    "estado": "realizado",
+    "resumen": "Arrancó con un pregón nocturno en Cumbemayo y un bando de más de tres horas por las calles. Según el Mincetur, movió S/ 75 millones y atrajo a 80 mil turistas.",
+    "reina": { "nombre": "Daniela Reaño Díaz", "barrio": "La Merced", "nota": "Ganó entre 22 candidatas." },
+    "cifras": [
+      { "valor": "S/ 75 mill.", "texto": "de movimiento económico, según el Mincetur" },
+      { "valor": "80 mil", "texto": "turistas" },
+      { "valor": "116 mil", "texto": "asistentes entre vecinos y visitantes" },
+      { "valor": "+50 mil", "texto": "personas en el Gran Bando" }
+    ],
+    "hechos": [
+      "La fiesta se abrió con un pregón nocturno en el barrio Cumbemayo.",
+      "En enero, el concurso de tradiciones del carnaval llenó de colores las calles que arreglan los propios vecinos.",
+      "Se presentaron el afiche, el programa y la canción oficial del carnaval.",
+      "En el complejo Qhapaq Ñan se eligió a las tres «viudas» que lloraron en el funeral del Rey Momo.",
+      "Valentina La Vera Castañeda, de San Marcos, fue Reina Integración, y Olenka Fernández Murga, de Pariamarca, Reina de los Centros Poblados."
+    ],
+    "fuentes": [
+      { "medio": "Andina", "titulo": "Mincetur: Carnaval de Cajamarca 2026 generó S/ 75 millones y atrajo a 80 mil turistas", "url": "https://andina.pe/agencia/noticia-mincetur-carnaval-cajamarca-2026-genero-s-75-millones-y-atrajo-a-80-mil-turistas-1065881.aspx" },
+      { "medio": "Andina", "titulo": "Carnaval se inicia con pregón nocturno en barrio de Cumbemayo", "url": "https://andina.pe/agencia/noticia-cajamarca-carnaval-se-inicia-pregon-nocturno-barrio-cumbemayo-1058975.aspx" },
+      { "medio": "Andina", "titulo": "Cajamarca inició tradicional carnaval con multitudinario y colorido bando", "url": "https://andina.pe/agencia/noticia-cajamarca-inicio-tradicional-carnaval-multitudinario-y-colorido-bando-las-calles-1060621.aspx" },
+      { "medio": "Andina", "titulo": "Eligen a las tres «viudas» que acompañarán el funeral del Rey Momo", "url": "https://andina.pe/agencia/noticia-carnaval-cajamarca-eligen-a-las-tres-viudas-acompanaran-funeral-del-rey-momo-1063518.aspx" },
+      { "medio": "Andina", "titulo": "Presentan afiche, programa de actividades y canción oficial del carnaval", "url": "https://andina.pe/agencia/noticia-presentan-afiche-programa-actividades-y-cancion-oficial-del-carnaval-cajamarca-1059822.aspx" },
+      { "medio": "Trome", "titulo": "Reinas del Carnaval de Cajamarca 2026", "url": "https://trome.com/actualidad/reinas-del-carnaval-de-cajamarca-se-llevan-coronas-camionetas-auto-y-moto-capital-del-carnaval-peruano-fechas-reina-carnaval-2026-infantil-de-centros-poblados-integracionfoto-video-noticia/" }
+    ],
+    "color": "fucsia"
+  },
+  {
+    "id": "2025",
+    "anio": 2025,
+    "estado": "realizado",
+    "resumen": "Un carnaval de marzo. Más de 150 grupos de 37 barrios salieron a la calle y la fiesta se cerró el 4 y 5 de marzo con el velorio y el entierro del Ño Carnavalón.",
+    "cifras": [
+      { "valor": "+150", "texto": "grupos en la calle" },
+      { "valor": "37", "texto": "barrios" },
+      { "valor": "S/ 500–5000", "texto": "puede costar un disfraz" }
+    ],
+    "hechos": [
+      "El Gran Corso salió el lunes 3 de marzo.",
+      "Los grupos recorrieron la ciudad desde el estadio Héroes de San Ramón hasta el Arco del Triunfo.",
+      "Hace medio siglo cada barrio tenía de tres a seis comparsas; hoy puede sacar hasta 25.",
+      "Rosmery Castrejón Sangay, de Pariamarca, fue elegida reina del carnaval de los centros poblados entre seis candidatas."
+    ],
+    "fuentes": [
+      { "medio": "El Comercio", "titulo": "Carnaval de Cajamarca: un viaje de colores, comparsas y tradiciones", "url": "https://elcomercio.pe/somos/carnaval-de-cajamarca-un-viaje-de-colores-tradiciones-y-comparsas-historia-viaje-noticia/" },
+      { "medio": "Andina", "titulo": "Cajamarca elige a reina del carnaval de los centros poblados", "url": "https://andina.pe/agencia/noticia-cajamarca-elige-a-reina-del-carnaval-los-centros-poblados-1018906.aspx" }
+    ],
+    "color": "verde"
+  },
+  {
+    "id": "2024",
+    "anio": 2024,
+    "nombre": "Carnaval Inolvidable, Edición Bicentenario",
+    "estado": "realizado",
+    "resumen": "El año del Bicentenario. El Ño Carnavalón entró hasta el Qhapaq Ñan con un concierto de más de seis horas, y en el corso un clarín de Chamis se llevó el título de campeón de campeones.",
+    "reina": { "nombre": "Nichol Bardales Cieza", "barrio": "San Vicente" },
+    "cifras": [
+      { "valor": "43", "texto": "comparsas en el concurso" },
+      { "valor": "98", "texto": "puntos del campeón de campeones" },
+      { "valor": "S/ 15 000", "texto": "de premio para Chamis" },
+      { "valor": "6 x S/ 1", "texto": "globos de agua en la calle" }
+    ],
+    "hechos": [
+      "En el concurso desfilaron 43 comparsas durante casi ocho horas, con sátira política incluida.",
+      "La representación del clarín del centro poblado de Chamis ganó el corso con 98 puntos.",
+      "Los palcos del corso costaban entre S/ 20 y S/ 100 por persona.",
+      "El entierro y la cremación del Ño Carnavalón fueron en Baños del Inca, entre el llanto de sus viudas.",
+      "Camila Shantall Marín Aro, de San Marcos, fue Reina Integración."
+    ],
+    "fuentes": [
+      { "medio": "La República", "titulo": "Carnaval de Cajamarca 2024: para el rico y para el pobre, para todos lo hizo Dios", "url": "https://larepublica.pe/turismo/2024/02/23/carnaval-de-cajamarca-2024-para-el-rico-y-para-el-pobre-para-todos-lo-hizo-dios-carnaval-inolvidable-carnaval-de-cajamarca-1216006" },
+      { "medio": "La República", "titulo": "Cajamarca eligió a su reina del carnaval 2024", "url": "https://larepublica.pe/sociedad/2024/01/28/cajamarca-eligio-a-su-reina-carnaval-2024-conoce-a-nichol-bardales-cieza-la-ganadora-mincetur-carnaval-cajamarquino-lrnd-2621528" },
+      { "medio": "Andina", "titulo": "Carnaval de Cajamarca del Bicentenario espera recibir unos 100,000 visitantes", "url": "https://andina.pe/agencia/noticia-carnaval-cajamarca-del-bicentenario-espera-recibir-unos-100000-visitantes-971539.aspx" },
+      { "medio": "Andina", "titulo": "Cajamarca elige Reina de Integración del Carnaval", "url": "https://andina.pe/agencia/noticia-cajamarca-elige-reina-integracion-del-carnaval-y-se-prepara-a-recibir-al-rey-momo-973027.aspx" }
+    ],
+    "color": "amarillo"
+  },
+  {
+    "id": "2023",
+    "anio": 2023,
+    "nombre": "Carnaval del Reencuentro",
+    "estado": "realizado",
+    "resumen": "Volvió después de dos años de pandemia. Por eso se llamó del Reencuentro: La Matarina y El Cilulo hicieron zapatear a vecinos, turistas y hasta policías.",
+    "reina": { "nombre": "Fiorella Aliaga Silva", "barrio": "Cumbemayo", "nota": "Ganó entre 19 candidatas." },
+    "cifras": [
+      { "valor": "2 años", "texto": "sin carnaval antes de esta edición" },
+      { "valor": "+90 %", "texto": "de la capacidad hotelera reservada" },
+      { "valor": "S/ 120 000", "texto": "de utilidades para la organización" }
+    ],
+    "hechos": [
+      "El sábado 18 de febrero el Ño Carnavalón hizo su gran ingreso a la ciudad.",
+      "La reina se eligió en el coliseo Gran Qhapaq Ñan.",
+      "Coplas, música, patrullas, pintura, talco, serpentina y mucha agua: la fiesta de siempre, con ganas acumuladas."
+    ],
+    "fuentes": [
+      { "medio": "Perú21", "titulo": "Carnaval del Reencuentro: la celebración y algarabía para todos", "url": "https://peru21.pe/peru/carnaval-cajamarca-2023-carnaval-del-reencuentro-la-celebracion-y-algarabia-para-todos-en-cajamarca-cronica-noticia/" },
+      { "medio": "Trome", "titulo": "Carnaval del Reencuentro 2023 hizo zapatear a turistas y policías", "url": "https://trome.com/actualidad/peru-carnavales-en-cajamarca-carnaval-del-reencuentro-2023-hizo-zapatear-a-turistas-policias-alegria-la-matarina-el-cilulo-no-carnavalon-hasta-cuando-dura-fiesta-mas-alegre-bandas-festival-imp-noticia/" },
+      { "medio": "Andina", "titulo": "Eligen a Fiorella Aliaga reina del Carnaval de Cajamarca 2023", "url": "https://andina.pe/agencia/noticia-eligen-a-fiorella-aliaga-reina-del-carnaval-cajamarca-2023-928815.aspx" },
+      { "medio": "Andina", "titulo": "Turistas reservan más de 90% de capacidad hotelera para el carnaval", "url": "https://andina.pe/ingles/noticia-cajamarca-turistas-reservan-mas-90-capacidad-hotelera-para-iconico-carnaval-924345.aspx" },
+      { "medio": "La República", "titulo": "Ño Carnavalón realizó su gran ingreso", "url": "https://larepublica.pe/sociedad/2023/02/18/cajamarca-carnaval-del-cajamarca-no-carnavalon-realizo-su-gran-ingreso-al-carnaval-de-cajamarca-lrnd-1242234" }
+    ],
+    "color": "turquesa"
+  },
+  {
+    "id": "2022",
+    "anio": 2022,
+    "estado": "suspendido",
+    "resumen": "Segundo año sin carnaval. La Municipalidad mantuvo la suspensión por la pandemia y organizó solo cuatro actividades, sin público.",
+    "cifras": [{ "valor": "4", "texto": "actividades sin público" }],
+    "hechos": [
+      "Hubo conversatorios virtuales en lugar de patrullas.",
+      "En febrero se pintó un mural gigante dedicado al carnaval.",
+      "Durante la pandemia, el «Ño Vacunatón» invitó a vacunarse contra la covid-19 a ritmo de carnaval."
+    ],
+    "fuentes": [
+      { "medio": "La República", "titulo": "Actividades del carnaval de Cajamarca se desarrollarán sin público", "url": "https://larepublica.pe/sociedad/2022/02/04/actividades-del-carnaval-de-cajamarca-se-desarrollaran-sin-publico-lrnd" },
+      { "medio": "La República", "titulo": "Pintan gigantesco mural alusivo al Carnaval de Cajamarca", "url": "https://larepublica.pe/sociedad/2022/02/20/pintan-gigantesco-mural-alusivo-al-carnaval-de-cajamarca-lrnd/" },
+      { "medio": "Andina", "titulo": "Cajamarca organiza Ño Vacunatón y a ritmo del carnaval invita a vacunarse", "url": "https://andina.pe/agencia/noticia-cajamarca-organiza-no-vacunaton-y-a-ritmo-del-carnaval-invita-a-vacunarse-contra-covid19-866280.aspx" }
+    ],
+    "color": "azul"
+  },
+  {
+    "id": "2021",
+    "anio": 2021,
+    "estado": "suspendido",
+    "resumen": "No hubo carnaval. El comité lo adelantó en septiembre de 2020 y en enero se confirmó la cancelación por el aumento de contagios de covid-19.",
+    "cifras": [],
+    "hechos": [
+      "En septiembre de 2020, el presidente del comité central anunció que no habría carnaval en 2021.",
+      "En enero, con los casos en alza en la región, la cancelación fue definitiva: «la salud es primero»."
+    ],
+    "fuentes": [
+      { "medio": "La República", "titulo": "Carnaval de Cajamarca no se realizará en el 2021", "url": "https://larepublica.pe/sociedad/2020/09/03/carnaval-de-cajamarca-no-se-realizara-en-el-2021-lrnd" },
+      { "medio": "Andina", "titulo": "¡La salud es primero! Cajamarca cancela su tradicional carnaval por el coronavirus", "url": "https://andina.pe/agencia/noticia-la-salud-es-primero-cajamarca-cancela-su-tradicional-carnaval-por-coronavirus-830841.aspx" }
+    ],
+    "color": "azul"
+  },
+  {
+    "id": "2020",
+    "anio": 2020,
+    "estado": "realizado",
+    "resumen": "El último carnaval antes de la pandemia. Antes de la fiesta, patrullas y comparsas viajaron a Lima a promocionarlo, hasta en Palacio de Gobierno.",
+    "cifras": [],
+    "hechos": [
+      "A fines de enero, una delegación de patrullas y comparsas recorrió Lima y llegó a Palacio de Gobierno.",
+      "El Carnaval de Integración Regional presentó su afiche y su spot promocional.",
+      "La fiesta central fue del 22 al 26 de febrero."
+    ],
+    "fuentes": [
+      { "medio": "La República", "titulo": "Promocionan Carnaval de Cajamarca en Palacio de Gobierno", "url": "https://larepublica.pe/sociedad/2020/01/30/promocionan-carnaval-de-cajamarca-en-palacio-de-gobierno-lrnd/" },
+      { "medio": "La República", "titulo": "Carnaval de Integración Regional presentó su afiche y spot promocional", "url": "https://larepublica.pe/sociedad/2020/01/20/carnaval-de-integracion-regional-presento-su-afiche-y-spot-promocional-lrdn" }
+    ],
+    "color": "naranja"
+  },
+  {
+    "id": "2019",
+    "anio": 2019,
+    "estado": "realizado",
+    "resumen": "Un carnaval tardío, del 2 al 6 de marzo. La ciudad se llenó de música y color desde el ingreso del Ño Carnavalón.",
+    "cifras": [],
+    "hechos": [
+      "Cajamarca vivió una fiesta en la calle por el ingreso del Ño Carnavalón.",
+      "Las reinas del certamen Señorita Carnaval de Cajamarca desfilaron en los carros alegóricos del corso."
+    ],
+    "fuentes": [
+      { "medio": "Andina", "titulo": "Cajamarca vivió fiesta por el ingreso de Ño Carnavalón", "url": "https://andina.pe/ingles/noticia-cajamarca-vivio-fiesta-por-ingreso-no-carnavalon-744131.aspx" },
+      { "medio": "Andina", "titulo": "Carnaval de Cajamarca: la ciudad vive ambiente festivo de música y color", "url": "https://andina.pe/ingles/noticia-carnaval-cajamarca-ciudad-vive-ambiente-festivo-musica-y-color-744182.aspx" }
+    ],
+    "color": "fucsia"
+  },
+  {
+    "id": "2018",
+    "anio": 2018,
+    "estado": "realizado",
+    "resumen": "Del 10 al 14 de febrero. Organizarlo costó un millón de soles, y el corso cerró en el complejo Qhapaq Ñan con delegaciones de barrios, distritos y provincias.",
+    "reina": { "nombre": "Claudia Corcuera Hernández", "barrio": "La Merced", "nota": "Ganó entre 19 candidatas, una por barrio." },
+    "cifras": [
+      { "valor": "S/ 1 mill.", "texto": "de inversión en la organización" },
+      { "valor": "15 000", "texto": "turistas esperados" },
+      { "valor": "19", "texto": "candidatas a reina" }
+    ],
+    "hechos": [
+      "La reina abrió el corso en el primer carro alegórico.",
+      "Las candidatas eran estudiantes o egresadas universitarias de entre 18 y 23 años.",
+      "La elección fue en el coliseo Gran Qhapaq Ñan."
+    ],
+    "fuentes": [
+      { "medio": "Andina", "titulo": "Carnaval de Cajamarca derrocha colorido y alegría durante el corso", "url": "https://andina.pe/agencia/noticia-carnaval-cajamarca-derrocha-colorido-y-alegria-durante-corso-699108.aspx" },
+      { "medio": "Andina", "titulo": "Cajamarca presenta a candidatas a reina de su tradicional carnaval", "url": "https://andina.pe/agencia/noticia-cajamarca-presenta-a-candidatas-a-reina-su-tradicional-carnaval-697799.aspx" },
+      { "medio": "Andina", "titulo": "Organizar el Carnaval de Cajamarca demandó inversión de S/ 1 millón", "url": "https://andina.pe/agencia/noticia-organizar-carnaval-cajamarca-demando-inversion-s-1-millon-706028.aspx" },
+      { "medio": "Andina", "titulo": "Cajamarca espera el arribo de 15,000 turistas por su tradicional carnaval", "url": "https://andina.pe/ingles/noticia-cajamarca-espera-arribo-15000-turistas-su-tradicional-carnaval-697066.aspx" }
+    ],
+    "color": "verde"
+  },
+  {
+    "id": "2017",
+    "anio": 2017,
+    "estado": "realizado",
+    "resumen": "El año en que la copla se volvió patrimonio. En junio, el Ministerio de Cultura declaró Patrimonio Cultural de la Nación a la copla y contrapunto del carnaval de Cajamarca.",
+    "reina": { "nombre": "Estelita Cabrera Regalado", "barrio": "provincia de Hualgayoc", "nota": "Reina Integración 2017." },
+    "cifras": [
+      { "valor": "12 000", "texto": "turistas, según Andina" },
+      { "valor": "R.V.M. 117", "texto": "la resolución que declaró patrimonio a la copla" }
+    ],
+    "hechos": [
+      "El Gran Corso Carnavalesco salió el 27 de febrero ante miles de turistas.",
+      "Las fotos de este sitio son de los juegos de fines de enero de 2017: globos de agua, disfraces y la Plaza de Armas mojada."
+    ],
+    "fuentes": [
+      { "medio": "Gobierno Regional de Cajamarca", "titulo": "Nota de prensa del Gran Corso Carnavalesco 2017", "url": "https://portal.regioncajamarca.gob.pe/sites/default/files/noticias/documentos/Febrero%20Nota%20084.pdf" },
+      { "medio": "Ministerio de Cultura", "titulo": "R.V.M. N.° 117-2017-VMPCIC-MC", "url": "https://img.lpderecho.pe/wp-content/uploads/2017/06/Declaran-Patrimonio-Cultural-de-la-Nación-a-la-Copla-y-contrapunto-del-carnaval-de-Cajamarca.pdf" },
+      { "medio": "Andina", "titulo": "Cajamarca espera el arribo de 15,000 turistas por su tradicional carnaval", "url": "https://andina.pe/ingles/noticia-cajamarca-espera-arribo-15000-turistas-su-tradicional-carnaval-697066.aspx" }
+    ],
+    "color": "naranja"
+  }
+]

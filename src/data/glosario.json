@@ -1,0 +1,209 @@
+[
+  {
+    "id": "shulca",
+    "palabra": "shulca",
+    "significado": "El hijo o la hija menor; el último de la familia.",
+    "ejemplo": "La shulca de la casa siempre se sale con la suya.",
+    "origen": "Quechua (sullka, «menor»)",
+    "categoria": "habla"
+  },
+  {
+    "id": "misho",
+    "palabra": "misho",
+    "significado": "Gato.",
+    "ejemplo": "El misho se escondió bajo la cama apenas vio los baldes.",
+    "origen": "Registrado para Cajamarca en el Diccionario de Peruanismos",
+    "categoria": "habla"
+  },
+  {
+    "id": "cholasho",
+    "palabra": "cholasho / chinasha",
+    "significado": "Muchachito / muchachita. Llevan el diminutivo -ash-, herencia del culle, la antigua lengua de la región.",
+    "ejemplo": "Ese cholasho ya está pintado de pies a cabeza.",
+    "origen": "Sufijo de origen culle",
+    "categoria": "habla"
+  },
+  {
+    "id": "aquisito",
+    "palabra": "aquisito",
+    "significado": "Aquí cerquita. El diminutivo hace que todo quede más cerca… aunque no siempre.",
+    "ejemplo": "Aquisito nomás es la plaza, vamos caminando.",
+    "categoria": "habla"
+  },
+  {
+    "id": "nomas",
+    "palabra": "nomás",
+    "significado": "Suaviza invitaciones y órdenes: «tranquilo», «sin problema». Tiene su propio diminutivo: nomasito.",
+    "ejemplo": "Pase nomás, siéntese nomasito.",
+    "categoria": "habla"
+  },
+  {
+    "id": "ahoritita",
+    "palabra": "ahoritita",
+    "significado": "Ya mismo. Más urgente que «ahorita»… en teoría.",
+    "ejemplo": "Ahoritita salimos con la patrulla.",
+    "categoria": "habla"
+  },
+  {
+    "id": "pues",
+    "palabra": "pues / pe",
+    "significado": "Muletilla que remata la frase y le da confianza.",
+    "ejemplo": "¡Ya pues, vamos a jugar carnaval!",
+    "categoria": "habla"
+  },
+  {
+    "id": "no-na",
+    "palabra": "Ño / Ña",
+    "significado": "Señor / señora. Trato antiguo, de respeto y cariño a la vez.",
+    "ejemplo": "Ño Carnavalón y Ña Carnavalona.",
+    "origen": "Castellano antiguo",
+    "categoria": "habla"
+  },
+  {
+    "id": "taita",
+    "palabra": "taita",
+    "significado": "Papá; también trato respetuoso para un mayor.",
+    "ejemplo": "El taita ya sacó su guitarra.",
+    "origen": "Andino",
+    "categoria": "habla"
+  },
+  {
+    "id": "poto",
+    "palabra": "poto",
+    "significado": "Mate o recipiente de calabaza para servir la chicha. Su doble sentido alimenta muchas coplas.",
+    "ejemplo": "Sírvame un potito de chicha, comadre.",
+    "origen": "Regional del norte peruano",
+    "categoria": "habla"
+  },
+  {
+    "id": "llanques",
+    "palabra": "llanques",
+    "significado": "Sandalias rústicas, parte de la vestimenta tradicional.",
+    "ejemplo": "Con llanques se baila mejor la cashua.",
+    "origen": "Quechua (llanqui)",
+    "categoria": "habla"
+  },
+  {
+    "id": "jugar-carnaval",
+    "palabra": "jugar carnaval",
+    "significado": "Mojar, pintar y empolvar a los demás (y dejarse) durante la fiesta.",
+    "ejemplo": "¿Todavía no has jugado carnaval? Ahoritita te toca.",
+    "categoria": "habla"
+  },
+  {
+    "id": "alalau",
+    "palabra": "¡alalau!",
+    "significado": "¡Qué frío! Ideal para cuando te cae el balde de agua helada.",
+    "ejemplo": "¡Alalau, esa agua viene del puquio!",
+    "origen": "Quechua",
+    "categoria": "exclamación"
+  },
+  {
+    "id": "achachau",
+    "palabra": "¡achachau!",
+    "significado": "¡Qué calor! / ¡Cómo quema!",
+    "ejemplo": "¡Achachau, el sol del mediodía!",
+    "origen": "Quechua",
+    "categoria": "exclamación"
+  },
+  {
+    "id": "atatau",
+    "palabra": "¡atatau!",
+    "significado": "¡Qué asco! / ¡Qué feo!",
+    "ejemplo": "¡Atatau, me echaron pintura con barro!",
+    "origen": "Quechua",
+    "categoria": "exclamación"
+  },
+  {
+    "id": "nanau",
+    "palabra": "¡ñañau!",
+    "significado": "¡Qué rico! Para la comida, la chicha… y la fiesta entera.",
+    "ejemplo": "¡Ñañau, qué rico carnaval!",
+    "categoria": "exclamación"
+  },
+  {
+    "id": "calientito",
+    "palabra": "calientito",
+    "significado": "Bebida caliente con su chorrito de aguardiente, para el frío que deja el agua.",
+    "ejemplo": "Un calientito y de vuelta a la plaza.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "chicha-de-patrulla",
+    "palabra": "chicha de patrulla",
+    "significado": "La chicha que los vecinos guardaban para la patrulla que llegaba cantando de casa en casa. Una costumbre que se va perdiendo.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "gitana",
+    "palabra": "gitana",
+    "significado": "Personaje de la patrulla: un hombre vestido de mujer, puesto ahí para la burla.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "virrey",
+    "palabra": "virrey",
+    "significado": "El que manda en la patrulla, espada en mano. Se ríe de la autoridad colonial.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "patrulla",
+    "palabra": "patrulla",
+    "significado": "Grupo de amigos o vecinos que recorre las calles cantando coplas, saltando y jugando con agua y pintura.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "comparsa",
+    "palabra": "comparsa",
+    "significado": "Grupo organizado por barrio: todos visten igual, bailan y cantan coplas. Compiten en damas, varones, mixta, infantil y vestimenta típica.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "contrapunto",
+    "palabra": "contrapunto",
+    "significado": "Duelo cantado: dos grupos se responden copla a copla hasta que uno se queda sin respuesta.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "clon",
+    "palabra": "clon",
+    "significado": "Personaje tipo arlequín que encabeza la comparsa: traje ancho y colorido, careta, silbato y cucurucho. Hay clon mayor, segundo y tercero.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "cucurucho",
+    "palabra": "cucurucho",
+    "significado": "El gran sombrero cónico del clon.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "viudas",
+    "palabra": "viudas",
+    "significado": "Quienes lloran (con mucho teatro) al Ño Carnavalón en su velorio y entierro.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "yunza",
+    "palabra": "yunza / umsha / cortamonte",
+    "significado": "Árbol adornado con regalos. Se baila a su alrededor y, en cada vuelta, una pareja le da un golpe hasta tumbarlo.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "corso",
+    "palabra": "corso",
+    "significado": "Gran desfile del lunes de carnaval, con carros alegóricos, reinas y comparsas.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "bando",
+    "palabra": "bando carnestolendo",
+    "significado": "Pregón que, semanas antes, anuncia por las calles que el carnaval se viene.",
+    "categoria": "fiesta"
+  },
+  {
+    "id": "testamento",
+    "palabra": "testamento",
+    "significado": "Documento burlón que deja el Ño Carnavalón antes de morir: «hereda» a las autoridades cosas picantes y sarcásticas.",
+    "categoria": "fiesta"
+  }
+]

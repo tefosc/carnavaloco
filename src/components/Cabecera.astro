@@ -1,0 +1,167 @@
+---
+const enlaces = [
+  { href: '/la-fiesta/', texto: 'La fiesta' },
+  { href: '/ediciones/', texto: 'Ediciones' },
+  { href: '/coplas/', texto: 'Coplas' },
+  { href: '/habla/', texto: 'Habla' },
+  { href: '/historia/', texto: 'Historia' },
+];
+
+const ruta = Astro.url.pathname.replace(/\/?$/, '/');
+const actual = (href: string) => ruta === href || (href !== '/' && ruta.startsWith(href));
+
+// Banderines de raso colgando de una cuerda.
+const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--verde)', 'var(--azul)', 'var(--naranja)', 'var(--turquesa)'];
+const n = 30;
+const banderines = Array.from({ length: n }, (_, i) => {
+  const t = (i + 0.5) / n;
+  const x = t * 1200;
+  const y = 2 + 4 * 14 * t * (1 - t);
+  return { d: `M${(x - 19).toFixed(1)} ${(y - 1).toFixed(1)} L${(x + 19).toFixed(1)} ${(y + 1).toFixed(1)} L${x.toFixed(1)} ${(y + 30).toFixed(1)} Z`, color: colores[i % colores.length] };
+});
+---
+
+<a class="saltar" href="#contenido">Ir al contenido</a>
+<header class="cabecera oscuro">
+  <div class="envoltura cabecera__fila">
+    <a class="marca" href="/" aria-label="Carnaval de Cajamarca, portada">
+      <span class="marca__grande">Carnaval</span>
+      <span class="marca__chica">de Cajamarca</span>
+    </a>
+    <nav aria-label="Secciones">
+      <ul>
+        {
+          enlaces.map((e) => (
+            <li>
+              <a href={e.href} aria-current={actual(e.href) ? 'page' : undefined}>
+                {e.texto}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+  </div>
+</header>
+<svg class="banderines" viewBox="0 0 1200 46" preserveAspectRatio="none" aria-hidden="true">
+  <path d="M0 2 Q600 30 1200 2" fill="none" stroke="var(--tinta)" stroke-width="2"></path>
+  {banderines.map((b) => <path d={b.d} fill={b.color} />)}
+</svg>
+
+<style>
+  .saltar {
+    position: absolute;
+    left: 1rem;
+    top: -4rem;
+    z-index: 100;
+    padding: 0.7rem 1rem;
+    background: var(--amarillo);
+    color: var(--tinta);
+    font-weight: 700;
+  }
+
+  .saltar:focus-visible {
+    top: 1rem;
+  }
+
+  .cabecera {
+    position: relative;
+    z-index: 20;
+    background: var(--tinta);
+    view-transition-name: cabecera;
+  }
+
+  .cabecera__fila {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem 2rem;
+    min-height: 4.5rem;
+    padding-block: 0.6rem;
+  }
+
+  .marca {
+    display: grid;
+    text-decoration: none;
+    line-height: 0.85;
+  }
+
+  .marca__grande {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2.1rem;
+    text-transform: uppercase;
+    color: var(--amarillo);
+  }
+
+  .marca__chica {
+    font-weight: 700;
+    font-size: 0.92rem;
+    color: var(--fucsia);
+    padding-left: 0.1rem;
+  }
+
+  nav ul {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.25rem 0.4rem;
+  }
+
+  nav a {
+    display: block;
+    padding: 0.55rem 0.8rem 0.45rem;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.35rem;
+    text-transform: uppercase;
+    letter-spacing: 0.02em;
+    text-decoration: none;
+    white-space: nowrap;
+    color: var(--blanco);
+    transition:
+      background-color 0.15s ease,
+      color 0.15s ease;
+  }
+
+  nav a:hover {
+    background: var(--fucsia);
+  }
+
+  nav a[aria-current='page'] {
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+
+  .banderines {
+    position: relative;
+    z-index: 19;
+    width: 100%;
+    height: 46px;
+    margin-bottom: -46px;
+    pointer-events: none;
+    view-transition-name: banderines;
+  }
+
+  @media (max-width: 760px) {
+    .cabecera__fila {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    nav {
+      width: 100%;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    nav ul {
+      flex-wrap: nowrap;
+    }
+
+    nav a {
+      font-size: 1.2rem;
+      padding-inline: 0.65rem;
+    }
+  }
+</style>

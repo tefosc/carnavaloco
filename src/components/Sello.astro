@@ -1,0 +1,63 @@
+---
+/**
+ * Sello redondo con texto en anillo, como los timbres de entrada de la fiesta.
+ * El contenido central va en el slot.
+ */
+interface Props {
+  anillo: string;
+  color?: string;
+  tinta?: string;
+  giro?: number;
+  class?: string;
+}
+
+const { anillo, color = 'var(--verde)', tinta = 'var(--tinta)', giro = -12, class: clase } = Astro.props;
+const id = `anillo-${Math.random().toString(36).slice(2, 8)}`;
+---
+
+<div class:list={['sello', clase]} style={`--sello:${color};--sello-tinta:${tinta};--giro:${giro}deg`}>
+  <svg class="sello__anillo" viewBox="0 0 200 200" aria-hidden="true">
+    <defs>
+      <path id={id} d="M100 100 m-78 0 a78 78 0 1 1 156 0 a78 78 0 1 1 -156 0"></path>
+    </defs>
+    <circle cx="100" cy="100" r="96" fill="var(--sello)" stroke="var(--sello-tinta)" stroke-width="4"></circle>
+    <circle cx="100" cy="100" r="62" fill="none" stroke="var(--sello-tinta)" stroke-width="2.5" stroke-dasharray="3 5"></circle>
+    <text font-family="var(--display)" font-weight="800" font-size="19" letter-spacing="3" fill="var(--sello-tinta)">
+      <textPath href={`#${id}`}>{anillo}</textPath>
+    </text>
+  </svg>
+  <div class="sello__centro">
+    <slot />
+  </div>
+</div>
+
+<style>
+  .sello {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: clamp(150px, 18vw, 210px);
+    aspect-ratio: 1;
+    color: var(--sello-tinta);
+    rotate: var(--giro);
+  }
+
+  .sello__anillo {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  .sello__centro {
+    position: relative;
+    display: grid;
+    place-items: center;
+    width: 58%;
+    text-align: center;
+    font-family: var(--display);
+    font-weight: 800;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+</style>

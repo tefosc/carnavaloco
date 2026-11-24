@@ -1,0 +1,163 @@
+---
+/**
+ * Los cinco días como banderolas de raso colgadas de una cuerda,
+ * con flecos abajo. Las fechas se calculan con la Pascua y el
+ * script las corrige si el sitio se construyó hace tiempo.
+ */
+import { programa } from '../data/carnaval';
+import { anioProximoCarnaval, diaDeCarnaval } from '../lib/fechas';
+
+const anio = anioProximoCarnaval();
+const formatoDia = new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' });
+const formatoMes = new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' });
+
+const dias = programa.map((d) => {
+  const fecha = diaDeCarnaval(anio, d.offset);
+  return { ...d, numero: formatoDia.format(fecha), mes: formatoMes.format(fecha) };
+});
+---
+
+<div class="banderolas" data-banderolas data-anio={anio}>
+  <svg class="banderolas__cuerda" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true">
+    <path d="M0 6 Q500 46 1000 6" fill="none" stroke="currentColor" stroke-width="3"></path>
+  </svg>
+  <ol class="banderolas__lista">
+    {
+      dias.map((d, i) => (
+        <li class="banderola flecos" data-color={d.color} style={`--i:${i}`}>
+          <p class="banderola__dia">{d.dia}</p>
+          <p class="banderola__fecha">
+            <span class="banderola__numero" data-offset={d.offset} data-parte="dia">
+              {d.numero}
+            </span>
+            <span class="banderola__mes" data-offset={d.offset} data-parte="mes">
+              {d.mes}
+            </span>
+          </p>
+          <h3>{d.titulo}</h3>
+          <p class="banderola__texto">{d.texto}</p>
+        </li>
+      ))
+    }
+  </ol>
+</div>
+
+<style>
+  .banderolas {
+    position: relative;
+    color: var(--blanco);
+  }
+
+  .banderolas__cuerda {
+    width: 100%;
+    height: 40px;
+  }
+
+  .banderolas__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: clamp(0.6rem, 1.5vw, 1.25rem);
+    margin-top: -26px;
+  }
+
+  .banderola {
+    --tinta-b: var(--tinta);
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    padding: 1.4rem 1.1rem 1.6rem;
+    background: var(--c);
+    color: var(--tinta-b);
+    /* Cuelga más bajo hacia el centro, siguiendo la curva de la cuerda */
+    margin-top: calc(sin(calc(var(--i) / 4 * 180deg)) * 22px);
+    border-top: 8px solid var(--tinta);
+  }
+
+  .banderola[data-color='azul'] {
+    --tinta-b: var(--blanco);
+  }
+
+  .banderola__dia {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .banderola__fecha {
+    display: flex;
+    align-items: baseline;
+    gap: 0.4rem;
+    font-family: var(--display);
+    font-weight: 900;
+    line-height: 0.8;
+  }
+
+  .banderola__numero {
+    font-size: clamp(4rem, 7vw, 6rem);
+  }
+
+  .banderola__mes {
+    font-size: 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .banderola h3 {
+    font-size: 1.55rem;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .banderola__texto {
+    font-size: 0.98rem;
+    line-height: 1.45;
+  }
+
+  @media (max-width: 1000px) {
+    .banderolas__lista {
+      grid-template-columns: repeat(2, 1fr);
+      row-gap: 2.5rem;
+    }
+
+    .banderola {
+      margin-top: 0;
+    }
+
+    .banderola:last-child {
+      grid-column: 1 / -1;
+    }
+
+    .banderolas__cuerda {
+      display: none;
+    }
+
+    .banderolas__lista {
+      margin-top: 0;
+    }
+  }
+
+  @media (max-width: 560px) {
+    .banderolas__lista {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+  import { anioProximoCarnaval, diaDeCarnaval } from '../lib/fechas';
+
+  const formatos = {
+    dia: new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' }),
+    mes: new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' }),
+  };
+
+  document.querySelectorAll<HTMLElement>('[data-banderolas]').forEach((raiz) => {
+    const anio = anioProximoCarnaval();
+    if (raiz.dataset.anio === String(anio)) return;
+    raiz.dataset.anio = String(anio);
+    raiz.querySelectorAll<HTMLElement>('[data-offset]').forEach((el) => {
+      const fecha = diaDeCarnaval(anio, Number(el.dataset.offset));
+      const parte = el.dataset.parte as 'dia' | 'mes';
+      el.textContent = formatos[parte].format(fecha);
+    });
+  });
+</script>

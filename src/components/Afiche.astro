@@ -1,0 +1,91 @@
+---
+/**
+ * Foto impresa como afiche pegado en la pared: trama de puntos,
+ * un giro leve y, si se pide, cinta adhesiva en las esquinas.
+ */
+import { Image } from 'astro:assets';
+import type { Foto } from '../data/fotos';
+
+interface Props {
+  foto: Foto;
+  giro?: number;
+  cinta?: boolean;
+  /** Ancho en que se muestra, para elegir el tamaño de imagen. */
+  sizes?: string;
+  class?: string;
+  marco?: string;
+  carga?: 'eager' | 'lazy';
+}
+
+const {
+  foto,
+  giro = 0,
+  cinta = false,
+  sizes = '(min-width: 900px) 40vw, 90vw',
+  class: clase,
+  marco = 'var(--blanco)',
+  carga = 'lazy',
+} = Astro.props;
+---
+
+<div class:list={['afiche', clase]} style={`--giro:${giro}deg;--marco:${marco}`}>
+  <div class="afiche__foto trama">
+    <Image
+      src={foto.src}
+      alt={foto.alt}
+      widths={[480, 800, 1200, 1600]}
+      sizes={sizes}
+      loading={carga}
+      fetchpriority={carga === 'eager' ? 'high' : 'auto'}
+    />
+  </div>
+  {
+    cinta && (
+      <>
+        <span class="afiche__cinta afiche__cinta--a" aria-hidden="true" />
+        <span class="afiche__cinta afiche__cinta--b" aria-hidden="true" />
+      </>
+    )
+  }
+</div>
+
+<style>
+  .afiche {
+    position: relative;
+    padding: 10px;
+    background: var(--marco);
+    rotate: var(--giro);
+    box-shadow: 0 1px 0 rgb(0 0 0 / 0.08);
+  }
+
+  .afiche__foto {
+    overflow: hidden;
+  }
+
+  .afiche__foto :global(img) {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: saturate(1.25) contrast(1.05);
+  }
+
+  .afiche__cinta {
+    position: absolute;
+    width: 92px;
+    height: 28px;
+    background: rgb(255 255 255 / 0.62);
+    border-inline: 1px dashed rgb(19 24 90 / 0.25);
+  }
+
+  .afiche__cinta--a {
+    top: -10px;
+    left: -24px;
+    rotate: -38deg;
+  }
+
+  .afiche__cinta--b {
+    bottom: -8px;
+    right: -26px;
+    rotate: -32deg;
+  }
+</style>

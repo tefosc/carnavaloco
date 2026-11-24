@@ -1,0 +1,99 @@
+---
+import Chicha from './Chicha.astro';
+import { creditoFotos } from '../data/fotos';
+---
+
+<footer class="pie zigzag-arriba">
+  <div class="envoltura pie__grid">
+    <div>
+      <Chicha
+        texto="¡Viva el carnaval!"
+        como="p"
+        class="pie__grito"
+        relleno="var(--amarillo)"
+        relleno2="var(--naranja)"
+        sombra="var(--azul)"
+      />
+      <p class="pie__nota">
+        Historia, coplas y habla de la fiesta más grande de Cajamarca. Las fechas cambian cada año: el programa oficial lo
+        publica la Municipalidad Provincial de Cajamarca.
+      </p>
+    </div>
+    <nav aria-label="Pie de página" class="pie__nav">
+      <a href="/la-fiesta/">La fiesta</a>
+      <a href="/ediciones/">Ediciones</a>
+      <a href="/coplas/">Coplas</a>
+      <a href="/habla/">Habla</a>
+      <a href="/historia/">Historia y fuentes</a>
+    </nav>
+  </div>
+  <p class="envoltura pie__creditos">
+    Fotos: {creditoFotos.autor},{' '}
+    <a href={creditoFotos.categoriaUrl}>Wikimedia Commons</a>,{' '}
+    <a href={creditoFotos.licenciaUrl}>{creditoFotos.licencia}</a>; algunas recortadas. Datos: prensa peruana y
+    Ministerio de Cultura, con la fuente en cada página.
+  </p>
+</footer>
+
+<style>
+  .pie {
+    position: relative;
+    padding-block: calc(clamp(3.5rem, 7vw, 5rem) + var(--zz)) 2.5rem;
+    background: var(--fucsia);
+    color: var(--tinta);
+  }
+
+  .pie a {
+    text-decoration-color: var(--tinta);
+  }
+
+  .pie__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 1fr;
+    gap: 2.5rem;
+    align-items: start;
+  }
+
+  .pie :global(.pie__grito) {
+    font-size: clamp(3.2rem, 9vw, 6.5rem);
+  }
+
+  .pie__nota {
+    max-width: 44ch;
+    margin-top: 1.5rem;
+    font-weight: 500;
+  }
+
+  .pie__nav {
+    display: grid;
+    gap: 0.2rem;
+    justify-items: start;
+  }
+
+  .pie__nav a {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2rem;
+    text-transform: uppercase;
+    text-decoration: none;
+    line-height: 1.15;
+  }
+
+  .pie__nav a:hover {
+    color: var(--blanco);
+  }
+
+  .pie__creditos {
+    margin-top: 3rem;
+    padding-top: 1.2rem;
+    border-top: 3px solid var(--tinta);
+    font-size: 0.95rem;
+    font-weight: 500;
+  }
+
+  @media (max-width: 760px) {
+    .pie__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

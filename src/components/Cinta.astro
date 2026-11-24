@@ -1,0 +1,138 @@
+---
+/**
+ * Cinta inclinada con gritos de la fiesta que corren de lado a lado.
+ * Solo se mueve si el sistema no pide reducir movimiento, y siempre
+ * tiene un botón para pausarla.
+ */
+interface Props {
+  items: string[];
+  color?: string;
+  tinta?: string;
+  giro?: number;
+}
+
+const { items, color = 'var(--amarillo)', tinta = 'var(--tinta)', giro = -2 } = Astro.props;
+---
+
+<div class="cinta" style={`--cinta:${color};--cinta-tinta:${tinta};--giro:${giro}deg`} data-cinta>
+  <p class="visualmente-oculto">{items.join('. ')}</p>
+  <div class="cinta__pista" aria-hidden="true">
+    {
+      [0, 1].map(() => (
+        <span class="cinta__tramo">
+          {items.map((t) => (
+            <span class="cinta__item">{t}</span>
+          ))}
+        </span>
+      ))
+    }
+  </div>
+  <button type="button" class="cinta__pausa" data-cinta-boton aria-label="Pausar la cinta">
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" data-icono-pausa
+      ><rect x="4" y="3" width="4" height="14"></rect><rect x="12" y="3" width="4" height="14"></rect></svg
+    >
+    <svg viewBox="0 0 20 20" width="18" height="18" aria-hidden="true" data-icono-seguir hidden
+      ><path d="M5 3 L17 10 L5 17 Z"></path></svg
+    >
+  </button>
+</div>
+
+<style>
+  .cinta {
+    position: relative;
+    z-index: 2;
+    margin-inline: -3vw;
+    padding-block: 0.6rem;
+    background: var(--cinta);
+    color: var(--cinta-tinta);
+    border-block: 4px solid var(--cinta-tinta);
+    rotate: var(--giro);
+    overflow: hidden;
+  }
+
+  .cinta__pista {
+    display: flex;
+    width: max-content;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .cinta__pista {
+      animation: correr 38s linear infinite;
+    }
+  }
+
+  .cinta[data-pausada] .cinta__pista {
+    animation-play-state: paused;
+  }
+
+  .cinta__tramo {
+    display: flex;
+    flex-shrink: 0;
+  }
+
+  .cinta__item {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    padding-inline: 1rem 1rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .cinta__item::after {
+    content: '';
+    width: 0.55em;
+    aspect-ratio: 1;
+    background: var(--fucsia);
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+
+  @keyframes correr {
+    to {
+      translate: -50% 0;
+    }
+  }
+
+  .cinta__pausa {
+    position: absolute;
+    right: calc(3vw + 0.6rem);
+    top: 50%;
+    translate: 0 -50%;
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    border: 3px solid var(--cinta-tinta);
+    background: var(--cinta);
+    color: var(--cinta-tinta);
+    cursor: pointer;
+  }
+
+  .cinta__pausa svg {
+    fill: currentColor;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .cinta__pausa {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-cinta]').forEach((cinta) => {
+    const boton = cinta.querySelector<HTMLButtonElement>('[data-cinta-boton]');
+    const pausa = cinta.querySelector<SVGElement>('[data-icono-pausa]');
+    const seguir = cinta.querySelector<SVGElement>('[data-icono-seguir]');
+    boton?.addEventListener('click', () => {
+      const pausada = cinta.toggleAttribute('data-pausada');
+      boton.setAttribute('aria-label', pausada ? 'Mover la cinta' : 'Pausar la cinta');
+      pausa?.toggleAttribute('hidden', pausada);
+      seguir?.toggleAttribute('hidden', !pausada);
+    });
+  });
+</script>

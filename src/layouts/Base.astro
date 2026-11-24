@@ -1,0 +1,42 @@
+---
+import '@fontsource-variable/big-shoulders-display';
+import '@fontsource-variable/bricolage-grotesque/standard.css';
+import '../styles/global.css';
+import Cabecera from '../components/Cabecera.astro';
+import Pie from '../components/Pie.astro';
+// La letra de los titulares se ve en el primer pantallazo: se precarga.
+import letraTitulares from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url';
+
+interface Props {
+  title: string;
+  description: string;
+}
+
+const { title, description } = Astro.props;
+const titulo = title === 'Carnaval de Cajamarca' ? title : `${title} | Carnaval de Cajamarca`;
+---
+
+<!doctype html>
+<html lang="es-PE">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="preload" as="font" type="font/woff2" href={letraTitulares} crossorigin />
+    <meta name="generator" content={Astro.generator} />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#13185a" />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="es_PE" />
+    <title>{titulo}</title>
+  </head>
+  <body>
+    <Cabecera />
+    <main id="contenido">
+      <slot />
+    </main>
+    <Pie />
+  </body>
+</html>

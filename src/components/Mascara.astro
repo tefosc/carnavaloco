@@ -1,0 +1,105 @@
+---
+/**
+ * Ilustración: máscara de malla pintada, con cucurucho de clon y gola.
+ * Inspirada en las máscaras de hilo metálico del carnaval cajamarquino.
+ */
+interface Props {
+  class?: string;
+}
+const { class: clase } = Astro.props;
+
+// Golas (cuellos de vuelos) generadas con arcos.
+const vuelos = (x: number, y: number, n: number, ancho: number) =>
+  `M${x} ${y} ` + Array.from({ length: n }, () => `a${ancho / 2} ${ancho / 2} 0 0 0 ${ancho} 0`).join(' ');
+
+const golaAtras = `${vuelos(48, 490, 10, 30.4)} L340 466 Q200 444 60 466 Z`;
+const golaDelante = `${vuelos(62, 470, 10, 27.6)} L330 450 Q200 430 70 450 Z`;
+
+// Lentejuelas en la cinta del sombrero.
+const lentejuelas = Array.from({ length: 9 }, (_, i) => {
+  const t = (i + 0.5) / 9;
+  const x = 116 + t * 168;
+  const y = 200 + Math.sin(t * Math.PI) * 17.5;
+  return { x, y, color: ['var(--amarillo)', 'var(--blanco)', 'var(--fucsia)'][i % 3] };
+});
+---
+
+<svg class={clase} viewBox="0 0 400 520" role="img" aria-labelledby="mascara-titulo">
+  <title id="mascara-titulo">Máscara de malla pintada con cucurucho de colores, como las del carnaval de Cajamarca</title>
+  <defs>
+    <pattern id="malla" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <path d="M0 0H7M0 0V7" stroke="#1f1235" stroke-opacity="0.2" stroke-width="1"></path>
+    </pattern>
+    <pattern id="rayas" width="34" height="34" patternUnits="userSpaceOnUse" patternTransform="rotate(-28)">
+      <rect width="34" height="34" fill="var(--fucsia)"></rect>
+      <rect width="11" height="34" fill="var(--amarillo)"></rect>
+      <rect x="17" width="5" height="34" fill="var(--blanco)"></rect>
+    </pattern>
+    <radialGradient id="piel" cx="0.45" cy="0.4" r="0.7">
+      <stop offset="0" stop-color="#fbd9c2"></stop>
+      <stop offset="1" stop-color="#eeb193"></stop>
+    </radialGradient>
+  </defs>
+
+  <!-- Cintas que cuelgan del sombrero -->
+  <g fill="none" stroke-linecap="round" stroke-width="13">
+    <path d="M118 210 C 84 262, 124 306, 88 360 S 98 430, 70 480" stroke="var(--turquesa)"></path>
+    <path d="M132 214 C 108 270, 140 320, 112 380" stroke="var(--verde)" stroke-width="10"></path>
+    <path d="M282 210 C 316 262, 276 306, 312 360 S 302 430, 330 480" stroke="var(--fucsia)"></path>
+    <path d="M268 214 C 292 270, 260 320, 288 380" stroke="var(--azul)" stroke-width="10"></path>
+  </g>
+
+  <!-- Gola -->
+  <path d={golaAtras} fill="var(--turquesa)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"></path>
+  <path d={golaDelante} fill="var(--blanco)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"></path>
+
+  <!-- Rostro de malla -->
+  <ellipse cx="200" cy="345" rx="102" ry="126" fill="url(#piel)"></ellipse>
+  <ellipse cx="200" cy="345" rx="102" ry="126" fill="url(#malla)" stroke="var(--tinta)" stroke-width="4"></ellipse>
+
+  <!-- Mejillas -->
+  <circle cx="146" cy="372" r="19" fill="var(--fucsia)" opacity="0.4"></circle>
+  <circle cx="254" cy="372" r="19" fill="var(--fucsia)" opacity="0.4"></circle>
+
+  <!-- Cejas -->
+  <g fill="none" stroke="var(--tinta)" stroke-width="7" stroke-linecap="round">
+    <path d="M136 300 Q160 280 186 296"></path>
+    <path d="M214 296 Q240 280 264 300"></path>
+  </g>
+
+  <!-- Ojos -->
+  <g stroke="var(--tinta)" stroke-width="3">
+    <path d="M138 322 Q162 302 186 322 Q162 338 138 322 Z" fill="#fff"></path>
+    <path d="M214 322 Q238 302 262 322 Q238 338 214 322 Z" fill="#fff"></path>
+  </g>
+  <circle cx="162" cy="321" r="8.5" fill="var(--azul)"></circle>
+  <circle cx="238" cy="321" r="8.5" fill="var(--azul)"></circle>
+  <circle cx="162" cy="321" r="3.8" fill="var(--tinta)"></circle>
+  <circle cx="238" cy="321" r="3.8" fill="var(--tinta)"></circle>
+  <circle cx="164.5" cy="318" r="1.8" fill="#fff"></circle>
+  <circle cx="240.5" cy="318" r="1.8" fill="#fff"></circle>
+
+  <!-- Nariz -->
+  <path d="M200 328 Q195 362 186 371 Q199 381 214 371" fill="none" stroke="var(--tinta)" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"></path>
+
+  <!-- Bigote retorcido -->
+  <path
+    d="M200 393 C 186 382, 160 380, 144 394 C 134 403, 118 400, 117 386 C 112 402, 126 418, 150 411 C 170 405, 186 401, 200 404 C 214 401, 230 405, 250 411 C 274 418, 288 402, 283 386 C 282 400, 266 403, 256 394 C 240 380, 214 382, 200 393 Z"
+    fill="var(--tinta)"></path>
+
+  <!-- Boca -->
+  <path d="M180 422 Q200 440 220 422 Q200 430 180 422 Z" fill="#c81e4a" stroke="var(--tinta)" stroke-width="2.5" stroke-linejoin="round"></path>
+
+  <!-- Cucurucho -->
+  <path d="M200 18 L116 200 Q200 226 284 200 Z" fill="url(#rayas)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"></path>
+  <!-- Cinta del sombrero -->
+  <path d="M110 198 Q200 232 290 198 L296 222 Q200 258 104 222 Z" fill="var(--azul)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"></path>
+  {lentejuelas.map((l) => <circle cx={l.x} cy={l.y + 10} r="5" fill={l.color} stroke="var(--tinta)" stroke-width="1.5" />)}
+
+  <!-- Pompón -->
+  <g stroke="var(--tinta)" stroke-width="3">
+    <circle cx="200" cy="18" r="17" fill="var(--turquesa)"></circle>
+    <circle cx="190" cy="10" r="6" fill="var(--amarillo)"></circle>
+    <circle cx="208" cy="24" r="5" fill="var(--naranja)"></circle>
+  </g>
+</svg>

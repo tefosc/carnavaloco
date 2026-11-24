@@ -1,0 +1,80 @@
+[
+  {
+    "id": "viva",
+    "frase": "¡Viva el carnaval!",
+    "explicacion": "El grito que se escucha en cada esquina, de patrulla a patrulla.",
+    "tipo": "grito"
+  },
+  {
+    "id": "toma-carnavales",
+    "frase": "Si quieres carnavales, toma carnavales.",
+    "explicacion": "Lo que te dicen justo antes del baldazo. Ya avisaron: no hay reclamo que valga.",
+    "tipo": "dicho"
+  },
+  {
+    "id": "llego",
+    "frase": "¡Ya llegó el Ño Carnavalón!",
+    "explicacion": "El sábado entra el rey de la fiesta y empieza en serio el juego con agua y pintura.",
+    "tipo": "grito"
+  },
+  {
+    "id": "nanau",
+    "frase": "¡Ñañau, qué rico carnaval!",
+    "explicacion": "«¡Ñañau!» es «¡qué rico!»: vale para la chicha, la comida y la fiesta entera.",
+    "tipo": "grito"
+  },
+  {
+    "id": "a-jugar",
+    "frase": "¡A jugar carnaval!",
+    "explicacion": "La invitación para sacar los baldes, la pintura, el talco y las serpentinas.",
+    "tipo": "grito"
+  },
+  {
+    "id": "nadie-se-salva",
+    "frase": "¡Aquí nadie se salva!",
+    "explicacion": "La regla de oro: si sales a la calle en carnaval, vuelves pintado.",
+    "tipo": "dicho"
+  },
+  {
+    "id": "para-todos",
+    "frase": "Para el rico y para el pobre, para todos lo hizo Dios.",
+    "explicacion": "Verso de copla que se canta en el carnaval: la fiesta es de todos y nadie se queda fuera.",
+    "tipo": "verso popular"
+  },
+  {
+    "id": "aquisito",
+    "frase": "Aquisito nomás.",
+    "explicacion": "Así se explica el clima de Cajamarca: aquisito llueve, aquisito sale el sol.",
+    "tipo": "dicho"
+  },
+  {
+    "id": "san-sebastian",
+    "frase": "Para chicha y para pan, el barrio San Sebastián.",
+    "explicacion": "Cada barrio presume con su lema a manera de copla.",
+    "tipo": "lema de barrio"
+  },
+  {
+    "id": "san-pedro",
+    "frase": "Para muchachas y flores, San Pedro de mis amores.",
+    "explicacion": "El orgullo de barrio también se canta.",
+    "tipo": "lema de barrio"
+  },
+  {
+    "id": "cumbemayo",
+    "frase": "Cumbemayo, la flor del Cumbe.",
+    "explicacion": "Lema del barrio Cumbemayo, uno de los más fiesteros.",
+    "tipo": "lema de barrio"
+  },
+  {
+    "id": "la-merced",
+    "frase": "La Merced es cuna de reinas.",
+    "explicacion": "Lema del barrio La Merced.",
+    "tipo": "lema de barrio"
+  },
+  {
+    "id": "san-jose",
+    "frase": "San José de los Valientes, cuna de artistas.",
+    "explicacion": "Lema del barrio San José.",
+    "tipo": "lema de barrio"
+  }
+]

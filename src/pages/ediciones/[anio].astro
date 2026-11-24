@@ -1,0 +1,437 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import Chicha from '../../components/Chicha.astro';
+import Afiche from '../../components/Afiche.astro';
+import { diaDeCarnaval } from '../../lib/fechas';
+import { fotos } from '../../data/fotos';
+
+export const getStaticPaths = (async () => {
+  const ediciones = (await getCollection('ediciones')).map((e) => e.data).sort((a, b) => a.anio - b.anio);
+  return ediciones.map((edicion, i) => ({
+    params: { anio: String(edicion.anio) },
+    props: { edicion, anterior: ediciones[i - 1], siguiente: ediciones[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  edicion: CollectionEntry<'ediciones'>['data'];
+  anterior?: CollectionEntry<'ediciones'>['data'];
+  siguiente?: CollectionEntry<'ediciones'>['data'];
+}
+
+const { edicion, anterior, siguiente } = Astro.props;
+const suspendido = edicion.estado === 'suspendido';
+const fmt = new Intl.DateTimeFormat('es-PE', { weekday: 'long', day: 'numeric', month: 'long', timeZone: 'UTC' });
+const fecha = (offset: number) => fmt.format(diaDeCarnaval(edicion.anio, offset)).replace(',', '');
+const inicio = fecha(-4);
+const fin = fecha(0);
+// La mitad de abajo del año tiene que contrastar con el raso de fondo.
+const relleno2 = suspendido ? 'var(--blanco)' : edicion.color === 'amarillo' ? 'var(--fucsia)' : 'var(--amarillo)';
+// Texto blanco solo sobre azul; en los demás rasos el azul noche contrasta mejor.
+const fondoClaro = edicion.color !== 'azul';
+
+const fotosDelAnio = edicion.anio === 2017
+  ? [fotos.patrullaMojada, fotos.disfrazPicaflor, fotos.plazaMojada, fotos.disfrazAbanico]
+  : [];
+---
+
+<Base
+  title={`Carnaval ${edicion.anio}`}
+  description={`Carnaval de Cajamarca ${edicion.anio}: ${edicion.resumen}`}
+>
+  <section
+    class:list={['ficha bloque zigzag-abajo', { oscuro: !fondoClaro }]}
+    data-color={edicion.color}
+    aria-labelledby="titulo-ficha"
+  >
+    <div class="envoltura ficha__grid">
+      <div>
+        <p class="ficha__antes">Carnaval de Cajamarca</p>
+        <h1 id="titulo-ficha" class="ficha__titulo">
+          <Chicha
+            texto={String(edicion.anio)}
+            class="ficha__anio"
+            relleno="var(--blanco)"
+            relleno2={relleno2}
+            sombra="var(--tinta)"
+          />
+          {edicion.nombre && <span class="ficha__nombre">{edicion.nombre}</span>}
+        </h1>
+        <p class="entrada ficha__resumen">{edicion.resumen}</p>
+      </div>
+      <div class="ficha__fechas">
+        {
+          suspendido ? (
+            <p class="ficha__sello-suspendido">Suspendido</p>
+          ) : (
+            <p>
+              <span>Del {inicio}</span>
+              <span>al {fin}</span>
+            </p>
+          )
+        }
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque cuerpo" aria-label={`Lo que pasó en ${edicion.anio}`}>
+    <div class="envoltura cuerpo__grid">
+      <div class="cuerpo__principal">
+        {
+          edicion.cifras.length > 0 && (
+            <ul class="entradas" aria-label="Cifras">
+              {edicion.cifras.map((c, i) => (
+                <li class="entrada-palco" data-color={['fucsia', 'verde', 'amarillo', 'turquesa'][i % 4]}>
+                  <span class="entrada-palco__valor">{c.valor}</span>
+                  <span class="entrada-palco__texto">{c.texto}</span>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+
+        <h2 class="cuerpo__titulo">{suspendido ? 'Lo que hubo en vez de fiesta' : 'Lo que pasó'}</h2>
+        <ul class="hechos">
+          {edicion.hechos.map((h) => <li>{h}</li>)}
+        </ul>
+      </div>
+
+      <aside class="cuerpo__lado">
+        {
+          edicion.reina && (
+            <div class="banda">
+              <p class="banda__cinta">Reina {edicion.anio}</p>
+              <p class="banda__nombre">{edicion.reina.nombre}</p>
+              <p class="banda__barrio">{edicion.reina.barrio}</p>
+              {edicion.reina.nota && <p class="banda__nota">{edicion.reina.nota}</p>}
+            </div>
+          )
+        }
+        <div class="fuentes">
+          <h2 class="fuentes__titulo">Fuentes</h2>
+          <ul>
+            {edicion.fuentes.map((f) => (
+              <li>
+                <a href={f.url}>{f.titulo ?? f.medio}</a>
+                <span>{f.medio}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      </aside>
+    </div>
+
+    {
+      fotosDelAnio.length > 0 && (
+        <div class="envoltura fotos-anio">
+          {fotosDelAnio.map((f, i) => (
+            <Afiche foto={f} giro={[-2, 1.5, -1, 2.5][i]} sizes="(min-width: 900px) 24vw, 46vw" />
+          ))}
+        </div>
+      )
+    }
+
+    <nav class="envoltura vecinos" aria-label="Otras ediciones">
+      {
+        anterior ? (
+          <a class="vecino" href={`/ediciones/${anterior.anio}/`}>
+            <span class="vecino__dir">Año anterior</span>
+            <span class="vecino__anio">{anterior.anio}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+      <a class="boton boton--hueco" href="/ediciones/">Todas las ediciones</a>
+      {
+        siguiente ? (
+          <a class="vecino vecino--sig" href={`/ediciones/${siguiente.anio}/`}>
+            <span class="vecino__dir">Año siguiente</span>
+            <span class="vecino__anio">{siguiente.anio}</span>
+          </a>
+        ) : (
+          <span />
+        )
+      }
+    </nav>
+  </section>
+</Base>
+
+<style>
+  /* ---------- Ficha ---------- */
+  .ficha {
+    padding-top: clamp(5rem, 9vw, 6.5rem);
+    background: var(--c);
+    color: var(--tinta);
+  }
+
+  .ficha.oscuro {
+    color: var(--blanco);
+  }
+
+  .ficha__grid {
+    display: grid;
+    grid-template-columns: 1.4fr 0.6fr;
+    gap: 2.5rem;
+    align-items: end;
+  }
+
+  .ficha__antes {
+    font-weight: 700;
+    margin-bottom: 0.6rem;
+  }
+
+  .ficha__titulo {
+    display: grid;
+    gap: clamp(1rem, 2.4vw, 2rem);
+    margin-bottom: 1.8rem;
+  }
+
+  .ficha :global(.ficha__anio) {
+    font-size: clamp(6rem, 22vw, 16rem);
+  }
+
+  .ficha__nombre {
+    font-size: clamp(2rem, 4.5vw, 3.4rem);
+    text-transform: uppercase;
+    max-width: 18ch;
+  }
+
+  .ficha__resumen {
+    font-weight: 600;
+  }
+
+  .ficha__fechas p {
+    display: grid;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.6rem, 2.6vw, 2.2rem);
+    line-height: 1;
+    text-transform: uppercase;
+    border-left: 6px solid currentColor;
+    padding-left: 1rem;
+  }
+
+  .ficha__fechas .ficha__sello-suspendido {
+    border: 5px solid currentColor;
+    padding: 0.4rem 1rem;
+    font-size: clamp(2.2rem, 4vw, 3.4rem);
+    rotate: -8deg;
+  }
+
+  /* ---------- Cuerpo ---------- */
+  .cuerpo__grid {
+    display: grid;
+    grid-template-columns: 1.5fr 0.8fr;
+    gap: 3rem 4rem;
+    align-items: start;
+  }
+
+  .entradas {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 13rem), 1fr));
+    gap: 1rem;
+    margin-bottom: 3.5rem;
+  }
+
+  /* Entrada de palco: muescas a los lados */
+  .entrada-palco {
+    display: grid;
+    gap: 0.3rem;
+    padding: 1.1rem 1.4rem 1.2rem;
+    background: var(--c);
+    color: var(--tinta);
+    -webkit-mask: radial-gradient(circle 11px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+      radial-gradient(circle 11px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+    mask: radial-gradient(circle 11px at 0 50%, #0000 98%, #000) left / 51% 100% no-repeat,
+      radial-gradient(circle 11px at 100% 50%, #0000 98%, #000) right / 51% 100% no-repeat;
+  }
+
+  .entrada-palco__valor {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    line-height: 0.9;
+  }
+
+  .entrada-palco__texto {
+    font-weight: 600;
+    font-size: 0.98rem;
+    line-height: 1.35;
+    border-top: 2px dashed var(--tinta);
+    padding-top: 0.4rem;
+  }
+
+  .cuerpo__titulo,
+  .fuentes__titulo {
+    font-size: clamp(2.4rem, 5vw, 3.6rem);
+    text-transform: uppercase;
+    margin-bottom: 1.4rem;
+  }
+
+  .hechos {
+    list-style: none;
+    display: grid;
+    gap: 1.1rem;
+    max-width: 60ch;
+  }
+
+  .hechos li {
+    position: relative;
+    padding-left: 2.2rem;
+    font-size: 1.15rem;
+  }
+
+  .hechos li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.2em;
+    width: 1.25rem;
+    aspect-ratio: 1;
+    background: var(--fucsia);
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+
+  /* Banda de reina, cruzada como la que llevan en el corso */
+  .banda {
+    position: relative;
+    margin-bottom: 3rem;
+    padding: 1.4rem 1.4rem 1.5rem;
+    background: var(--tinta);
+    color: var(--blanco);
+    overflow: hidden;
+  }
+
+  .banda__cinta {
+    margin: -0.2rem -3rem 1rem;
+    padding: 0.35rem 3rem;
+    background: var(--amarillo);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    rotate: -4deg;
+    text-align: center;
+  }
+
+  .banda__nombre {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 2.2rem;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .banda__barrio {
+    margin-top: 0.4rem;
+    color: var(--amarillo);
+    font-weight: 700;
+  }
+
+  .banda__nota {
+    margin-top: 0.6rem;
+    font-size: 0.95rem;
+    opacity: 0.85;
+  }
+
+  .fuentes ul {
+    list-style: none;
+    display: grid;
+    gap: 0.9rem;
+  }
+
+  .fuentes li {
+    display: grid;
+    gap: 0.1rem;
+  }
+
+  .fuentes span {
+    font-size: 0.9rem;
+    font-weight: 600;
+    opacity: 0.75;
+  }
+
+  .fuentes__titulo {
+    font-size: 2rem;
+  }
+
+  .fotos-anio {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 4rem;
+    align-items: start;
+  }
+
+  .fotos-anio > :global(:nth-child(even)) {
+    margin-top: 2rem;
+  }
+
+  /* ---------- Vecinos ---------- */
+  .vecinos {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 1rem;
+    align-items: center;
+    margin-top: 5rem;
+    padding-top: 2rem;
+    border-top: 4px solid var(--tinta);
+  }
+
+  .vecino {
+    display: grid;
+    text-decoration: none;
+    justify-self: start;
+  }
+
+  .vecino--sig {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .vecino__dir {
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .vecino__anio {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(3rem, 6vw, 4.5rem);
+    line-height: 0.9;
+    color: var(--fucsia);
+    -webkit-text-stroke: 0.04em var(--tinta);
+    paint-order: stroke fill;
+  }
+
+  .vecino:hover .vecino__anio {
+    color: var(--azul);
+  }
+
+  @media (max-width: 860px) {
+    .ficha__grid,
+    .cuerpo__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .fotos-anio {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .vecinos {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .vecinos .boton {
+      grid-column: 1 / -1;
+      grid-row: 2;
+      justify-self: center;
+    }
+  }
+</style>

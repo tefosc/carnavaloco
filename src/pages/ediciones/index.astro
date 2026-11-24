@@ -1,0 +1,67 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../../components/CabezaPagina.astro';
+import CartelEdicion from '../../components/CartelEdicion.astro';
+
+const ediciones = (await getCollection('ediciones')).map((e) => e.data).sort((a, b) => b.anio - a.anio);
+const giros = [-2.5, 1.5, -1, 3, -3, 2, -1.5, 2.5, -2, 1];
+const realizadas = ediciones.filter((e) => e.estado === 'realizado').length;
+---
+
+<Base
+  title="Carnavales de años anteriores"
+  description="Las ediciones del Carnaval de Cajamarca desde 2017: fechas, reinas, cifras y lo que pasó cada año, con sus fuentes."
+>
+  <CabezaPagina titulo="Ediciones" fondo="var(--naranja)" relleno="var(--blanco)" sombra="var(--tinta)">
+    <p>
+      {realizadas} carnavales y dos febreros en silencio, de 2017 a hoy. Cada afiche lleva a lo que pasó ese año: la reina,
+      las cifras, lo que contó la prensa y de dónde sale cada dato.
+    </p>
+  </CabezaPagina>
+
+  <section class="bloque muro" aria-label="Afiches por año">
+    <ul class="envoltura muro__lista">
+      {
+        ediciones.map((e, i) => (
+          <li>
+            <CartelEdicion edicion={e} giro={giros[i % giros.length]} oscuro={i % 3 === 1} />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="envoltura muro__nota">
+      ¿Tienes datos de un año que falta, como los ganadores de comparsas? Los resultados oficiales los publica la
+      Municipalidad Provincial de Cajamarca cada febrero.
+    </p>
+  </section>
+</Base>
+
+<style>
+  .muro__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2.4rem 1.6rem;
+  }
+
+  .muro__lista li:nth-child(4n + 2),
+  .muro__lista li:nth-child(4n + 4) {
+    translate: 0 2rem;
+  }
+
+  .muro__nota {
+    margin-top: 5rem;
+    max-width: 62ch;
+  }
+
+  @media (max-width: 900px) {
+    .muro__lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .muro__lista li:nth-child(n) {
+      translate: none;
+    }
+  }
+</style>

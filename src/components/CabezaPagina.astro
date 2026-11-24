@@ -1,0 +1,92 @@
+---
+/**
+ * Encabezado de las páginas interiores: un paño de raso de color,
+ * el título en letra de afiche y la bajada. A la derecha, lo que venga en el slot.
+ */
+import Chicha from './Chicha.astro';
+
+interface Props {
+  titulo: string;
+  fondo: string;
+  relleno?: string;
+  relleno2?: string;
+  sombra?: string;
+  tintaTexto?: string;
+  pintura?: boolean;
+}
+
+const {
+  titulo,
+  fondo,
+  relleno = 'var(--amarillo)',
+  relleno2,
+  sombra = 'var(--fucsia)',
+  tintaTexto = 'var(--tinta)',
+  pintura = false,
+} = Astro.props;
+---
+
+<section
+  class="cabeza bloque zigzag-abajo"
+  style={`background:${fondo};color:${tintaTexto}`}
+  data-pintura={pintura ? '' : undefined}
+>
+  {pintura && <div class="capa-pintura" data-capa-pintura aria-hidden="true" />}
+  <div class="envoltura cabeza__grid">
+    <div class="cabeza__texto">
+      <Chicha texto={titulo} como="h1" class="cabeza__titulo" relleno={relleno} relleno2={relleno2} sombra={sombra} />
+      <div class="entrada cabeza__entrada">
+        <slot />
+      </div>
+    </div>
+    {
+      Astro.slots.has('lado') && (
+        <div class="cabeza__lado">
+          <slot name="lado" />
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .cabeza {
+    padding-top: clamp(5rem, 9vw, 6.5rem);
+  }
+
+  .cabeza__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1.3fr 0.7fr;
+    gap: 2.5rem;
+    align-items: end;
+  }
+
+  .cabeza :global(.cabeza__titulo) {
+    font-size: clamp(4rem, 12vw, 9.5rem);
+    margin-bottom: 1.8rem;
+  }
+
+  .cabeza__entrada {
+    font-weight: 600;
+  }
+
+  .cabeza__entrada :global(p + p) {
+    margin-top: 0.8em;
+  }
+
+  .cabeza__lado {
+    justify-self: end;
+  }
+
+  @media (max-width: 860px) {
+    .cabeza__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cabeza__lado {
+      justify-self: start;
+    }
+  }
+</style>

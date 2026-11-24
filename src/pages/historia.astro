@@ -1,0 +1,176 @@
+---
+import Base from '../layouts/Base.astro';
+import CabezaPagina from '../components/CabezaPagina.astro';
+import Afiche from '../components/Afiche.astro';
+import Sello from '../components/Sello.astro';
+import { historia, fuentes } from '../data/carnaval';
+import { fotos } from '../data/fotos';
+
+const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--turquesa)', 'var(--naranja)', 'var(--verde)'];
+---
+
+<Base
+  title="Historia y fuentes"
+  description="Historia del Carnaval de Cajamarca: de la copla española al carnaval moderno de 1930, la copla como patrimonio y los años de pandemia. Con sus fuentes."
+>
+  <CabezaPagina titulo="Historia" fondo="var(--tinta)" tintaTexto="var(--blanco)" relleno="var(--fucsia)" sombra="var(--amarillo)">
+    <p>
+      Cinco siglos de mezcla: el romance español que llegó con la conquista, la sátira que el pueblo le agregó, los barrios
+      que la convirtieron en competencia y un carnaval moderno que empezó en 1930 con carros alegóricos y reinas.
+    </p>
+    <Sello slot="lado" anillo="Patrimonio Cultural de la Nación ✶ " color="var(--fucsia)" giro={-10}>
+      <span class="sello-patrimonio__anio">2017</span>
+      <span class="sello-patrimonio__texto">copla y contrapunto</span>
+    </Sello>
+  </CabezaPagina>
+
+  <section class="bloque linea" aria-labelledby="titulo-linea">
+    <div class="envoltura">
+      <h2 id="titulo-linea" class="visualmente-oculto">Línea de tiempo</h2>
+      <ol class="hitos">
+        {
+          historia.map((h, i) => (
+            <li class="hito" style={`--tono:${colores[i % colores.length]}`}>
+              <p class:list={['hito__cuando', { 'hito__cuando--largo': h.cuando.length > 12 }]}>{h.cuando}</p>
+              <div class="hito__cuerpo">
+                <h3>{h.titulo}</h3>
+                <p>{h.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="bloque fondo-naranja patio zigzag-arriba" aria-labelledby="titulo-patio">
+    <div class="envoltura patio__grid">
+      <Afiche foto={fotos.patioMunicipal} giro={-2} cinta sizes="(min-width: 900px) 50vw, 92vw" />
+      <div>
+        <h2 id="titulo-patio" class="titulo-bloque">La ciudad se viste</h2>
+        <p class="lectura">
+          Antes de la fiesta, los vecinos arreglan sus calles con colores y hasta compiten por la mejor. El patio de la
+          antigua municipalidad se cubre de telas en los colores del carnaval y de máscaras gigantes pintadas a mano.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque fuentes" aria-labelledby="titulo-fuentes">
+    <div class="envoltura">
+      <h2 id="titulo-fuentes" class="titulo-bloque">Fuentes</h2>
+      <p class="lectura fuentes__intro">
+        Lo que dice este sitio sale de estas notas y documentos. Cada edición del carnaval tiene además sus propias
+        fuentes en su página. Las fotos son de Pitxiquin en Wikimedia Commons, con licencia CC BY-SA 4.0.
+      </p>
+      <ul class="fuentes__lista">
+        {
+          fuentes.map((f) => (
+            <li>
+              <span class="fuentes__medio">{f.medio}</span>
+              <a href={f.url}>{f.titulo}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sello-patrimonio__anio {
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-weight: 900;
+  }
+
+  .sello-patrimonio__texto {
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Línea de tiempo ---------- */
+  .hitos {
+    list-style: none;
+    display: grid;
+    gap: 0;
+  }
+
+  .hito {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1rem 3rem;
+    padding-block: 2.2rem;
+    border-top: 5px solid var(--tinta);
+  }
+
+  .hito:last-child {
+    border-bottom: 5px solid var(--tinta);
+  }
+
+  .hito__cuando {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.85;
+    text-transform: uppercase;
+    color: var(--tono);
+    -webkit-text-stroke: 0.035em var(--tinta);
+    paint-order: stroke fill;
+    text-wrap: balance;
+  }
+
+  .hito__cuando--largo {
+    font-size: clamp(2rem, 4.4vw, 3.6rem);
+  }
+
+  .hito__cuerpo {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    max-width: 52ch;
+  }
+
+  .hito__cuerpo h3 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Patio ---------- */
+  .patio__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem 4rem;
+    align-items: center;
+  }
+
+  /* ---------- Fuentes ---------- */
+  .fuentes__intro {
+    margin-bottom: 2.5rem;
+  }
+
+  .fuentes__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.4rem 3rem;
+  }
+
+  .fuentes__lista li {
+    display: grid;
+    gap: 0.2rem;
+    padding-top: 0.8rem;
+    border-top: 3px solid var(--tinta);
+  }
+
+  .fuentes__medio {
+    font-weight: 700;
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 860px) {
+    .hito,
+    .patio__grid,
+    .fuentes__lista {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

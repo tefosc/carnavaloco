@@ -1,0 +1,122 @@
+[
+  {
+    "id": "lima-trujillo",
+    "tema": "cajamarca",
+    "origen": "tradicional",
+    "versos": ["Lima, ciudad de los reyes,", "Trujillo primaveral,", "y mi bella Cajamarca,", "capital del carnaval."],
+    "fuente": { "medio": "RPP", "titulo": "Cajamarca está de fiesta con su carnaval", "url": "https://rpp.pe/peru/actualidad/cajamarca-esta-de-fiesta-con-su-carnaval-noticia-673520" },
+    "nota": "RPP la cita como una de las coplas populares que se escuchan en toda la ciudad."
+  },
+  {
+    "id": "para-todos",
+    "tema": "cajamarca",
+    "origen": "tradicional",
+    "versos": ["Para todos lo hizo Dios,", "para el grande, para el chico,", "para el pobre, para el rico."],
+    "fuente": { "medio": "RPP", "titulo": "Las alegres y pícaras coplas de Cajamarca", "url": "https://rpp.pe/peru/actualidad/las-alegres-y-picaras-coplas-de-cajamarca-noticia-669715" },
+    "nota": "También se canta al revés: «carnaval es para el chico y el grande, para el rico y el pobre»."
+  },
+  {
+    "id": "destino",
+    "tema": "despedida",
+    "origen": "tradicional",
+    "versos": ["Destino que me has traído", "de mi tierra para acá,", "así como me has traído", "devuélveme para allá."],
+    "fuente": { "medio": "La República", "titulo": "Carnaval de Cajamarca 2024", "url": "https://larepublica.pe/turismo/2024/02/23/carnaval-de-cajamarca-2024-para-el-rico-y-para-el-pobre-para-todos-lo-hizo-dios-carnaval-inolvidable-carnaval-de-cajamarca-1216006" },
+    "nota": "Se canta repitiendo cada par de versos."
+  },
+  {
+    "id": "no-te-vayas",
+    "tema": "despedida",
+    "origen": "tradicional",
+    "versos": ["No te vayas, carnaval,", "quédate otro día más;", "si por capricho te vas,", "yo te sigo por tu tras."],
+    "fuente": { "medio": "La República", "titulo": "Carnaval de Cajamarca 2024", "url": "https://larepublica.pe/turismo/2024/02/23/carnaval-de-cajamarca-2024-para-el-rico-y-para-el-pobre-para-todos-lo-hizo-dios-carnaval-inolvidable-carnaval-de-cajamarca-1216006" },
+    "nota": "Suena cuando la fiesta se acaba, cada verso con su repetición."
+  },
+  {
+    "id": "patrulla-sale",
+    "tema": "invitación",
+    "origen": "inedita",
+    "versos": ["Afina bien tu guitarra,", "que la patrulla ya sale;", "el que no canta esta copla,", "que se moje y que se calle."]
+  },
+  {
+    "id": "vengo-de-san-sebastian",
+    "tema": "invitación",
+    "origen": "inedita",
+    "versos": ["Vengo de San Sebastián", "con mi patrulla cantando,", "a pedirle a la morena", "que no me siga mojando."]
+  },
+  {
+    "id": "llego-el-no",
+    "tema": "picardía",
+    "origen": "inedita",
+    "versos": ["Llegó el Ño Carnavalón", "con su panza y su sombrero,", "a gastarse en cuatro días", "lo que juntó el año entero."]
+  },
+  {
+    "id": "echame-pintura",
+    "tema": "picardía",
+    "origen": "inedita",
+    "versos": ["Échame pintura, negra,", "échame agua, que no importa,", "que el carnaval se nos va", "y la vida es cosa corta."]
+  },
+  {
+    "id": "chicha-del-poto",
+    "tema": "picardía",
+    "origen": "inedita",
+    "versos": ["Dame chicha de tu poto,", "no me pongas esa cara,", "que yo hablo de calabaza", "y tu mente se dispara."],
+    "nota": "En Cajamarca el «poto» es el mate de calabaza en que se sirve la chicha. El doble sentido es marca de la casa."
+  },
+  {
+    "id": "patrulla-la-merced",
+    "tema": "contrapunto",
+    "origen": "inedita",
+    "versos": ["Patrulla del otro barrio,", "no te creas tan cantora,", "que mi barrio con su copla", "te deja muda en una hora."]
+  },
+  {
+    "id": "calla-cantorcito",
+    "tema": "contrapunto",
+    "origen": "inedita",
+    "versos": ["Calla, calla, cantorcito,", "no presumas tanto, tanto,", "que hasta el misho de mi casa", "maúlla mejor tu canto."],
+    "nota": "«Misho» es gato en el habla de Cajamarca."
+  },
+  {
+    "id": "cholita-cumbemayo",
+    "tema": "amor",
+    "origen": "inedita",
+    "versos": ["Cholita de Cumbemayo,", "tus ojos son dos luceros;", "si me echas una mirada", "te doy todos mis carneros."]
+  },
+  {
+    "id": "chinashita",
+    "tema": "amor",
+    "origen": "inedita",
+    "versos": ["Chinashita de ojos negros,", "no me eches más agua fría,", "que este pobre cholashito", "ya no tiene ropa limpia."],
+    "nota": "«Chinasha» y «cholasho»: muchachita y muchachito, con el diminutivo -ash- que viene del culle."
+  },
+  {
+    "id": "aquisito",
+    "tema": "cajamarca",
+    "origen": "inedita",
+    "versos": ["Aquisito nomás llueve,", "aquisito sale el sol,", "aquisito te mojaron", "y aquisito… ¡qué color!"]
+  },
+  {
+    "id": "tierra-linda",
+    "tema": "cajamarca",
+    "origen": "inedita",
+    "versos": ["Cajamarca, tierra linda,", "de quesillo y de manjar;", "quien te prueba en carnaval", "ya no te puede olvidar."]
+  },
+  {
+    "id": "shulquita",
+    "tema": "cajamarca",
+    "origen": "inedita",
+    "versos": ["La shulquita de mi casa", "me ha robado la pintura:", "la más chiquita del barrio", "con la mayor travesura."],
+    "nota": "La «shulca» es la hija menor, la última de la familia."
+  },
+  {
+    "id": "se-va-el-no",
+    "tema": "despedida",
+    "origen": "inedita",
+    "versos": ["Se va el Ño Carnavalón,", "lo lloran todas sus viudas,", "y nos deja en testamento", "puras deudas y mil dudas."]
+  },
+  {
+    "id": "adios-carnaval",
+    "tema": "despedida",
+    "origen": "inedita",
+    "versos": ["Adiós, adiós, carnaval,", "ya te vas y aquí me quedo,", "con la pintura en la cara", "y en el bolsillo, ni un medio."]
+  }
+]

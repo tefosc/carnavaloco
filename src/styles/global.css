@@ -1,0 +1,299 @@
+/*
+ * Sistema visual: afiche chicha + raso de clon.
+ * Colores planos y saturados como el satín de los disfraces; letras de rótulo
+ * con contorno y sombra dura; bordes en zigzag (la gola) y flecos.
+ */
+
+:root {
+  --fucsia: #ff2a92;
+  --amarillo: #ffe600;
+  --verde: #00b35c;
+  --azul: #1d2fd0;
+  --naranja: #ff6a00;
+  --turquesa: #00b8c8;
+  --tinta: #13185a;
+  --blanco: #ffffff;
+
+  --display: 'Big Shoulders Display Variable', 'Arial Narrow', 'Roboto Condensed', sans-serif;
+  --texto: 'Bricolage Grotesque Variable', system-ui, sans-serif;
+
+  --ancho: 1240px;
+  --margen: clamp(1.25rem, 4vw, 3rem);
+  --zz: 16px;
+
+  color-scheme: light;
+  accent-color: var(--fucsia);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  -webkit-tap-highlight-color: rgb(255 42 146 / 0.3);
+  scroll-padding-top: 1rem;
+}
+
+a,
+button,
+input,
+label {
+  touch-action: manipulation;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  html {
+    scroll-behavior: smooth;
+  }
+
+  @view-transition {
+    navigation: auto;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: var(--texto);
+  font-size: 1.125rem;
+  line-height: 1.55;
+  color: var(--tinta);
+  background: var(--blanco);
+  -webkit-font-smoothing: antialiased;
+  overflow-x: clip;
+}
+
+h1,
+h2,
+h3,
+h4 {
+  margin: 0;
+  font-family: var(--display);
+  font-weight: 900;
+  line-height: 0.9;
+  letter-spacing: 0;
+  text-wrap: balance;
+}
+
+h3 {
+  font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+  font-weight: 800;
+}
+
+p,
+ul,
+ol,
+dl,
+figure,
+blockquote {
+  margin: 0;
+}
+
+p {
+  text-wrap: pretty;
+}
+
+ul,
+ol {
+  padding: 0;
+}
+
+img,
+svg {
+  display: block;
+  max-width: 100%;
+  height: auto;
+}
+
+button,
+input {
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration-thickness: 0.12em;
+  text-underline-offset: 0.18em;
+  text-decoration-color: var(--fucsia);
+}
+
+a:hover {
+  text-decoration-color: currentColor;
+}
+
+:focus-visible {
+  outline: 3px solid var(--azul);
+  outline-offset: 3px;
+}
+
+.oscuro :focus-visible {
+  outline-color: var(--amarillo);
+}
+
+::selection {
+  background: var(--amarillo);
+  color: var(--tinta);
+}
+
+/* ---------- Estructura ---------- */
+
+.envoltura {
+  /* Respeta la muesca de los teléfonos en horizontal */
+  --borde: max(var(--margen), env(safe-area-inset-left), env(safe-area-inset-right));
+  width: min(100% - 2 * var(--borde), var(--ancho));
+  margin-inline: auto;
+}
+
+.bloque {
+  position: relative;
+  padding-block: clamp(4rem, 9vw, 7rem);
+}
+
+.oscuro {
+  color: var(--blanco);
+}
+
+.lectura {
+  max-width: 62ch;
+}
+
+.lectura p + p {
+  margin-top: 0.9em;
+}
+
+.entrada {
+  font-size: clamp(1.2rem, 1.9vw, 1.45rem);
+  line-height: 1.45;
+  max-width: 46ch;
+}
+
+.titulo-bloque {
+  font-size: clamp(3rem, 9vw, 7rem);
+  text-transform: uppercase;
+  margin-bottom: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+.visualmente-oculto {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* ---------- Fondos de raso ---------- */
+
+.fondo-fucsia { background-color: var(--fucsia); }
+.fondo-amarillo { background-color: var(--amarillo); }
+.fondo-verde { background-color: var(--verde); }
+.fondo-azul { background-color: var(--azul); }
+.fondo-naranja { background-color: var(--naranja); }
+.fondo-turquesa { background-color: var(--turquesa); }
+.fondo-tinta { background-color: var(--tinta); }
+
+[data-color='fucsia'] { --c: var(--fucsia); }
+[data-color='amarillo'] { --c: var(--amarillo); }
+[data-color='verde'] { --c: var(--verde); }
+[data-color='azul'] { --c: var(--azul); }
+[data-color='naranja'] { --c: var(--naranja); }
+[data-color='turquesa'] { --c: var(--turquesa); }
+
+/* ---------- La gola: bordes en zigzag ----------
+ * Se recorta el borde del bloque con una máscara. Sin soporte de máscaras,
+ * el bloque queda recto y nada se rompe. */
+
+.zigzag-abajo {
+  padding-bottom: calc(clamp(4rem, 9vw, 7rem) + var(--zz));
+  -webkit-mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
+  mask:
+    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
+  margin-bottom: calc(-1 * var(--zz));
+  z-index: 1;
+}
+
+.zigzag-arriba {
+  padding-top: calc(clamp(4rem, 9vw, 7rem) + var(--zz));
+  -webkit-mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
+  mask:
+    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
+  margin-top: calc(-1 * var(--zz));
+}
+
+/* ---------- Flecos colgando ---------- */
+
+.flecos {
+  position: relative;
+}
+
+.flecos::after {
+  content: '';
+  position: absolute;
+  inset: 100% 0 auto;
+  height: 22px;
+  background: repeating-linear-gradient(90deg, var(--c, var(--amarillo)) 0 3px, #0000 3px 7px);
+  -webkit-mask: linear-gradient(#000 40%, #0000);
+  mask: linear-gradient(#000 40%, #0000);
+}
+
+/* ---------- Botón de afiche ---------- */
+
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  min-height: 48px;
+  padding: 0.55rem 1.3rem 0.5rem;
+  border: 3px solid var(--tinta);
+  background: var(--amarillo);
+  color: var(--tinta);
+  font-family: var(--display);
+  font-weight: 800;
+  font-size: 1.35rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.boton:hover {
+  background: var(--fucsia);
+  color: var(--blanco);
+}
+
+.boton:active {
+  translate: 0 2px;
+}
+
+.boton--hueco {
+  background: transparent;
+  color: inherit;
+  border-color: currentColor;
+}
+
+/* ---------- Fotos impresas con trama ---------- */
+
+.trama {
+  position: relative;
+  isolation: isolate;
+}
+
+.trama::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(rgb(19 24 90 / 0.32) 0.9px, #0000 1.3px) 0 0 / 5px 5px;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
