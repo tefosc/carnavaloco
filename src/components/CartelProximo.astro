@@ -1,0 +1,92 @@
+---
+/**
+ * Afiche del próximo carnaval, recién pegado encima de los de años anteriores.
+ */
+import Chicha from './Chicha.astro';
+import { ANIO } from '../data/carnaval2027';
+import { diaDeCarnaval } from '../lib/fechas';
+
+interface Props {
+  giro?: number;
+}
+
+const { giro = -2 } = Astro.props;
+const dia = new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' });
+const mes = new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' });
+const fin = diaDeCarnaval(ANIO, 0);
+const fechas = `${dia.format(diaDeCarnaval(ANIO, -4))} al ${dia.format(fin)} de ${mes.format(fin)}`;
+---
+
+<a href={`/${ANIO}/`} class="proximo claro" style={`--giro:${giro}deg`}>
+  <span class="proximo__arriba">Se viene</span>
+  <Chicha texto={String(ANIO)} class="proximo__anio" relleno="var(--amarillo)" relleno2="var(--naranja)" sombra="var(--tinta)" />
+  <span class="proximo__fechas">{fechas}</span>
+  <span class="proximo__ver">Ver el programa</span>
+</a>
+
+<style>
+  .proximo {
+    display: grid;
+    align-content: start;
+    gap: 0.5rem;
+    min-height: 100%;
+    padding: 1.1rem 1.1rem 1.3rem;
+    background: var(--fucsia);
+    color: var(--tinta);
+    text-decoration: none;
+    rotate: var(--giro);
+    outline: 4px dashed var(--tinta);
+    outline-offset: -10px;
+    container-type: inline-size;
+  }
+
+  @media (prefers-reduced-motion: no-preference) {
+    .proximo {
+      transition:
+        rotate 0.2s ease,
+        translate 0.2s ease;
+    }
+
+    .proximo:hover {
+      rotate: 0deg;
+      translate: 0 -4px;
+    }
+  }
+
+  .proximo:focus-visible {
+    outline: 3px solid var(--azul);
+    outline-offset: 3px;
+  }
+
+  .proximo__arriba {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.2rem, 12cqi, 1.8rem);
+    text-transform: uppercase;
+  }
+
+  .proximo :global(.proximo__anio) {
+    font-size: clamp(2.6rem, 38cqi, 9rem);
+  }
+
+  .proximo__fechas {
+    font-weight: 700;
+  }
+
+  .proximo__ver {
+    justify-self: start;
+    margin-top: 0.4rem;
+    padding: 0.2rem 0.6rem 0.1rem;
+    background: var(--tinta);
+    color: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    text-transform: uppercase;
+  }
+
+  .proximo:hover .proximo__ver {
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+</style>

@@ -1,5 +1,6 @@
 ---
 const enlaces = [
+  { href: '/2027/', texto: '2027', especial: true },
   { href: '/la-fiesta/', texto: 'La fiesta' },
   { href: '/ediciones/', texto: 'Ediciones' },
   { href: '/coplas/', texto: 'Coplas' },
@@ -33,7 +34,11 @@ const banderines = Array.from({ length: n }, (_, i) => {
         {
           enlaces.map((e) => (
             <li>
-              <a href={e.href} aria-current={actual(e.href) ? 'page' : undefined}>
+              <a
+                href={e.href}
+                aria-current={actual(e.href) ? 'page' : undefined}
+                class:list={{ 'nav__especial': e.especial }}
+              >
                 {e.texto}
               </a>
             </li>
@@ -131,6 +136,18 @@ const banderines = Array.from({ length: n }, (_, i) => {
   nav a[aria-current='page'] {
     background: var(--amarillo);
     color: var(--tinta);
+  }
+
+  /* El próximo carnaval va siempre resaltado, como un sticker */
+  nav a.nav__especial {
+    background: var(--fucsia);
+    color: var(--tinta);
+    rotate: -3deg;
+  }
+
+  nav a.nav__especial[aria-current='page'],
+  nav a.nav__especial:hover {
+    background: var(--amarillo);
   }
 
   .banderines {

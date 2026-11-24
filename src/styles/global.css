@@ -133,9 +133,25 @@ a:hover {
   outline-color: var(--amarillo);
 }
 
+/* Selección: azul noche sobre lo claro, amarillo sobre lo oscuro.
+ * .claro marca las islas claras dentro de secciones oscuras (banderolas, la cinta…). */
 ::selection {
+  background: var(--tinta);
+  color: var(--amarillo);
+  -webkit-text-fill-color: var(--amarillo);
+  text-shadow: none;
+}
+
+:is(.oscuro, .fondo-azul, .fondo-tinta) ::selection {
   background: var(--amarillo);
   color: var(--tinta);
+  -webkit-text-fill-color: var(--tinta);
+}
+
+.claro ::selection {
+  background: var(--tinta);
+  color: var(--amarillo);
+  -webkit-text-fill-color: var(--amarillo);
 }
 
 /* ---------- Estructura ---------- */

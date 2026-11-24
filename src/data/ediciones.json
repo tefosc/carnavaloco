@@ -3,10 +3,10 @@
     "id": "2026",
     "anio": 2026,
     "estado": "realizado",
-    "resumen": "Arrancó con un pregón nocturno en Cumbemayo y un bando de más de tres horas por las calles. Según el Mincetur, movió S/ 75 millones y atrajo a 80 mil turistas.",
+    "resumen": "Arrancó con un pregón nocturno en Cumbemayo y un bando de más de tres horas por las calles. Movió S/ 75 millones y atrajo a 80 mil turistas.",
     "reina": { "nombre": "Daniela Reaño Díaz", "barrio": "La Merced", "nota": "Ganó entre 22 candidatas." },
     "cifras": [
-      { "valor": "S/ 75 mill.", "texto": "de movimiento económico, según el Mincetur" },
+      { "valor": "S/ 75 mill.", "texto": "de movimiento económico" },
       { "valor": "80 mil", "texto": "turistas" },
       { "valor": "116 mil", "texto": "asistentes entre vecinos y visitantes" },
       { "valor": "+50 mil", "texto": "personas en el Gran Bando" }
@@ -202,7 +202,7 @@
     "resumen": "El año en que la copla se volvió patrimonio. En junio, el Ministerio de Cultura declaró Patrimonio Cultural de la Nación a la copla y contrapunto del carnaval de Cajamarca.",
     "reina": { "nombre": "Estelita Cabrera Regalado", "barrio": "provincia de Hualgayoc", "nota": "Reina Integración 2017." },
     "cifras": [
-      { "valor": "12 000", "texto": "turistas, según Andina" },
+      { "valor": "12 000", "texto": "turistas" },
       { "valor": "R.V.M. 117", "texto": "la resolución que declaró patrimonio a la copla" }
     ],
     "hechos": [

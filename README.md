@@ -18,6 +18,7 @@ Astro 7 pide Node ≥ 22.23.4. El `package.json` declara `devEngines.runtime` (N
 | Ruta                  | Contenido                                                         |
 | :-------------------- | :---------------------------------------------------------------- |
 | `/`                   | Portada: cuenta regresiva, los cinco días, copla, muro de ediciones |
+| `/2027/`              | Carnaval 2027: día por día con hora y lugar, previas y consejos   |
 | `/la-fiesta/`         | Programa, personajes, costumbres, música y comida                 |
 | `/ediciones/`         | Muro de afiches de 2017 a 2026                                    |
 | `/ediciones/[año]/`   | Ficha de cada año: reina, cifras, hechos y fuentes                |
@@ -38,6 +39,8 @@ src/data/
 ```
 
 `src/content.config.ts` valida los JSON: si algo no cumple el formato, `pnpm build` falla y dice qué campo está mal.
+
+**Horarios del 2027:** cuando la Municipalidad publique el programa oficial (a inicios de enero), edita `src/data/carnaval2027.ts`: pon la `hora` de cada día (por ejemplo `'10:00 a. m.'`), corrige `lugar` si cambia, llena la `fecha` de las actividades previas y cambia `programaOficial` a `true`. Mientras `hora` sea `null`, la página muestra «Por confirmar».
 
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 

@@ -24,7 +24,7 @@ const dias = programa.map((d) => {
   <ol class="banderolas__lista">
     {
       dias.map((d, i) => (
-        <li class="banderola flecos" data-color={d.color} style={`--i:${i}`}>
+        <li class="banderola flecos claro" data-color={d.color} style={`--i:${i}`}>
           <p class="banderola__dia">{d.dia}</p>
           <p class="banderola__fecha">
             <span class="banderola__numero" data-offset={d.offset} data-parte="dia">

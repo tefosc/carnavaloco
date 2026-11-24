@@ -57,6 +57,13 @@ const estilo = [
     position: relative;
   }
 
+  /* Las capas de adorno no se seleccionan: al marcar el título solo se resalta el frente */
+  .chicha__sombra,
+  .chicha__contorno {
+    -webkit-user-select: none;
+    user-select: none;
+  }
+
   .chicha__sombra {
     color: var(--sombra);
     -webkit-text-stroke: 0.13em var(--sombra);

@@ -7,6 +7,7 @@ import Sello from '../components/Sello.astro';
 import Cinta from '../components/Cinta.astro';
 import Banderolas from '../components/Banderolas.astro';
 import CartelEdicion from '../components/CartelEdicion.astro';
+import CartelProximo from '../components/CartelProximo.astro';
 import Pintura from '../components/Pintura.astro';
 import { fotos } from '../data/fotos';
 import { anioProximoCarnaval, diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
@@ -55,7 +56,7 @@ const palabras = [
           aquí nadie se salva.
         </p>
         <div class="portada__acciones">
-          <a class="boton" href="/la-fiesta/">Ver los cinco días</a>
+          <a class="boton" href="/2027/">Ver el programa 2027</a>
           <button class="boton boton--hueco" type="button" data-jugar>Echar pintura</button>
         </div>
       </div>
@@ -88,20 +89,25 @@ const palabras = [
         </p>
       </div>
       <Banderolas />
-      <p class="dias__mas"><a class="boton" href="/la-fiesta/">Ver personajes, música y comida</a></p>
+      <p class="dias__mas">
+        <a class="boton" href="/2027/">Horarios y lugares 2027</a>
+        <a class="boton boton--hueco" href="/la-fiesta/">Ver personajes, música y comida</a>
+      </p>
     </div>
   </section>
 
   <section class="bloque fondo-amarillo pancarta" aria-labelledby="titulo-pancarta">
     <div class="envoltura pancarta__grid">
       <h2 id="titulo-pancarta" class="visualmente-oculto">Una copla</h2>
-      <blockquote class="pancarta__copla">
-        {pancarta.versos.map((v) => <p>{v}</p>)}
-      </blockquote>
+      <div class="pancarta__marco">
+        <blockquote class="pancarta__copla">
+          {pancarta.versos.map((v) => <p>{v}</p>)}
+        </blockquote>
+      </div>
       <div class="pancarta__lado">
         <p>
-          Copla popular que se canta en toda la ciudad, según <a href={pancarta.fuente?.url}>{pancarta.fuente?.medio}</a>.
-          Cuatro versos de ocho sílabas, riman los pares. Así se arma toda copla cajamarquina.
+          Copla popular que se canta en toda la ciudad. Cuatro versos de ocho sílabas, riman los pares: así se arma toda
+          copla cajamarquina.
         </p>
         <a class="boton boton--hueco" href="/coplas/">Más coplas</a>
       </div>
@@ -110,15 +116,19 @@ const palabras = [
 
   <section class="bloque pared" aria-labelledby="titulo-pared">
     <div class="envoltura">
-      <h2 id="titulo-pared" class="titulo-bloque">Diez carnavales en la pared</h2>
+      <h2 id="titulo-pared" class="titulo-bloque">Diez carnavales y el que viene</h2>
       <p class="lectura pared__texto">
-        Reinas, cifras y lo que pasó cada año, desde 2017. Incluye los dos febreros en que la pandemia dejó la calle vacía.
+        Reinas, cifras y lo que pasó cada año desde 2017, con los dos febreros en que la pandemia dejó la calle vacía. El
+        de 2027 ya está pegado.
       </p>
       <ul class="pared__muro">
+        <li>
+          <CartelProximo giro={-2} />
+        </li>
         {
           ediciones.map((e, i) => (
             <li>
-              <CartelEdicion edicion={e} giro={giros[i % giros.length]} oscuro={i % 3 === 1} />
+              <CartelEdicion edicion={e} giro={giros[(i + 1) % giros.length]} oscuro={i % 3 === 0} />
             </li>
           ))
         }
@@ -280,6 +290,9 @@ const palabras = [
   }
 
   .dias__mas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
     margin-top: 4rem;
   }
 
@@ -301,16 +314,16 @@ const palabras = [
     font-family: var(--display);
     font-weight: 900;
     text-transform: uppercase;
-    line-height: 0.9;
-    /* Un verso por línea, como en una pancarta */
-    font-size: clamp(1.9rem, 5.8vw, 5.6rem);
+    line-height: 1;
+    /* Un verso por línea, como en una pancarta: la letra se mide contra
+       el ancho de su columna, no de la ventana, así nunca se parte */
+    font-size: min(5.6rem, 8.4cqi);
     white-space: nowrap;
+  }
 
-    /* En pantallas muy angostas el verso puede partirse antes que cortarse */
-    @media (max-width: 400px) {
-      white-space: normal;
-      font-size: 1.8rem;
-    }
+  .pancarta__marco {
+    container-type: inline-size;
+    min-width: 0;
   }
 
   .pancarta__copla p:nth-child(1) { color: var(--tinta); }
@@ -348,12 +361,12 @@ const palabras = [
   .pared__muro {
     list-style: none;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(4, minmax(0, 1fr));
     gap: 1.6rem 1rem;
   }
 
-  .pared__muro li:nth-child(5n + 2),
-  .pared__muro li:nth-child(5n + 4) {
+  .pared__muro li:nth-child(4n + 2),
+  .pared__muro li:nth-child(4n + 4) {
     translate: 0 1.6rem;
   }
 

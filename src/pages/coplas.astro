@@ -32,7 +32,7 @@ const rimaPar = (verso: string) => {
       barrio de enfrente o llorar al Ño Carnavalón. Desde 2017, la copla y el contrapunto son Patrimonio Cultural de la
       Nación.
     </p>
-    <div slot="lado" class="azar" data-azar>
+    <div slot="lado" class="azar oscuro" data-azar>
       <blockquote class="azar__copla" aria-live="polite" data-azar-copla>
         {(tradicionales.find((c) => c.id === 'no-te-vayas') ?? tradicionales[0]).versos.map((v) => <p>{v}</p>)}
       </blockquote>
@@ -95,12 +95,12 @@ const rimaPar = (verso: string) => {
         se queda sin respuesta. Este duelo es de ejemplo, escrito para este sitio:
       </p>
       <div class="duelo__ring">
-        <blockquote class="duelo__copla duelo__copla--a">
+        <blockquote class="duelo__copla duelo__copla--a claro">
           <p class="duelo__quien">Barrio de acá</p>
           {desafio.versos.map((v) => <p>{v}</p>)}
         </blockquote>
         <p class="duelo__vs" aria-hidden="true">vs</p>
-        <blockquote class="duelo__copla duelo__copla--b">
+        <blockquote class="duelo__copla duelo__copla--b claro">
           <p class="duelo__quien">Barrio de allá</p>
           {respuesta.versos.map((v) => <p>{v}</p>)}
         </blockquote>
@@ -113,9 +113,9 @@ const rimaPar = (verso: string) => {
       <h2 id="titulo-cancionero" class="titulo-bloque">Cancionero</h2>
       <div class="lectura cancionero__intro">
         <p>
-          Las marcadas como <strong>tradicionales</strong> se cantan en Cajamarca y vienen con la fuente donde aparecen
-          citadas. Las <strong>nuevas</strong> se escribieron para este sitio, siguiendo la forma de siempre: las coplas
-          del carnaval son anónimas y se heredan cantando.
+          Las <strong>tradicionales</strong> se cantan en Cajamarca de generación en generación. Las
+          <strong>nuevas</strong> se escribieron para este sitio, siguiendo la forma de siempre: las coplas del carnaval
+          son anónimas y se heredan cantando.
         </p>
       </div>
 
@@ -147,11 +147,6 @@ const rimaPar = (verso: string) => {
                 ))}
               </blockquote>
               {c.nota && <p class="copla__nota">{c.nota}</p>}
-              {c.fuente && (
-                <p class="copla__fuente">
-                  Citada en <a href={c.fuente.url}>{c.fuente.medio}</a>
-                </p>
-              )}
             </li>
           ))
         }

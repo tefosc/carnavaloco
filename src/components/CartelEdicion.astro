@@ -27,7 +27,7 @@ const paleta = oscuro
 
 <a
   href={`/ediciones/${edicion.anio}/`}
-  class:list={['cartel', { 'cartel--suspendido': suspendido }]}
+  class:list={['cartel', { 'cartel--suspendido': suspendido, oscuro, claro: !oscuro }]}
   data-color={edicion.color}
   style={`--giro:${giro}deg;--fondo:${paleta.fondo};--texto:${paleta.texto}`}
 >
