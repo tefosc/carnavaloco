@@ -28,7 +28,7 @@ const {
 
 <section
   class:list={['cabeza bloque zigzag-abajo', { oscuro: tintaTexto === 'var(--blanco)' }]}
-  style={`background:${fondo};color:${tintaTexto}`}
+  style={`background:${fondo};color:${tintaTexto};--zz-color:${fondo}`}
   data-pintura={pintura ? '' : undefined}
 >
   {pintura && <div class="capa-pintura" data-capa-pintura aria-hidden="true" />}

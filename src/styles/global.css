@@ -166,6 +166,10 @@ a:hover {
 .bloque {
   position: relative;
   padding-block: clamp(4rem, 9vw, 7rem);
+  /* Lo girado o lo que sobresale (cintas, sellos, afiches) no ensancha la página:
+     así el teléfono no deja alejar hacia una franja en blanco. clip no crea
+     contenedor de scroll, por lo que sticky sigue funcionando. */
+  overflow-x: clip;
 }
 
 .oscuro {
@@ -206,13 +210,14 @@ a:hover {
 
 /* ---------- Fondos de raso ---------- */
 
-.fondo-fucsia { background-color: var(--fucsia); }
-.fondo-amarillo { background-color: var(--amarillo); }
-.fondo-verde { background-color: var(--verde); }
-.fondo-azul { background-color: var(--azul); }
-.fondo-naranja { background-color: var(--naranja); }
-.fondo-turquesa { background-color: var(--turquesa); }
-.fondo-tinta { background-color: var(--tinta); }
+/* --zz-color: el color de los dientes del zigzag, el mismo del fondo */
+.fondo-fucsia { background-color: var(--fucsia); --zz-color: var(--fucsia); }
+.fondo-amarillo { background-color: var(--amarillo); --zz-color: var(--amarillo); }
+.fondo-verde { background-color: var(--verde); --zz-color: var(--verde); }
+.fondo-azul { background-color: var(--azul); --zz-color: var(--azul); }
+.fondo-naranja { background-color: var(--naranja); --zz-color: var(--naranja); }
+.fondo-turquesa { background-color: var(--turquesa); --zz-color: var(--turquesa); }
+.fondo-tinta { background-color: var(--tinta); --zz-color: var(--tinta); }
 
 [data-color='fucsia'] { --c: var(--fucsia); }
 [data-color='amarillo'] { --c: var(--amarillo); }
@@ -222,26 +227,40 @@ a:hover {
 [data-color='turquesa'] { --c: var(--turquesa); }
 
 /* ---------- La gola: bordes en zigzag ----------
- * Se recorta el borde del bloque con una máscara. Sin soporte de máscaras,
- * el bloque queda recto y nada se rompe. */
+ * Los dientes son una tira angosta pintada con un degradado, del color del
+ * fondo (--zz-color), que cuelga fuera del bloque. Antes era una máscara sobre
+ * la sección entera: en teléfonos eso pesa en memoria y, al hacer zoom, el
+ * navegador podía dejar la página en blanco. */
+
+.zigzag-abajo,
+.zigzag-arriba {
+  position: relative;
+}
 
 .zigzag-abajo {
-  padding-bottom: calc(clamp(4rem, 9vw, 7rem) + var(--zz));
-  -webkit-mask:
-    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
-  mask:
-    conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
-  margin-bottom: calc(-1 * var(--zz));
   z-index: 1;
 }
 
-.zigzag-arriba {
-  padding-top: calc(clamp(4rem, 9vw, 7rem) + var(--zz));
-  -webkit-mask:
-    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
-  mask:
-    conic-gradient(from 135deg at top, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zz)) 100%;
-  margin-top: calc(-1 * var(--zz));
+.zigzag-abajo::after,
+.zigzag-arriba::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: var(--zz);
+  pointer-events: none;
+}
+
+.zigzag-abajo::after {
+  top: calc(100% - 1px);
+  background: conic-gradient(from -45deg at bottom, var(--zz-color, var(--blanco)) 90deg, #0000 0) 50% 0 /
+    calc(2 * var(--zz)) 100% repeat-x;
+}
+
+.zigzag-arriba::before {
+  bottom: calc(100% - 1px);
+  background: conic-gradient(from 135deg at top, var(--zz-color, var(--blanco)) 90deg, #0000 0) 50% 0 /
+    calc(2 * var(--zz)) 100% repeat-x;
 }
 
 /* ---------- Flecos colgando ---------- */
@@ -309,7 +328,7 @@ a:hover {
   content: '';
   position: absolute;
   inset: 0;
-  background: radial-gradient(rgb(19 24 90 / 0.32) 0.9px, #0000 1.3px) 0 0 / 5px 5px;
-  mix-blend-mode: multiply;
+  /* Puntos de imprenta sin modo de fusión: más liviano para el teléfono */
+  background: radial-gradient(rgb(19 24 90 / 0.24) 0.9px, #0000 1.3px) 0 0 / 5px 5px;
   pointer-events: none;
 }
