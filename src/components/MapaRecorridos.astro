@@ -669,7 +669,13 @@ const etiquetas = etiquetasMapa.map((e) => ({
       elegir(null);
     });
 
+    const SIN_RED_3D = 'Sin conexión: el mapa 3D necesita internet. Este plano sí funciona sin señal.';
+
     botonVer3d.addEventListener('click', async () => {
+      if (!navigator.onLine) {
+        estado.textContent = SIN_RED_3D;
+        return;
+      }
       botonVer3d.disabled = true;
       botonVer3d.textContent = 'Cargando el 3D…';
       estado.textContent = '';
@@ -692,7 +698,9 @@ const etiquetas = etiquetasMapa.map((e) => ({
       } catch (error) {
         console.error(error);
         mostrarPlano();
-        estado.textContent = 'Este navegador no pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
+        estado.textContent = navigator.onLine
+          ? 'Este navegador no pudo abrir el mapa 3D. Aquí sigue el mapa plano.'
+          : SIN_RED_3D;
       }
     });
 

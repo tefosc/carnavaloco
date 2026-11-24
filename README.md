@@ -52,6 +52,8 @@ src/data/
 
 **Hoy en el carnaval:** del sábado al miércoles, el inicio y `/2027/` cambian solos la cuenta regresiva por lo que toca ese día (hora, lugar, qué viene mañana y su ruta en el mapa), con la fecha de Perú. Lo hace `src/lib/hoy.ts` al abrir la página, así que no hace falta volver a publicar cada día. Para ver cómo queda un día antes de tiempo, agrega `?fecha=` a la dirección: por ejemplo `/?fecha=2027-02-08` o `/2027/?fecha=2027-02-09`.
 
+**Sin conexión:** al abrir la web una vez con internet queda guardada en el teléfono (todas las páginas, estilos, scripts y letras, cerca de 1 MB), y se abre aunque en el corso no haya señal. Las fotos se guardan a medida que se ven; el mapa 3D necesita internet. Lo hace un service worker que `integraciones/sin-conexion/` escribe en `/sw.js` al terminar el build, con la lista real de archivos; cada despliegue con cambios trae una versión nueva y borra la anterior. Si no hay señal y la página no está guardada, se muestra `/sin-conexion/`. En `pnpm dev` no se registra, para ver siempre lo último. La web también se puede instalar como app (`manifest.webmanifest`, íconos en `src/pages/iconos/`).
+
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 
 **Agregar una copla:** en `coplas.json`, con `origen: "tradicional"` y `fuente` si la sacaste de algún lado, o `"inedita"` si es nueva. Entre 3 y 6 versos. Cada verso se muestra con «bis», porque al cantar se dice dos veces; si la copla se canta repitiendo cada par de versos, agrega `"repite": "par"` y el «bis» va al final de cada par.

@@ -208,6 +208,25 @@ a:hover {
   border: 0;
 }
 
+/* Aviso de «sin conexión» (src/layouts/Base.astro): abajo, encima de todo */
+.sin-red {
+  position: fixed;
+  inset-inline: 0;
+  bottom: 0;
+  z-index: 50;
+  margin: 0;
+  padding: 0.6rem 1rem calc(0.6rem + env(safe-area-inset-bottom));
+  background: var(--tinta);
+  color: var(--amarillo);
+  border-top: 4px solid var(--amarillo);
+  font-weight: 700;
+  text-align: center;
+}
+
+.sin-red:empty {
+  display: none;
+}
+
 /* «bis» de las coplas: el verso se canta dos veces (src/lib/coplas.ts).
    Va en todas las coplas del sitio, sea cual sea la letra de alrededor. */
 .bis {

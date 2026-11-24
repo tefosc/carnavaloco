@@ -55,6 +55,9 @@ const estilo = [
     grid-area: 1 / 1;
     /* Todas posicionadas: así se apilan en el orden del HTML aunque la sombra tenga translate */
     position: relative;
+    /* --aire-arriba: espacio para tildes en la primera línea («Ñ», «Ó»). Sin él, lo que
+       sobresale de la caja se queda sin relleno (el color va con background-clip: text) */
+    padding-top: var(--aire-arriba, 0);
   }
 
   /* Las capas de adorno no se seleccionan: al marcar el título solo se resalta el frente */
@@ -78,7 +81,8 @@ const estilo = [
   .chicha__frente {
     color: var(--relleno);
     /* Relleno partido, como los afiches serigrafiados */
-    background: linear-gradient(var(--relleno) 52%, var(--relleno2) 52%) 0 0 / 100% 0.86em repeat-y;
+    background: linear-gradient(var(--relleno) 52%, var(--relleno2) 52%) 0 var(--aire-arriba, 0) / 100% 0.86em
+      repeat-y;
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;

@@ -127,6 +127,8 @@ const yunzas = previas.find((p) => p.cuando === 'Después del miércoles');
   .hoy :global(.hoy__titulo) {
     font-size: clamp(3rem, 7.5vw, 6.2rem);
     line-height: 0.92;
+    /* «Ño Carnavalón»: lugar para la tilde de la Ñ si cae en la primera línea */
+    --aire-arriba: 0.2em;
   }
 
   .hoy__texto {

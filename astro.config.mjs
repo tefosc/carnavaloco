@@ -1,6 +1,7 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
 import sitemap from '@astrojs/sitemap';
+import sinConexion from './integraciones/sin-conexion/index.mjs';
 
 // Dominio del sitio, para el sitemap y las imágenes al compartir.
 // En Vercel, VERCEL_PROJECT_PRODUCTION_URL trae el dominio de producción (sin https://).
@@ -14,7 +15,11 @@ const dominio =
 // https://astro.build/config
 export default defineConfig({
   site: dominio,
-  integrations: [sitemap({ filter: (pagina) => !pagina.includes('/404') })],
+  integrations: [
+    sitemap({ filter: (pagina) => !pagina.includes('/404') && !pagina.includes('/sin-conexion') }),
+    // Escribe /sw.js para usar la web sin señal
+    sinConexion(),
+  ],
   vite: {
     // MapLibre (mapa 3D) pesa ~1 MB, pero se carga solo al tocar «Ver en 3D»
     build: { chunkSizeWarningLimit: 1200 },

@@ -5,6 +5,7 @@ import Sello from '../components/Sello.astro';
 import Pintura from '../components/Pintura.astro';
 import MapaRecorridos from '../components/MapaRecorridos.astro';
 import HoyEnElCarnaval from '../components/HoyEnElCarnaval.astro';
+import Instalar from '../components/Instalar.astro';
 import { ANIO, programaOficial, dias, previas, consejos } from '../data/carnaval2027';
 import { diaDeCarnaval, momentoDelCarnaval } from '../lib/fechas';
 
@@ -154,6 +155,7 @@ googleCalendar.searchParams.set('details', `Programa día por día: ${new URL(`/
           ))
         }
       </ul>
+      <Instalar />
       <div class="consejos__mas">
         <a class="boton" href="/la-fiesta/">Ver personajes y costumbres</a>
         <a class="boton boton--hueco" href="/ediciones/">Ver carnavales anteriores</a>

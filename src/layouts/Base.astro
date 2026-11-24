@@ -13,9 +13,11 @@ interface Props {
   description: string;
   /** Imagen para compartir: /og/<og>.png (ver src/data/og.ts). */
   og?: string;
+  /** false en páginas que no deben salir en buscadores (por ejemplo /sin-conexion/). */
+  indexable?: boolean;
 }
 
-const { title, description, og = 'inicio' } = Astro.props;
+const { title, description, og = 'inicio', indexable = true } = Astro.props;
 const titulo = title === 'Carnaval de Cajamarca' ? title : `${title} | Carnaval de Cajamarca`;
 const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagen = new URL(`/og/${og}.png`, Astro.site);
@@ -27,7 +29,10 @@ const imagen = new URL(`/og/${og}.png`, Astro.site);
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <link rel="apple-touch-icon" href="/iconos/icono-apple-180.png" />
     <link rel="preload" as="font" type="font/woff2" href={letraTitulares} crossorigin />
+    {!indexable && <meta name="robots" content="noindex" />}
     <link rel="canonical" href={canonica} />
     <link rel="sitemap" href="/sitemap-index.xml" />
     <meta name="generator" content={Astro.generator} />
@@ -54,5 +59,24 @@ const imagen = new URL(`/og/${og}.png`, Astro.site);
       <slot />
     </main>
     <Pie />
+    <!-- Se llena solo cuando no hay conexión -->
+    <p class="sin-red" role="status" data-sin-red></p>
   </body>
 </html>
+
+<script>
+  // Guarda la web en el teléfono para usarla sin señal (integraciones/sin-conexion).
+  // Solo en el build: en desarrollo no se guarda nada, para ver siempre lo último.
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch((error) => console.error('No se pudo guardar la web', error));
+  }
+
+  // Aviso cuando se pierde la señal
+  const aviso = document.querySelector<HTMLElement>('[data-sin-red]');
+  const revisarRed = () => {
+    if (aviso) aviso.textContent = navigator.onLine ? '' : 'Sin conexión: estás viendo lo guardado en tu teléfono.';
+  };
+  addEventListener('online', revisarRed);
+  addEventListener('offline', revisarRed);
+  revisarRed();
+</script>
