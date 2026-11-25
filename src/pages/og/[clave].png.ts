@@ -2,6 +2,7 @@ import type { APIRoute, GetStaticPaths } from 'astro';
 import { getCollection } from 'astro:content';
 import { imagenOg, type DatosOg } from '../../lib/og';
 import { ogPaginas } from '../../data/og';
+import { barrios } from '../../data/barrios';
 
 export const getStaticPaths = (async () => {
   const ediciones = (await getCollection('ediciones')).map((e) => e.data);
@@ -15,8 +16,18 @@ export const getStaticPaths = (async () => {
       sello: e.estado === 'suspendido' ? 'Suspendido' : undefined,
     } satisfies DatosOg,
   }));
+  const porBarrio = barrios.map((b) => ({
+    params: { clave: `barrio-${b.id}` },
+    props: {
+      titulo: b.nombre,
+      bajada: b.apodo ?? b.lema ?? 'Un barrio del Carnaval de Cajamarca.',
+      fondo: b.color,
+      relleno: b.color === 'amarillo' ? 'fucsia' : 'blanco',
+      sello: b.sector ? `Sector ${b.sector}` : undefined,
+    } satisfies DatosOg,
+  }));
   const paginas = Object.entries(ogPaginas).map(([clave, datos]) => ({ params: { clave }, props: datos }));
-  return [...paginas, ...porEdicion];
+  return [...paginas, ...porEdicion, ...porBarrio];
 }) satisfies GetStaticPaths;
 
 export const GET: APIRoute = async ({ props }) => {

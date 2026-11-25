@@ -13,6 +13,7 @@ interface Props {
   sombra?: string;
   tintaTexto?: string;
   pintura?: boolean;
+  tamano?: string;
 }
 
 const {
@@ -23,12 +24,13 @@ const {
   sombra = 'var(--fucsia)',
   tintaTexto = 'var(--tinta)',
   pintura = false,
+  tamano,
 } = Astro.props;
 ---
 
 <section
   class:list={['cabeza bloque zigzag-abajo', { oscuro: tintaTexto === 'var(--blanco)' }]}
-  style={`background:${fondo};color:${tintaTexto};--zz-color:${fondo}`}
+  style={`background:${fondo};color:${tintaTexto};--zz-color:${fondo}${tamano ? `;--tamano-titulo:${tamano}` : ''}`}
   data-pintura={pintura ? '' : undefined}
 >
   {pintura && <div class="capa-pintura" data-capa-pintura aria-hidden="true" />}
@@ -64,7 +66,7 @@ const {
   }
 
   .cabeza :global(.cabeza__titulo) {
-    font-size: clamp(4rem, 12vw, 9.5rem);
+    font-size: var(--tamano-titulo, clamp(4rem, 12vw, 9.5rem));
     margin-bottom: 1.8rem;
   }
 

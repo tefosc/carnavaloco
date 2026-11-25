@@ -24,7 +24,8 @@ Astro 7 pide Node ≥ 22.23.4. El `package.json` declara `devEngines.runtime` (N
 | `/ediciones/`         | Muro de afiches de 2017 a 2026                                    |
 | `/ediciones/[año]/`   | Ficha de cada año: reina, cifras, hechos y fuentes                |
 | `/coplas/`            | Cómo se arma una copla, el contrapunto, el juego «Completa la copla» y el cancionero |
-| `/barrios/`           | Lemas, reinas y rivalidades de los barrios y centros poblados     |
+| `/barrios/`           | Pared de estandartes con los 24 sectores, buscador y pueblos      |
+| `/barrios/[barrio]/`  | Ficha de cada barrio: apodo, lema, aniversario y datos            |
 | `/habla/`             | El dejo cajamarquino, «dilo así» y glosario con buscador          |
 | `/historia/`          | Línea de tiempo y todas las fuentes                               |
 | `/carnaval-2027.ics`  | Calendario descargable con los cinco días                         |
@@ -40,7 +41,8 @@ src/data/
 ├── frases.json      # Gritos, dichos, lemas de barrio
 ├── carnaval.ts      # Historia, programa, personajes, costumbres, música, comida
 ├── carnaval2027.ts  # Programa 2027: horas, lugares, previas, consejos
-├── barrios.ts       # Barrios y centros poblados
+├── barrios.ts       # Los 24 sectores (ordenanza 894-CMPC), barrios del carnaval y pueblos
+├── contacto.ts      # Número de WhatsApp al que llegan los aportes (con código de país, sin +)
 ├── og.ts            # Texto y color de la imagen para compartir de cada página
 ├── mapa.json        # Calles y rutas del mapa (generado desde OpenStreetMap)
 ├── recorridos.ts    # Rutas de cada día, compartidas por el mapa plano y el 3D
@@ -53,7 +55,9 @@ src/data/
 
 **Hoy en el carnaval:** del sábado al miércoles, el inicio y `/2027/` cambian solos la cuenta regresiva por lo que toca ese día (hora, lugar, qué viene mañana y su ruta en el mapa), con la fecha de Perú. Lo hace `src/lib/hoy.ts` al abrir la página, así que no hace falta volver a publicar cada día. Para ver cómo queda un día antes de tiempo, agrega `?fecha=` a la dirección: por ejemplo `/?fecha=2027-02-08` o `/2027/?fecha=2027-02-09`.
 
-**Sin conexión:** al abrir la web una vez con internet queda guardada en el teléfono (todas las páginas, estilos, scripts y letras, cerca de 1 MB), y se abre aunque en el corso no haya señal. Las fotos se guardan a medida que se ven; el mapa 3D necesita internet. Lo hace un service worker que `integraciones/sin-conexion/` escribe en `/sw.js` al terminar el build, con la lista real de archivos; cada despliegue con cambios trae una versión nueva y borra la anterior. Si no hay señal y la página no está guardada, se muestra `/sin-conexion/`. En `pnpm dev` no se registra, para ver siempre lo último. La web también se puede instalar como app (`manifest.webmanifest`, íconos en `src/pages/iconos/`).
+**Sin conexión:** al abrir la web una vez con internet queda guardada en el teléfono (todas las páginas, estilos, scripts y letras, cerca de 1,4 MB), y se abre aunque en el corso no haya señal. Las fotos se guardan a medida que se ven; el mapa 3D necesita internet. Lo hace un service worker que `integraciones/sin-conexion/` escribe en `/sw.js` al terminar el build, con la lista real de archivos; cada despliegue con cambios trae una versión nueva y borra la anterior. Si no hay señal y la página no está guardada, se muestra `/sin-conexion/`. En `pnpm dev` no se registra, para ver siempre lo último. La web también se puede instalar como app (`manifest.webmanifest`, íconos en `src/pages/iconos/`).
+
+**Barrios:** cada barrio de `barrios.ts` genera su ficha en `/barrios/<id>/` y su imagen para compartir en `/og/barrio-<id>.png`. Para completar uno, llena `apodo`, `lema` y `hechos`; mientras `apodo` esté vacío, su estandarte invita a contarlo por WhatsApp. El aniversario de cada sector alimenta la franja «Hoy cumple años» de la portada y de `/barrios/` (`src/lib/aniversarios.ts`); con `?fecha=2027-07-14` se ve cómo queda ese día. Los botones de WhatsApp abren un contacto a elegir hasta que se llene `contacto.whatsapp`.
 
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 

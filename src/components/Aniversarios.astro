@@ -1,0 +1,91 @@
+---
+---
+
+<section class="aniversarios bloque fondo-tinta oscuro" data-aniversarios hidden aria-label="Aniversarios de los barrios">
+  <div class="envoltura aniversarios__grid">
+    <p class="aniversarios__titulo" data-aniversarios-titulo></p>
+    <ul class="aniversarios__lista" data-aniversarios-lista></ul>
+  </div>
+</section>
+
+<script>
+  import { aplicarAniversarios } from '../lib/aniversarios';
+
+  aplicarAniversarios();
+</script>
+
+<style is:global>
+  .aniversarios {
+    padding-block: clamp(1.8rem, 4vw, 2.6rem);
+  }
+
+  .aniversarios__grid {
+    display: grid;
+    gap: 1rem 2rem;
+    align-items: center;
+  }
+
+  .aniversarios__titulo {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 2.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--amarillo);
+  }
+
+  .aniversarios--hoy .aniversarios__titulo {
+    color: var(--fucsia);
+  }
+
+  .aniversarios__lista {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.7rem;
+  }
+
+  .aniversarios__item {
+    display: grid;
+    gap: 0.1rem;
+    min-width: 11rem;
+    padding: 0.7rem 1rem;
+    background: var(--c);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+    text-decoration: none;
+  }
+
+  .aniversarios__item[data-color='azul'] {
+    color: var(--blanco);
+  }
+
+  .aniversarios__item strong {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    line-height: 1;
+  }
+
+  .aniversarios__item span {
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+
+  .aniversarios__item:hover {
+    translate: 0 -3px;
+  }
+
+  @media (min-width: 900px) {
+    .aniversarios__grid {
+      grid-template-columns: auto 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .aniversarios__item:hover {
+      translate: none;
+    }
+  }
+</style>

@@ -1,0 +1,97 @@
+---
+import type { Barrio } from '../data/barrios';
+import { formatearAniversario } from '../lib/barrios';
+
+interface Props {
+  barrio: Barrio;
+}
+
+const { barrio } = Astro.props;
+const { id, nombre, sector, apodo, aniversario, color } = barrio;
+---
+
+<a class="estandarte flecos" href={`/barrios/${id}/`} data-color={color}>
+  <span class="estandarte__sector" aria-hidden="true">{sector ?? '✶'}</span>
+  <span class="estandarte__nombre">{nombre}</span>
+  {apodo && <span class="estandarte__apodo">{apodo}</span>}
+  {aniversario && <span class="estandarte__aniversario">Cumple el {formatearAniversario(aniversario)}</span>}
+  {!apodo && <span class="estandarte__invitacion">¿Cómo le dicen? Cuéntanos</span>}
+</a>
+
+<style>
+  .estandarte {
+    --tinta-e: var(--tinta);
+    display: grid;
+    align-content: start;
+    gap: 0.45rem;
+    height: 100%;
+    min-height: 15rem;
+    padding: 0.9rem 0.9rem 1.5rem;
+    background: var(--c);
+    color: var(--tinta-e);
+    border-top: 10px solid var(--tinta);
+    text-decoration: none;
+    transition: translate 0.15s ease;
+  }
+
+  .estandarte[data-color='azul'] {
+    --tinta-e: var(--blanco);
+  }
+
+  .estandarte:hover,
+  .estandarte:focus-visible {
+    translate: 0 -5px;
+  }
+
+  .estandarte__sector {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(3.6rem, 17vw, 5.4rem);
+    line-height: 0.8;
+    opacity: 0.9;
+  }
+
+  .estandarte__nombre {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+    overflow-wrap: anywhere;
+  }
+
+  .estandarte__apodo {
+    justify-self: start;
+    padding: 0.25rem 0.5rem 0.2rem;
+    background: var(--tinta);
+    color: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    line-height: 1.05;
+    text-transform: uppercase;
+  }
+
+  .estandarte__aniversario,
+  .estandarte__invitacion {
+    font-size: 0.9rem;
+    font-weight: 600;
+    line-height: 1.25;
+  }
+
+  .estandarte__invitacion {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .estandarte {
+      transition: none;
+    }
+
+    .estandarte:hover,
+    .estandarte:focus-visible {
+      translate: none;
+    }
+  }
+</style>

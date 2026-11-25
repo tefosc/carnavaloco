@@ -169,17 +169,22 @@ const banderines = Array.from({ length: n }, (_, i) => {
 
     nav {
       width: 100%;
-      overflow-x: auto;
-      scrollbar-width: none;
     }
 
     nav ul {
-      flex-wrap: nowrap;
+      gap: 0.2rem 0.15rem;
     }
 
     nav a {
       font-size: 1.2rem;
       padding-inline: 0.65rem;
+    }
+  }
+
+  @media (max-width: 380px) {
+    nav a {
+      font-size: 1.05rem;
+      padding-inline: 0.45rem;
     }
   }
 </style>

@@ -10,6 +10,7 @@ import CartelEdicion from '../components/CartelEdicion.astro';
 import CartelProximo from '../components/CartelProximo.astro';
 import Pintura from '../components/Pintura.astro';
 import HoyEnElCarnaval from '../components/HoyEnElCarnaval.astro';
+import Aniversarios from '../components/Aniversarios.astro';
 import { fotos } from '../data/fotos';
 import { anioProximoCarnaval, momentoDelCarnaval } from '../lib/fechas';
 import { conBis } from '../lib/coplas';
@@ -89,6 +90,8 @@ const palabras = [
   </section>
 
   <HoyEnElCarnaval />
+
+  <Aniversarios />
 
   <section class="bloque fondo-azul oscuro dias" aria-labelledby="titulo-dias">
     <Cinta items={gritos} />
