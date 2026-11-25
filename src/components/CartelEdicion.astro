@@ -20,14 +20,17 @@ const fin = diaDeCarnaval(edicion.anio, 0);
 const fechas = `${fmt.format(inicio)} al ${fmt.format(fin)}`;
 const suspendido = edicion.estado === 'suspendido';
 
+const sobreAzul = !oscuro && edicion.color === 'azul';
+const letraClara = oscuro || sobreAzul;
+
 const paleta = oscuro
   ? { fondo: 'var(--tinta)', relleno: 'var(--c)', relleno2: 'var(--amarillo)', sombra: 'var(--fucsia)', texto: 'var(--blanco)' }
-  : { fondo: 'var(--c)', relleno: 'var(--blanco)', relleno2: 'var(--blanco)', sombra: 'var(--tinta)', texto: 'var(--tinta)' };
+  : { fondo: 'var(--c)', relleno: 'var(--blanco)', relleno2: 'var(--blanco)', sombra: 'var(--tinta)', texto: sobreAzul ? 'var(--blanco)' : 'var(--tinta)' };
 ---
 
 <a
   href={`/ediciones/${edicion.anio}/`}
-  class:list={['cartel', { 'cartel--suspendido': suspendido, oscuro, claro: !oscuro }]}
+  class:list={['cartel', { 'cartel--suspendido': suspendido, oscuro: letraClara, claro: !letraClara }]}
   data-color={edicion.color}
   style={`--giro:${giro}deg;--fondo:${paleta.fondo};--texto:${paleta.texto}`}
 >
