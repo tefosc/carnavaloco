@@ -63,10 +63,50 @@ const imagen = new URL(`/og/${og}.png`, Astro.site);
     <Manchas />
     <!-- Se llena solo cuando no hay conexión -->
     <p class="sin-red" role="status" data-sin-red></p>
+    <!-- Solo en el teléfono, y solo si el navegador puede instalar la web (src/lib/instalar.ts) -->
+    <div class="instalar-flotante" data-instalar-flotante hidden>
+      <button type="button" class="instalar-flotante__boton" data-flotante-instalar>Instalar app</button>
+      <button type="button" class="instalar-flotante__cerrar" data-flotante-cerrar aria-label="Ocultar el aviso de instalar">
+        <span aria-hidden="true">×</span>
+      </button>
+    </div>
   </body>
 </html>
 
 <script>
+  import { alCambiar, disponible, instalar } from '../lib/instalar';
+
+  // Botón flotante de instalar: si lo cierran, no vuelve a salir por dos semanas
+  const flotante = document.querySelector<HTMLElement>('[data-instalar-flotante]');
+  const CLAVE = 'instalar-oculto';
+  const ocultoHasta = () => {
+    try {
+      return Number(localStorage.getItem(CLAVE)) || 0;
+    } catch {
+      return 0;
+    }
+  };
+  if (flotante) {
+    const botonInstalar = flotante.querySelector<HTMLButtonElement>('[data-flotante-instalar]')!;
+    alCambiar(() => {
+      flotante.hidden = !disponible() || Date.now() < ocultoHasta();
+    });
+    botonInstalar.addEventListener('click', async () => {
+      if (botonInstalar.getAttribute('aria-disabled') === 'true') return;
+      botonInstalar.setAttribute('aria-disabled', 'true');
+      await instalar();
+      botonInstalar.removeAttribute('aria-disabled');
+    });
+    flotante.querySelector('[data-flotante-cerrar]')?.addEventListener('click', () => {
+      try {
+        localStorage.setItem(CLAVE, String(Date.now() + 14 * 86_400_000));
+      } catch {
+        // Sin almacenamiento: se oculta solo hasta la próxima página
+      }
+      flotante.hidden = true;
+    });
+  }
+
   const aviso = document.querySelector<HTMLElement>('[data-sin-red]');
   const estado = document.querySelector<HTMLElement>('[data-guardado]');
   const servicio = import.meta.env.PROD && navigator.serviceWorker;

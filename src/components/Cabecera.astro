@@ -30,7 +30,12 @@ const banderines = Array.from({ length: n }, (_, i) => {
       <span class="marca__grande">Carnaval</span>
       <span class="marca__chica">de Cajamarca</span>
     </a>
-    <nav aria-label="Secciones">
+    <!-- Solo en el teléfono y con JavaScript: lo muestra el script de abajo -->
+    <button type="button" class="menu-boton" aria-expanded="false" aria-controls="menu-principal" data-menu-boton hidden>
+      <span class="menu-boton__rayas" aria-hidden="true"></span>
+      <span>Menú</span>
+    </button>
+    <nav id="menu-principal" aria-label="Secciones" data-menu>
       <ul>
         {
           enlaces.map((e) => (
@@ -161,6 +166,10 @@ const banderines = Array.from({ length: n }, (_, i) => {
     view-transition-name: banderines;
   }
 
+  .menu-boton {
+    display: none;
+  }
+
   @media (max-width: 760px) {
     .cabecera__fila {
       flex-direction: column;
@@ -179,6 +188,106 @@ const banderines = Array.from({ length: n }, (_, i) => {
       font-size: 1.2rem;
       padding-inline: 0.65rem;
     }
+
+    /* Con JavaScript: marca a la izquierda, botón «Menú» a la derecha y los enlaces
+       en una lista que baja a todo el ancho. Sin JavaScript queda lo de arriba. */
+    .cabecera__fila.con-menu {
+      flex-direction: row;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .cabecera__fila.con-menu nav {
+      flex-basis: 100%;
+      order: 3;
+    }
+
+    .cabecera__fila.con-menu nav:not(.abierto) {
+      display: none;
+    }
+
+    .cabecera__fila.con-menu nav ul {
+      flex-direction: column;
+      gap: 0.15rem;
+      padding-bottom: 0.8rem;
+    }
+
+    .cabecera__fila.con-menu nav a {
+      font-size: 1.7rem;
+      padding: 0.7rem 0.9rem 0.6rem;
+      border-top: 2px solid rgb(255 255 255 / 0.14);
+    }
+
+    .cabecera__fila.con-menu nav a.nav__especial {
+      justify-self: start;
+      width: fit-content;
+      margin-block: 0.4rem;
+    }
+
+    .menu-boton:not([hidden]) {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      min-height: 48px;
+      padding: 0.3rem 0.9rem 0.2rem;
+      border: 3px solid var(--amarillo);
+      background: transparent;
+      color: var(--amarillo);
+      font-family: var(--display);
+      font-weight: 800;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+      cursor: pointer;
+    }
+
+    .menu-boton[aria-expanded='true'] {
+      background: var(--amarillo);
+      color: var(--tinta);
+    }
+
+    /* Las tres rayas se vuelven una X al abrir */
+    .menu-boton__rayas,
+    .menu-boton__rayas::before,
+    .menu-boton__rayas::after {
+      display: block;
+      width: 1.4rem;
+      height: 3px;
+      background: currentColor;
+      content: '';
+    }
+
+    .menu-boton__rayas {
+      position: relative;
+    }
+
+    .menu-boton__rayas::before,
+    .menu-boton__rayas::after {
+      position: absolute;
+      left: 0;
+    }
+
+    .menu-boton__rayas::before {
+      top: -7px;
+    }
+
+    .menu-boton__rayas::after {
+      top: 7px;
+    }
+
+    .menu-boton[aria-expanded='true'] .menu-boton__rayas {
+      background: transparent;
+    }
+
+    .menu-boton[aria-expanded='true'] .menu-boton__rayas::before {
+      top: 0;
+      rotate: 45deg;
+    }
+
+    .menu-boton[aria-expanded='true'] .menu-boton__rayas::after {
+      top: 0;
+      rotate: -45deg;
+    }
   }
 
   @media (max-width: 380px) {
@@ -186,5 +295,40 @@ const banderines = Array.from({ length: n }, (_, i) => {
       font-size: 1.05rem;
       padding-inline: 0.45rem;
     }
+
+    .cabecera__fila.con-menu nav a {
+      font-size: 1.5rem;
+    }
   }
 </style>
+
+<script>
+  // Menú del teléfono: los enlaces se esconden detrás del botón «Menú».
+  // Sin JavaScript, o en pantallas anchas, los enlaces quedan a la vista.
+  const fila = document.querySelector<HTMLElement>('.cabecera__fila');
+  const boton = document.querySelector<HTMLButtonElement>('[data-menu-boton]');
+  const menu = document.querySelector<HTMLElement>('[data-menu]');
+
+  if (fila && boton && menu) {
+    boton.hidden = false;
+    fila.classList.add('con-menu');
+
+    const abrir = (abierto: boolean) => {
+      menu.classList.toggle('abierto', abierto);
+      boton.setAttribute('aria-expanded', String(abierto));
+    };
+
+    boton.addEventListener('click', () => abrir(boton.getAttribute('aria-expanded') !== 'true'));
+
+    // Escape lo cierra y devuelve el foco al botón
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && boton.getAttribute('aria-expanded') === 'true') {
+        abrir(false);
+        boton.focus();
+      }
+    });
+
+    // Al volver con «atrás», el menú no debe quedar abierto
+    addEventListener('pageshow', () => abrir(false));
+  }
+</script>

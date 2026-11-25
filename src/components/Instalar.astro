@@ -46,59 +46,29 @@
 </style>
 
 <script>
-  interface AvisoInstalacion extends Event {
-    prompt: () => Promise<void>;
-    userChoice: Promise<{ outcome: 'accepted' | 'dismissed' }>;
-  }
+  import { alCambiar, disponible, instalar, yaInstalada } from '../lib/instalar';
 
   const boton = document.querySelector<HTMLButtonElement>('[data-instalar]');
   const estado = document.querySelector<HTMLElement>('[data-instalar-estado]');
-  // navigator.install() es la API nueva; beforeinstallprompt, la de Chrome y Edge
-  const instalarNuevo = (navigator as Navigator & { install?: () => Promise<void> }).install;
-  let aviso: AvisoInstalacion | undefined;
 
   if (boton && estado) {
-    if (typeof instalarNuevo === 'function') boton.hidden = false;
-
-    addEventListener('beforeinstallprompt', (evento) => {
-      evento.preventDefault();
-      aviso = evento as AvisoInstalacion;
-      boton.hidden = false;
-    });
-
-    addEventListener('appinstalled', () => {
-      boton.hidden = true;
-      estado.textContent = 'Listo: ya está en tu teléfono.';
+    alCambiar(() => {
+      boton.hidden = !disponible();
+      if (yaInstalada()) estado.textContent = 'Listo: ya está en tu teléfono.';
     });
 
     boton.addEventListener('click', async () => {
-      if (boton.getAttribute('aria-disabled') === 'true') return;
       // aria-disabled y no disabled: así el foco no se pierde
+      if (boton.getAttribute('aria-disabled') === 'true') return;
       boton.setAttribute('aria-disabled', 'true');
-      try {
-        if (typeof instalarNuevo === 'function') {
-          // Se llama dentro del clic: si se demora, el navegador ya no lo permite
-          await instalarNuevo.call(navigator);
-          estado.textContent = 'Listo: ya está en tu teléfono.';
-          boton.hidden = true;
-        } else if (aviso) {
-          // El aviso sirve una sola vez
-          const esteAviso = aviso;
-          aviso = undefined;
-          await esteAviso.prompt();
-          const { outcome } = await esteAviso.userChoice;
-          estado.textContent = outcome === 'accepted' ? 'Listo: ya está en tu teléfono.' : 'No se instaló.';
-          if (!aviso) boton.hidden = true;
-        }
-      } catch (error) {
-        estado.textContent =
-          error instanceof DOMException && error.name === 'AbortError'
+      const resultado = await instalar();
+      estado.textContent =
+        resultado === 'instalada'
+          ? 'Listo: ya está en tu teléfono.'
+          : resultado === 'cancelada'
             ? 'No se instaló.'
             : 'No se pudo instalar desde aquí.';
-        if (!(error instanceof DOMException && error.name === 'AbortError')) console.error(error);
-      } finally {
-        boton.removeAttribute('aria-disabled');
-      }
+      boton.removeAttribute('aria-disabled');
     });
   }
 </script>

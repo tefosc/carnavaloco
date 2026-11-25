@@ -227,6 +227,60 @@ a:hover {
   display: none;
 }
 
+/* Botón flotante de instalar (src/layouts/Base.astro): solo en el teléfono */
+.instalar-flotante {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .instalar-flotante:not([hidden]) {
+    position: fixed;
+    right: max(0.8rem, env(safe-area-inset-right));
+    bottom: calc(0.8rem + env(safe-area-inset-bottom));
+    z-index: 40;
+    display: flex;
+    align-items: stretch;
+    border: 3px solid var(--tinta);
+    background: var(--amarillo);
+    box-shadow: 4px 4px 0 var(--tinta);
+  }
+
+  /* Con el aviso de «sin conexión» abajo, se sube para no taparlo */
+  .sin-red:not(:empty) + .instalar-flotante {
+    bottom: calc(4.2rem + env(safe-area-inset-bottom));
+  }
+
+  .instalar-flotante__boton,
+  .instalar-flotante__cerrar {
+    min-height: 48px;
+    border: 0;
+    background: transparent;
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 800;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .instalar-flotante__boton {
+    padding: 0.2rem 0.9rem 0;
+    font-size: 1.3rem;
+    letter-spacing: 0.02em;
+  }
+
+  .instalar-flotante__cerrar {
+    min-width: 44px;
+    border-left: 3px solid var(--tinta);
+    font-size: 1.8rem;
+    line-height: 1;
+  }
+
+  .instalar-flotante__boton:active,
+  .instalar-flotante__cerrar:active {
+    background: var(--fucsia);
+  }
+}
+
 /* «bis» de las coplas: el verso se canta dos veces (src/lib/coplas.ts).
    Va en todas las coplas del sitio, sea cual sea la letra de alrededor. */
 .bis {

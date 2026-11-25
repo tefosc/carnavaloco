@@ -59,7 +59,8 @@ Para actualizarlas a la última versión: `npx skills update -p` (cambia `skills
 ### Para usar en la fiesta
 
 - **Funciona sin señal**: con abrir la web una vez con internet, queda guardada en el teléfono. Las páginas, los estilos y las letras pesan cerca de 1 MB. Si se pierde la conexión, aparece un aviso.
-- **Se puede instalar como app** desde Chrome en Android, con su ícono. El botón aparece en «Si vas», en `/2027/`.
+- **Se puede instalar como app** desde Chrome en Android, con su ícono. En el teléfono sale un botón flotante «Instalar app» abajo a la derecha, en todas las páginas (se puede cerrar con la ×; no vuelve por dos semanas), y otro en «Si vas», en `/2027/`. La lógica está en `src/lib/instalar.ts`.
+- **Menú del teléfono**: botón «Menú» (hamburguesa) en la cabecera; los enlaces se abren y se cierran con él, y también con Escape. Sin JavaScript quedan a la vista.
 
 ### Pintura
 
