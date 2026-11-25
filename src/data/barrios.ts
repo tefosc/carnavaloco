@@ -12,6 +12,7 @@ export interface Barrio {
   aniversario?: Aniversario;
   apodo?: string;
   lema?: string;
+  rival?: string;
   hechos: string[];
   color: Color;
 }
@@ -23,6 +24,7 @@ export const barrios: Barrio[] = [
     sector: 1,
     aniversario: { dia: 14, mes: 7 },
     lema: 'Para chicha y para pan, el barrio San Sebastián.',
+    rival: 'san-pedro',
     hechos: [
       'Rival de siempre de San Pedro: en otros tiempos sus patrullas se agarraban a trompadas el martes de carnaval.',
     ],
@@ -45,6 +47,7 @@ export const barrios: Barrio[] = [
     sector: 3,
     aniversario: { dia: 29, mes: 6 },
     lema: 'Para muchachas y flores, San Pedro de mis amores.',
+    rival: 'san-sebastian',
     hechos: [
       'El Club Comparsa San Pedro nació en 1972.',
       'La otra mitad de la vieja rivalidad con San Sebastián.',

@@ -2,7 +2,10 @@
 import type { GetStaticPaths } from 'astro';
 import Base from '../../layouts/Base.astro';
 import CabezaPagina from '../../components/CabezaPagina.astro';
-import InvitacionBarrio from '../../components/InvitacionBarrio.astro';
+import AniversarioBarrio from '../../components/AniversarioBarrio.astro';
+import ContadorProximamente from '../../components/ContadorProximamente.astro';
+import DatosBarrio from '../../components/DatosBarrio.astro';
+import ConsejosBarrio from '../../components/ConsejosBarrio.astro';
 import { barrios, type Barrio } from '../../data/barrios';
 import { formatearAniversario } from '../../lib/barrios';
 import { enlaceWhatsapp } from '../../lib/whatsapp';
@@ -24,7 +27,7 @@ const { nombre, sector, aniversario, apodo, lema, hechos, color } = barrio;
 
 const sobreAzul = color === 'azul';
 const relleno = color === 'amarillo' ? 'var(--fucsia)' : 'var(--blanco)';
-const faltaAlgo = !apodo || hechos.length === 0;
+const rival = barrios.find((otro) => otro.id === barrio.rival);
 const fechaAniversario = aniversario ? formatearAniversario(aniversario) : undefined;
 const urlFicha = new URL(Astro.url.pathname, Astro.site).href;
 
@@ -37,7 +40,6 @@ const descripcion = [
   .join(', ');
 
 const mensajeCompartir = `${nombre}${apodo ? `, ${apodo.toLowerCase()}` : ''}: ${urlFicha}`;
-const mensajeAporte = `Soy de ${nombre} y quiero contar cómo le dicen a mi barrio: `;
 ---
 
 <Base og={`barrio-${barrio.id}`} title={nombre} description={`${descripcion}.`}>
@@ -57,35 +59,40 @@ const mensajeAporte = `Soy de ${nombre} y quiero contar cómo le dicen a mi barr
     </p>
   </CabezaPagina>
 
+  {aniversario && <AniversarioBarrio nombre={nombre} aniversario={aniversario} />}
+
+  <ContadorProximamente barrio={barrio} rival={rival} />
+
   <section class="bloque ficha" aria-labelledby="titulo-ficha">
     <div class="envoltura ficha__cuerpo">
       <h2 id="titulo-ficha" class="titulo-bloque">Lo que sabemos</h2>
 
+      <DatosBarrio barrio={barrio} rival={rival} />
+
       {
-        hechos.length > 0 ? (
+        hechos.length > 0 && (
           <ul class="ficha__hechos">
             {hechos.map((hecho) => (
               <li>{hecho}</li>
             ))}
           </ul>
-        ) : (
-          <p class="entrada">Todavía no tenemos datos de este barrio.</p>
         )
       }
+    </div>
+  </section>
 
-      {
-        faltaAlgo && (
-          <InvitacionBarrio
-            pregunta={apodo ? `¿Sabes algo más de ${nombre}?` : `¿Cómo le dicen a ${nombre}?`}
-            mensaje={mensajeAporte}
-          />
-        )
-      }
+  <section class="bloque consejos fondo-tinta oscuro" aria-labelledby="titulo-consejos">
+    <div class="envoltura consejos__cuerpo">
+      <h2 id="titulo-consejos" class="titulo-bloque">Consejos del barrio</h2>
 
+      <ConsejosBarrio barrio={barrio} />
+    </div>
+  </section>
+
+  <section class="bloque ficha__pie" aria-label="Navegación entre barrios">
+    <div class="envoltura ficha__pie-cuerpo">
       <p class="ficha__acciones">
-        <a class="boton" href={enlaceWhatsapp(mensajeCompartir, '')} target="_blank" rel="noopener">
-          Mandar por WhatsApp
-        </a>
+        <a class="boton" href={enlaceWhatsapp(mensajeCompartir, '')} target="_blank" rel="noopener">Mandar por WhatsApp</a>
         <a class="boton boton--hueco" href="/barrios/">Todos los barrios</a>
       </p>
 
@@ -123,13 +130,16 @@ const mensajeAporte = `Soy de ${nombre} y quiero contar cómo le dicen a mi barr
     text-transform: uppercase;
   }
 
-  .ficha__cuerpo {
+  .ficha__cuerpo,
+  .consejos__cuerpo,
+  .ficha__pie-cuerpo {
     display: grid;
     gap: 2rem;
     justify-items: start;
   }
 
-  .ficha__cuerpo .titulo-bloque {
+  .ficha__cuerpo .titulo-bloque,
+  .consejos__cuerpo .titulo-bloque {
     margin-bottom: 0;
   }
 
@@ -155,6 +165,10 @@ const mensajeAporte = `Soy de ${nombre} y quiero contar cómo le dicen a mi barr
     aspect-ratio: 1;
     background: var(--fucsia);
     clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+
+  .ficha__pie {
+    padding-block: clamp(2rem, 5vw, 3rem) clamp(3rem, 7vw, 5rem);
   }
 
   .ficha__acciones {

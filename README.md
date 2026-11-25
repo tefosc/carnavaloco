@@ -59,6 +59,10 @@ src/data/
 
 **Barrios:** cada barrio de `barrios.ts` genera su ficha en `/barrios/<id>/` y su imagen para compartir en `/og/barrio-<id>.png`. Para completar uno, llena `apodo`, `lema` y `hechos`; mientras `apodo` esté vacío, su estandarte invita a contarlo por WhatsApp. El aniversario de cada sector alimenta la franja «Hoy cumple años» de la portada y de `/barrios/` (`src/lib/aniversarios.ts`); con `?fecha=2027-07-14` se ve cómo queda ese día. Los botones de WhatsApp abren un contacto a elegir hasta que se llene `contacto.whatsapp`.
 
+**Datos y consejos en cada ficha:** «Lo que sabemos» (`DatosBarrio.astro`) muestra los mismos seis datos en todos los barrios, cada uno con su ícono; el que falta pide el aporte por WhatsApp dentro de su propia tarjeta. «Consejos del barrio» (`ConsejosBarrio.astro`) tiene seis categorías iguales para todos (cómo llegar, dónde juntarse, qué comer, qué llevar, seguridad, dónde dormir) y queda vacío hasta que alguien las confirme. Los íconos están en `src/data/iconos.ts`.
+
+**Carnaval 2027 en cada barrio:** cada ficha lleva un contador de días al aniversario (`src/lib/aniversario-barrio.ts`, con la fecha de Perú) y el bloque «Próximamente» de `src/components/ContadorProximamente.astro`: un contador de carnavaleros, la credencial con el número del barrio y el de toda la web, los botones de compartir y, si el barrio tiene `rival` en `barrios.ts`, el duelo. Todo está bloqueado y con `000` hasta que haya servidor para guardar los registros; no muestra ninguna cifra.
+
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 
 **Arma tu copla** (en `/coplas/`): la gente escribe sus cuatro versos con ayuda para las sílabas y la rima (`src/lib/rima.ts`, la misma que usa el juego) y se lleva un afiche chicha en imagen (`src/lib/afiche-copla.ts`). Todo pasa en el navegador: la copla no se manda a ningún lado y el borrador queda en el teléfono. Las palabras que sugiere para rimar salen de las coplas, del glosario y de la lista `deSiempre` en `src/components/ArmaCopla.astro`.

@@ -33,17 +33,23 @@ export function etiquetaFaltan(faltan: number): string {
   return `en ${faltan} días`;
 }
 
-function diasHasta(hoy: Date, { dia, mes }: Aniversario): number {
+export function diasParaAniversario(hoy: Date, { dia, mes }: Aniversario): number {
   const anio = hoy.getUTCFullYear();
   const esteAnio = Date.UTC(anio, mes - 1, dia);
   const siguiente = esteAnio >= hoy.getTime() ? esteAnio : Date.UTC(anio + 1, mes - 1, dia);
   return Math.round((siguiente - hoy.getTime()) / DIA_EN_MS);
 }
 
+export function describirFaltan(faltan: number, nombre: string): { numero: string; texto: string } {
+  if (faltan === 0) return { numero: 'Hoy', texto: `cumple años ${nombre}` };
+  const dias = faltan === 1 ? 'día' : 'días';
+  return { numero: String(faltan), texto: `${dias} para el aniversario de ${nombre}` };
+}
+
 export function proximosAniversarios(hoy: Date, cantidad: number): ProximoAniversario[] {
   return barrios
     .flatMap((barrio) =>
-      barrio.aniversario ? [{ barrio, aniversario: barrio.aniversario, faltan: diasHasta(hoy, barrio.aniversario) }] : [],
+      barrio.aniversario ? [{ barrio, aniversario: barrio.aniversario, faltan: diasParaAniversario(hoy, barrio.aniversario) }] : [],
     )
     .sort((a, b) => a.faltan - b.faltan)
     .slice(0, cantidad);

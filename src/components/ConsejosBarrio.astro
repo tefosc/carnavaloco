@@ -1,0 +1,205 @@
+---
+import type { Barrio } from '../data/barrios';
+import type { Color } from '../data/carnaval';
+import type { NombreIcono } from '../data/iconos';
+import { enlaceWhatsapp } from '../lib/whatsapp';
+import Icono from './Icono.astro';
+
+interface Props {
+  barrio: Barrio;
+}
+
+interface Categoria {
+  icono: NombreIcono;
+  titulo: string;
+  tema: string;
+  color: Color;
+}
+
+const { barrio } = Astro.props;
+const { nombre } = barrio;
+
+const categorias: Categoria[] = [
+  { icono: 'bus', titulo: 'Cómo llegar', tema: 'cómo llegar', color: 'turquesa' },
+  { icono: 'grupo', titulo: 'Dónde juntarse', tema: 'dónde juntarse', color: 'fucsia' },
+  { icono: 'tenedor', titulo: 'Qué comer', tema: 'qué comer', color: 'naranja' },
+  { icono: 'paraguas', titulo: 'Qué llevar', tema: 'qué llevar', color: 'azul' },
+  { icono: 'escudo', titulo: 'Seguridad', tema: 'seguridad', color: 'verde' },
+  { icono: 'cama', titulo: 'Dónde dormir', tema: 'dónde dormir', color: 'amarillo' },
+];
+
+const mensajeDe = ({ tema }: Categoria) => `Tengo un consejo sobre ${tema} en ${nombre}: `;
+---
+
+<p class="intro">Los consejos los confirman vecinos de {nombre}. Si tú sabes algo, cuéntanos.</p>
+
+<ul class="estados" aria-label="Cómo marcamos cada dato">
+  <li class="estado estado--verificado">Verificado</li>
+  <li class="estado estado--barrio">Confirmado por el barrio</li>
+  <li class="estado estado--pendiente">Por confirmar</li>
+</ul>
+
+<ul class="mural">
+  {
+    categorias.map((categoria) => (
+      <li class="papel" data-color={categoria.color}>
+        <span class="papel__icono">
+          <Icono nombre={categoria.icono} />
+        </span>
+        <h3 class="papel__titulo">{categoria.titulo}</h3>
+        <p class="papel__texto">Aún no tenemos este dato de {nombre}.</p>
+        <a class="papel__boton" href={enlaceWhatsapp(mensajeDe(categoria))} target="_blank" rel="noopener">
+          Cuéntanos
+        </a>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .intro {
+    max-width: 52ch;
+    font-size: 1.15rem;
+  }
+
+  .estados {
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .estado {
+    padding: 0.3rem 0.7rem 0.2rem;
+    border: 2px solid var(--tinta);
+    background: var(--blanco);
+    color: var(--tinta);
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  .estado--verificado {
+    background: var(--verde);
+  }
+
+  .estado--pendiente {
+    border-style: dashed;
+  }
+
+  .mural {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.6rem 1rem;
+    width: 100%;
+    padding-top: 0.6rem;
+  }
+
+  .papel {
+    position: relative;
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    justify-items: start;
+    padding: 1.4rem 0.9rem 1rem;
+    border: 3px solid var(--tinta);
+    background: var(--c);
+    color: var(--tinta);
+    box-shadow: 5px 5px 0 var(--blanco);
+  }
+
+  .papel[data-color='azul'] {
+    color: var(--blanco);
+  }
+
+  .papel:nth-child(odd) {
+    rotate: -1deg;
+  }
+
+  .papel:nth-child(even) {
+    rotate: 1deg;
+  }
+
+  .papel::before {
+    content: '';
+    position: absolute;
+    top: -0.8rem;
+    left: 50%;
+    translate: -50% 0;
+    width: 4.2rem;
+    height: 1.3rem;
+    border: 2px solid var(--tinta);
+    background: rgb(255 255 255 / 0.8);
+    rotate: -3deg;
+  }
+
+  .papel__icono {
+    display: grid;
+    place-items: center;
+    width: 3.4rem;
+    height: 3.4rem;
+    border: 3px solid var(--tinta);
+    border-radius: 50%;
+    background: var(--blanco);
+    color: var(--tinta);
+  }
+
+  .papel__icono :global(svg) {
+    width: 1.9rem;
+    height: 1.9rem;
+  }
+
+  .papel__titulo {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.45rem, 5.4vw, 2rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .papel__texto {
+    font-weight: 600;
+    line-height: 1.3;
+  }
+
+  .papel__boton {
+    display: inline-flex;
+    align-items: center;
+    min-height: 40px;
+    margin-top: 0.3rem;
+    padding: 0.2rem 0.9rem 0;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    text-decoration: none;
+    text-transform: uppercase;
+  }
+
+  .papel__boton:hover {
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  @media (min-width: 760px) {
+    .mural {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 2rem 1.4rem;
+    }
+
+    .papel {
+      padding: 1.6rem 1.1rem 1.2rem;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .papel:nth-child(odd),
+    .papel:nth-child(even) {
+      rotate: none;
+    }
+  }
+</style>

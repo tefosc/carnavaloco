@@ -1,0 +1,509 @@
+---
+import type { Barrio } from '../data/barrios';
+import Candado from './Candado.astro';
+
+interface Props {
+  barrio: Barrio;
+  rival?: Barrio;
+}
+
+const { barrio, rival } = Astro.props;
+const compartirCredencial = ['WhatsApp', 'Facebook', 'Instagram', 'Descargar imagen'];
+const invitarBarrio = ['Mandar al grupo del barrio', 'Copiar enlace'];
+---
+
+<section class="proximo bloque" data-color={barrio.color} aria-labelledby="titulo-proximo">
+  <div class="envoltura">
+    <h2 id="titulo-proximo" class="titulo-bloque">Carnaval 2027</h2>
+
+    <div class="proximo__marco">
+      <div class="proximo__aviso">
+        <Candado class="proximo__candado" />
+        <p>
+          <strong>Próximamente</strong>
+          <span>Aquí vas a ver cuántos de {barrio.nombre} van al Carnaval 2027 y qué número te toca.</span>
+        </p>
+      </div>
+
+      <div class="proximo__vista" aria-hidden="true">
+        <div class="contador">
+          <p class="contador__numero">000</p>
+          <p class="contador__texto">carnavaleros de {barrio.nombre} ya van</p>
+          <div class="contador__barra"><i></i></div>
+          <p class="contador__global">En toda la web: <strong>000</strong> carnavaleros</p>
+          <span class="contador__boton">Voy al carnaval 2027</span>
+        </div>
+
+        <div class="carnet">
+          <div class="carnet__cabeza">
+            <span class="carnet__marca">Carnaval de Cajamarca</span>
+            <span class="carnet__anio">2027</span>
+          </div>
+          <div class="carnet__cuerpo">
+            <div class="carnet__foto">
+              <svg viewBox="0 0 48 48" focusable="false">
+                <circle cx="24" cy="17" r="9" fill="#fff" stroke="#13185a" stroke-width="3"></circle>
+                <path d="M6 44c2-12 10-16 18-16s16 4 18 16z" fill="#fff" stroke="#13185a" stroke-width="3"></path>
+              </svg>
+            </div>
+            <div class="carnet__datos">
+              <b>Carnavalero</b>
+              <strong class="carnet__nombre">Tu nombre aquí</strong>
+              <span class="carnet__barrio">{barrio.nombre}</span>
+              <span class="carnet__modo">Salgo con mi barrio</span>
+            </div>
+          </div>
+          <div class="carnet__numeros">
+            <div>
+              <small>En {barrio.nombre}</small>
+              <strong>N.° 000</strong>
+            </div>
+            <div>
+              <small>En toda la web</small>
+              <strong>N.° 000</strong>
+            </div>
+          </div>
+          <div class="carnet__pie">
+            <span>Sáb 6 al mié 10 de febrero</span>
+            <span class="carnet__fundador">Fundador · lugar reservado</span>
+          </div>
+        </div>
+
+        <div class="compartir">
+          <div class="compartir__grupo">
+            <h3 class="compartir__titulo">Compartir mi credencial</h3>
+            <div class="compartir__fila">
+              {
+                compartirCredencial.map((nombre) => (
+                  <span class="compartir__boton">
+                    <Candado />
+                    {nombre}
+                  </span>
+                ))
+              }
+            </div>
+          </div>
+          <div class="compartir__grupo">
+            <h3 class="compartir__titulo">Invitar a mi barrio</h3>
+            <div class="compartir__fila">
+              {
+                invitarBarrio.map((nombre) => (
+                  <span class="compartir__boton">
+                    <Candado />
+                    {nombre}
+                  </span>
+                ))
+              }
+            </div>
+          </div>
+        </div>
+
+        {
+          rival && (
+            <div class="duelo">
+              <h3 class="duelo__titulo">Duelo de barrios</h3>
+              <div class="duelo__lados">
+                <p class="duelo__lado">
+                  {barrio.nombre}
+                  <strong>000</strong>
+                </p>
+                <p class="duelo__vs">vs</p>
+                <p class="duelo__lado duelo__lado--derecha">
+                  {rival.nombre}
+                  <strong>000</strong>
+                </p>
+              </div>
+              <div class="duelo__barra">
+                <i style="background: var(--c)" />
+                <i style={`background: var(--${rival.color})`} />
+              </div>
+            </div>
+          )
+        }
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .proximo {
+    --sobre: var(--tinta);
+  }
+
+  .proximo[data-color='azul'] {
+    --sobre: var(--blanco);
+  }
+
+  .proximo__marco {
+    border: 3px solid var(--tinta);
+    box-shadow: 6px 6px 0 var(--tinta);
+    background: var(--blanco);
+    overflow: hidden;
+  }
+
+  .proximo__aviso {
+    display: flex;
+    align-items: center;
+    gap: 0.9rem;
+    padding: 0.9rem clamp(1rem, 3vw, 1.6rem);
+    background: var(--amarillo);
+    border-bottom: 3px solid var(--tinta);
+  }
+
+  .proximo__aviso :global(.proximo__candado) {
+    flex: none;
+    width: 2.4rem;
+    height: 2.4rem;
+  }
+
+  .proximo__aviso strong {
+    display: block;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.9rem;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .proximo__aviso span {
+    font-weight: 600;
+  }
+
+  .proximo__vista {
+    display: grid;
+    gap: 1.8rem;
+    padding: clamp(1rem, 3vw, 2rem);
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .contador {
+    display: grid;
+    align-content: start;
+    gap: 0.6rem;
+    padding: 1.2rem;
+    border: 3px solid var(--tinta);
+    text-align: center;
+  }
+
+  .contador__numero {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(5rem, 22vw, 8rem);
+    line-height: 0.85;
+    color: var(--c);
+    -webkit-text-stroke: 3px var(--tinta);
+    paint-order: stroke fill;
+    text-shadow: 5px 5px 0 var(--tinta);
+  }
+
+  .contador__texto {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .contador__barra {
+    position: relative;
+    height: 16px;
+    border: 3px solid var(--tinta);
+    overflow: hidden;
+  }
+
+  .contador__barra i {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 38%;
+    background: var(--c);
+  }
+
+  .contador__global {
+    font-weight: 700;
+  }
+
+  .contador__global strong {
+    margin-inline: 0.2rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.5rem;
+    color: var(--fucsia);
+    -webkit-text-stroke: 1.5px var(--tinta);
+    paint-order: stroke fill;
+  }
+
+  .contador__boton {
+    display: grid;
+    place-items: center;
+    min-height: 52px;
+    border: 3px solid var(--tinta);
+    background: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+  }
+
+  .carnet {
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    box-shadow: 5px 5px 0 var(--c);
+    overflow: hidden;
+  }
+
+  .carnet__cabeza {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.8rem;
+    background: var(--c);
+    color: var(--sobre);
+    border-bottom: 3px solid var(--tinta);
+  }
+
+  .carnet__marca {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .carnet__anio {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.9rem;
+    line-height: 1;
+  }
+
+  .carnet__cuerpo {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.8rem;
+    align-items: center;
+    padding: 0.8rem;
+  }
+
+  .carnet__foto {
+    display: grid;
+    place-items: center;
+    width: 5rem;
+    height: 5rem;
+    border: 3px solid var(--tinta);
+    background: var(--c);
+  }
+
+  .carnet__foto svg {
+    width: 3.4rem;
+    height: 3.4rem;
+  }
+
+  .carnet__datos {
+    display: grid;
+    gap: 0.15rem;
+    min-width: 0;
+  }
+
+  .carnet__datos b {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+  }
+
+  .carnet__nombre {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.8rem;
+    line-height: 1;
+    text-transform: uppercase;
+    color: #9a9dc0;
+  }
+
+  .carnet__barrio {
+    font-weight: 800;
+  }
+
+  .carnet__modo {
+    justify-self: start;
+    margin-top: 0.25rem;
+    padding: 0.1rem 0.5rem 0;
+    border: 2px solid var(--tinta);
+    background: var(--amarillo);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .carnet__numeros {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 3px solid var(--tinta);
+  }
+
+  .carnet__numeros div {
+    display: grid;
+    padding: 0.5rem 0.8rem;
+    min-width: 0;
+  }
+
+  .carnet__numeros div + div {
+    border-left: 3px solid var(--tinta);
+  }
+
+  .carnet__numeros small {
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .carnet__numeros strong {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2.6rem;
+    line-height: 1;
+    color: var(--c);
+    -webkit-text-stroke: 2px var(--tinta);
+    paint-order: stroke fill;
+  }
+
+  .carnet__numeros div:last-child strong {
+    color: var(--fucsia);
+  }
+
+  .carnet__pie {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem 0.5rem;
+    padding: 0.5rem 0.8rem;
+    border-top: 3px dashed var(--tinta);
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+
+  .carnet__fundador {
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #6b6f9b;
+  }
+
+  .compartir {
+    display: grid;
+    gap: 1.6rem;
+  }
+
+  .compartir__grupo {
+    display: grid;
+    gap: 0.7rem;
+    align-content: start;
+  }
+
+  .compartir__titulo {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.4rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .compartir__fila {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .compartir__boton {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.4rem 0.8rem;
+    border: 3px dashed var(--tinta);
+    background: #e6e3ef;
+    color: #555a8a;
+    font-weight: 800;
+    font-size: 0.95rem;
+  }
+
+  .compartir__boton :global(svg) {
+    flex: none;
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .duelo {
+    display: grid;
+    gap: 0.8rem;
+    padding: 1.2rem;
+    border: 3px solid var(--tinta);
+  }
+
+  .duelo__titulo {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.6rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .duelo__lados {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 0.5rem;
+    align-items: end;
+  }
+
+  .duelo__lado {
+    display: grid;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.3rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .duelo__lado strong {
+    font-size: 2.6rem;
+  }
+
+  .duelo__lado--derecha {
+    text-align: right;
+  }
+
+  .duelo__vs {
+    padding-bottom: 0.4rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+  }
+
+  .duelo__barra {
+    display: flex;
+    height: 22px;
+    border: 3px solid var(--tinta);
+    overflow: hidden;
+  }
+
+  .duelo__barra i {
+    display: block;
+    width: 50%;
+  }
+
+  @media (min-width: 900px) {
+    .proximo__vista {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .compartir {
+      grid-column: 1 / -1;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .duelo {
+      grid-column: 1 / -1;
+    }
+  }
+</style>

@@ -1,0 +1,204 @@
+---
+import type { Barrio } from '../data/barrios';
+import type { NombreIcono } from '../data/iconos';
+import { formatearAniversario } from '../lib/barrios';
+import { enlaceWhatsapp } from '../lib/whatsapp';
+import Icono from './Icono.astro';
+
+interface Props {
+  barrio: Barrio;
+  rival?: Barrio;
+}
+
+interface Dato {
+  icono: NombreIcono;
+  etiqueta: string;
+  valor?: string;
+  enlace?: string;
+  largo?: boolean;
+  mensaje: string;
+}
+
+const { barrio, rival } = Astro.props;
+const { nombre, sector, aniversario, apodo, lema } = barrio;
+
+const datos: Dato[] = [
+  {
+    icono: 'pin',
+    etiqueta: 'Sector',
+    valor: sector ? `N.° ${sector} de 24` : 'No figura entre los 24 sectores',
+    mensaje: '',
+  },
+  {
+    icono: 'calendario',
+    etiqueta: 'Aniversario',
+    valor: aniversario ? formatearAniversario(aniversario) : undefined,
+    mensaje: `Soy de ${nombre} y quiero contar cuándo es el aniversario del barrio: `,
+  },
+  {
+    icono: 'burbuja',
+    etiqueta: 'Cómo le dicen',
+    valor: apodo,
+    mensaje: `Soy de ${nombre} y quiero contar cómo le dicen a mi barrio: `,
+  },
+  {
+    icono: 'nota',
+    etiqueta: 'Su lema',
+    valor: lema ? `«${lema}»` : undefined,
+    largo: true,
+    mensaje: `Soy de ${nombre} y quiero compartir el lema o la copla de mi barrio: `,
+  },
+  {
+    icono: 'rayo',
+    etiqueta: 'Su rival de siempre',
+    valor: rival?.nombre,
+    enlace: rival ? `/barrios/${rival.id}/` : undefined,
+    mensaje: `Soy de ${nombre} y quiero contar con quién tiene rivalidad mi barrio: `,
+  },
+  {
+    icono: 'bandera',
+    etiqueta: 'Patrullas y comparsas',
+    mensaje: `Soy de ${nombre} y quiero contar qué patrullas y comparsas salen de mi barrio: `,
+  },
+];
+---
+
+<ul class="datos" data-color={barrio.color}>
+  {
+    datos.map((dato) => (
+      <li class:list={['dato', { 'dato--vacio': !dato.valor }]}>
+        <span class="dato__icono">
+          <Icono nombre={dato.icono} />
+        </span>
+        <div class="dato__texto">
+          <p class="dato__etiqueta">{dato.etiqueta}</p>
+          {dato.valor && dato.enlace && (
+            <a class="dato__valor dato__enlace" href={dato.enlace}>
+              {dato.valor}
+            </a>
+          )}
+          {dato.valor && !dato.enlace && <p class:list={['dato__valor', { 'dato__valor--largo': dato.largo }]}>{dato.valor}</p>}
+          {!dato.valor && (
+            <>
+              <p class="dato__valor">Por confirmar</p>
+              <a class="dato__cuentanos" href={enlaceWhatsapp(dato.mensaje)} target="_blank" rel="noopener">
+                Cuéntanos
+              </a>
+            </>
+          )}
+        </div>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .datos {
+    --sobre: var(--tinta);
+    list-style: none;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.2rem;
+    width: 100%;
+  }
+
+  .datos[data-color='azul'] {
+    --sobre: var(--blanco);
+  }
+
+  .dato {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.9rem;
+    padding: 1rem;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    box-shadow: 4px 4px 0 var(--tinta);
+  }
+
+  .dato--vacio {
+    border-style: dashed;
+    background: #faf9fd;
+    box-shadow: none;
+  }
+
+  .dato__icono {
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 2.9rem;
+    height: 2.9rem;
+    border: 3px solid var(--tinta);
+    border-radius: 50%;
+    background: var(--c);
+    color: var(--sobre);
+  }
+
+  .dato--vacio .dato__icono {
+    background: var(--blanco);
+    color: var(--tinta);
+  }
+
+  .dato__icono :global(svg) {
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  .dato__texto {
+    display: grid;
+    gap: 0.2rem;
+    min-width: 0;
+  }
+
+  .dato__etiqueta {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .dato__valor {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.6rem;
+    line-height: 1.05;
+    overflow-wrap: anywhere;
+  }
+
+  .dato__valor--largo {
+    font-family: var(--texto);
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.05rem;
+    line-height: 1.3;
+  }
+
+  .dato__enlace {
+    text-decoration: underline;
+    text-underline-offset: 4px;
+  }
+
+  .dato--vacio .dato__valor {
+    font-size: 1.25rem;
+    color: #6b6f9b;
+  }
+
+  .dato__cuentanos {
+    justify-self: start;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  @media (min-width: 640px) {
+    .datos {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .datos {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

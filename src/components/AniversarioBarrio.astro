@@ -1,0 +1,80 @@
+---
+import type { Aniversario } from '../data/barrios';
+import { describirFaltan, diasParaAniversario, formatearAniversario } from '../lib/barrios';
+import { hoyEnPeru } from '../lib/fechas';
+
+interface Props {
+  nombre: string;
+  aniversario: Aniversario;
+}
+
+const { nombre, aniversario } = Astro.props;
+const { numero, texto } = describirFaltan(diasParaAniversario(hoyEnPeru(), aniversario), nombre);
+---
+
+<section
+  class="aniversario bloque fondo-tinta oscuro"
+  data-aniversario-barrio
+  data-dia={aniversario.dia}
+  data-mes={aniversario.mes}
+  data-nombre={nombre}
+  aria-label={`Aniversario de ${nombre}`}
+>
+  <div class="envoltura aniversario__cuerpo">
+    <p class="aniversario__numero" data-aniversario-numero>{numero}</p>
+    <div class="aniversario__detalle">
+      <p class="aniversario__texto" data-aniversario-texto>{texto}</p>
+      <p class="aniversario__fecha">Su aniversario es el {formatearAniversario(aniversario)}</p>
+    </div>
+  </div>
+</section>
+
+<script>
+  import { aplicarAniversarioDelBarrio } from '../lib/aniversario-barrio';
+
+  aplicarAniversarioDelBarrio();
+</script>
+
+<style>
+  .aniversario {
+    padding-block: clamp(2.4rem, 6vw, 4rem);
+  }
+
+  .aniversario__cuerpo {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem clamp(1.2rem, 4vw, 3rem);
+  }
+
+  .aniversario__numero {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(6rem, 24vw, 11rem);
+    line-height: 0.82;
+    color: var(--amarillo);
+    -webkit-text-stroke: 3px var(--tinta);
+    paint-order: stroke fill;
+    text-shadow: 6px 6px 0 var(--fucsia);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .aniversario__detalle {
+    display: grid;
+    gap: 0.4rem;
+    min-width: 0;
+  }
+
+  .aniversario__texto {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 5vw, 3rem);
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .aniversario__fecha {
+    font-weight: 600;
+    font-size: 1.1rem;
+  }
+</style>
