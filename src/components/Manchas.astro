@@ -1,0 +1,209 @@
+---
+/**
+ * Pintura por toda la web: cada sección (y el pie) lleva una a tres manchas en los
+ * bordes —salpicones, manos, globos reventados, chorreados, brochazos, talco—
+ * que aparecen al bajar, como si alguien acabara de pintar. Las formas están en
+ * src/lib/manchas.ts. Son decoración: quedan detrás del texto y los lectores de
+ * pantalla no las leen. Una sección con data-sin-manchas se queda limpia.
+ */
+---
+
+<style is:global>
+  .con-manchas {
+    position: relative;
+    isolation: isolate;
+  }
+
+  /* clip y no hidden: hidden la volvería contenedor de scroll y la animación no avanzaría */
+  .manchas {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    overflow: clip;
+    pointer-events: none;
+  }
+
+  .mancha-deco {
+    position: absolute;
+    opacity: 0.92;
+  }
+
+  .mancha-deco--chorreado {
+    transform-origin: top center;
+  }
+
+  /* Entran al bajar: salpican, se estampan, chorrean o se pintan de una pasada.
+     Es decoración: donde el navegador no anima con el scroll, ya están pintadas. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports ((animation-timeline: view()) and (animation-range: entry)) {
+      .mancha-deco {
+        animation: mancha-salpica auto linear backwards;
+        animation-timeline: view();
+        animation-range: entry 0% entry 100%;
+      }
+
+      .mancha-deco--mano {
+        animation-name: mancha-estampa;
+      }
+
+      .mancha-deco--chorreado {
+        animation-name: mancha-chorrea;
+      }
+
+      .mancha-deco--brochazo {
+        animation-name: mancha-pinta;
+      }
+    }
+  }
+
+  @keyframes mancha-salpica {
+    from {
+      opacity: 0;
+      scale: 0.35;
+    }
+    70% {
+      opacity: 0.92;
+      scale: 1.06;
+    }
+  }
+
+  @keyframes mancha-estampa {
+    from {
+      opacity: 0;
+      scale: 1.4;
+    }
+    55% {
+      opacity: 0.92;
+      scale: 0.95;
+    }
+  }
+
+  @keyframes mancha-chorrea {
+    from {
+      opacity: 0;
+      scale: 1 0.1;
+    }
+    30% {
+      opacity: 0.92;
+    }
+  }
+
+  @keyframes mancha-pinta {
+    from {
+      clip-path: inset(0 100% 0 0);
+    }
+  }
+</style>
+
+<script>
+  import { azarConSemilla, crearMancha, PROPORCION, semillaDe, type TipoMancha } from '../lib/manchas';
+
+  const PALETA = ['#ff2a92', '#ffe600', '#00b35c', '#1d2fd0', '#ff6a00', '#00b8c8', '#ffffff'];
+  /** Ancho de cada forma en la computadora (en el teléfono va más chica). */
+  const ANCHO: Record<TipoMancha, number> = {
+    salpicon: 230,
+    mano: 150,
+    globo: 210,
+    chorreado: 360,
+    brochazo: 380,
+    talco: 200,
+  };
+
+  type Rgb = [number, number, number];
+  const hexARgb = (hex: string): Rgb => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16)) as Rgb;
+  const leerRgb = (css: string): Rgb | null => {
+    const n = css.match(/[\d.]+/g)?.map(Number);
+    if (!n || n.length < 3 || n[3] === 0) return null;
+    return [n[0], n[1], n[2]];
+  };
+  const luz = ([r, g, b]: Rgb) => (0.2126 * r + 0.7152 * g + 0.0722 * b) / 255;
+  const distancia = (a: Rgb, b: Rgb) => Math.hypot(a[0] - b[0], a[1] - b[1], a[2] - b[2]);
+
+  /** Color de fondo real: el de la sección o, si es transparente, el de más afuera. */
+  function fondoDe(el: Element | null): Rgb {
+    for (; el; el = el.parentElement) {
+      const c = leerRgb(getComputedStyle(el).backgroundColor);
+      if (c) return c;
+    }
+    return [255, 255, 255];
+  }
+
+  function elegirTipo(azar: () => number, primera: boolean, fondoClaro: boolean): TipoMancha {
+    const opciones: [TipoMancha, number][] = [
+      ['salpicon', 3],
+      ['mano', 3],
+      ['globo', 2],
+      ['brochazo', 2],
+      ['chorreado', primera ? 2 : 0],
+      ['talco', fondoClaro ? 0 : 1],
+    ];
+    let tiro = azar() * opciones.reduce((s, [, peso]) => s + peso, 0);
+    for (const [tipo, peso] of opciones) {
+      tiro -= peso;
+      if (tiro < 0) return tipo;
+    }
+    return 'salpicon';
+  }
+
+  function decorar(seccion: HTMLElement, indice: number) {
+    const alto = seccion.offsetHeight;
+    if (alto < 220 || seccion.hasAttribute('data-sin-manchas')) return;
+    const movil = seccion.offsetWidth < 700;
+    const azar = azarConSemilla(semillaDe(`${location.pathname}#${indice}`));
+    const fondo = fondoDe(seccion);
+    const fondoClaro = luz(fondo) > 0.85;
+    // El texto pasa por encima: sobre letra clara no van colores claros, y al revés
+    const textoClaro = luz(leerRgb(getComputedStyle(seccion).color) ?? [0, 0, 0]) > 0.6;
+    const colores = PALETA.filter((c) => {
+      const rgb = hexARgb(c);
+      return distancia(rgb, fondo) > 140 && (textoClaro ? luz(rgb) < 0.62 : luz(rgb) > 0.3);
+    });
+    if (colores.length === 0) return;
+
+    const cuantas = movil ? (alto < 700 ? 1 : 2) : alto < 650 ? 2 : alto < 1300 ? 3 : 4;
+    // Margen real entre el borde y el texto: las manchas viven ahí y solo rozan el texto
+    const envoltura = seccion.querySelector<HTMLElement>('.envoltura');
+    const margen = envoltura
+      ? envoltura.getBoundingClientRect().left - seccion.getBoundingClientRect().left
+      : 40;
+    const capa = document.createElement('div');
+    capa.className = 'manchas';
+    capa.setAttribute('aria-hidden', 'true');
+
+    for (let k = 0; k < cuantas; k++) {
+      const tipo = elegirTipo(azar, k === 0, fondoClaro);
+      const color = tipo === 'talco' ? '#ffffff' : colores[Math.floor(azar() * colores.length)];
+      const ancho = ANCHO[tipo] * (0.9 + azar() * 0.45) * (movil ? 0.6 : 1);
+      const altoMancha = ancho * PROPORCION[tipo];
+      const svg = crearMancha(tipo, color, ancho, azar);
+      svg.classList.add('mancha-deco', `mancha-deco--${tipo}`);
+      const izquierda = (indice + k) % 2 === 0;
+
+      if (tipo === 'chorreado') {
+        // Cuelga del borde de arriba
+        svg.style.top = '0';
+        svg.style.left = `${(izquierda ? 4 + azar() * 22 : 52 + azar() * 22).toFixed(1)}%`;
+      } else {
+        // En los márgenes, un poco salida de la sección; las que tocan el mismo lado
+        // se reparten a lo alto para no encimarse
+        const base = movil ? 0.5 : tipo === 'brochazo' ? 0.2 : 0.12 + azar() * 0.22;
+        // Lo que se ve de la mancha no pasa mucho del margen (salvo que la mancha sea chica)
+        const visible = Math.max(margen + 40, ancho * 0.3);
+        const afuera = Math.max(base, 1 - visible / ancho);
+        svg.style[izquierda ? 'left' : 'right'] = `${(-ancho * afuera).toFixed(0)}px`;
+        const franja = 1 / cuantas;
+        const desde = Math.max(0.06, k * franja);
+        const hasta = Math.min(0.92, (k + 1) * franja);
+        svg.style.top = `${((desde + azar() * (hasta - desde)) * 100).toFixed(1)}%`;
+        svg.style.marginTop = `${(-altoMancha / 2).toFixed(0)}px`;
+        svg.style.rotate = `${((azar() - 0.5) * (tipo === 'brochazo' ? 24 : 60)).toFixed(1)}deg`;
+      }
+      capa.append(svg);
+    }
+
+    seccion.classList.add('con-manchas');
+    seccion.prepend(capa);
+  }
+
+  document.querySelectorAll<HTMLElement>('main .bloque, footer.pie').forEach(decorar);
+</script>

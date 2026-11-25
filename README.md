@@ -56,6 +56,8 @@ src/data/
 
 **Agregar un año:** un objeto nuevo en `ediciones.json` con `id` y `anio` iguales. La página `/ediciones/<año>/` se genera sola.
 
+**Arma tu copla** (en `/coplas/`): la gente escribe sus cuatro versos con ayuda para las sílabas y la rima (`src/lib/rima.ts`, la misma que usa el juego) y se lleva un afiche chicha en imagen (`src/lib/afiche-copla.ts`). Todo pasa en el navegador: la copla no se manda a ningún lado y el borrador queda en el teléfono. Las palabras que sugiere para rimar salen de las coplas, del glosario y de la lista `deSiempre` en `src/components/ArmaCopla.astro`.
+
 **Agregar una copla:** en `coplas.json`, con `origen: "tradicional"` y `fuente` si la sacaste de algún lado, o `"inedita"` si es nueva. Entre 3 y 6 versos. Cada verso se muestra con «bis», porque al cantar se dice dos veces; si la copla se canta repitiendo cada par de versos, agrega `"repite": "par"` y el «bis» va al final de cada par.
 
 ## Despliegue en Vercel
@@ -78,6 +80,7 @@ Afiche chicha + raso de clon:
 - Colores planos del satín de los disfraces: fucsia, amarillo, verde loro, azul rey, naranja y turquesa; el texto en azul noche.
 - Titulares en Big Shoulders Display con contorno y sombra dura (`src/components/Chicha.astro`); texto en Bricolage Grotesque.
 - Bordes en zigzag de gola, flecos, banderolas, sellos redondos y afiches pegados (`src/styles/global.css` y `src/components/`).
+- Pintura por toda la web: cada sección lleva en los bordes salpicones, manos, globos reventados, chorreados, brochazos o talco (`src/lib/manchas.ts` y `src/components/Manchas.astro`), que entran al bajar con animaciones ligadas al scroll. Se reparten con una semilla por página, así cada página se pinta siempre igual. Una sección con `data-sin-manchas` queda limpia.
 - El movimiento respeta `prefers-reduced-motion`; la cinta de gritos se detiene al pasar el mouse.
 
 ## Fotos

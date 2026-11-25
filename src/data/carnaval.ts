@@ -25,6 +25,24 @@ export const historia = [
       'Un grupo de entusiastas decide popularizar la fiesta: aparecen los primeros carros alegóricos, con sus reinas y sus comparsas.',
   },
   {
+    cuando: '1930',
+    titulo: 'Se acaba el baldazo',
+    texto:
+      'En el gobierno de Augusto B. Leguía se prohíbe el juego brusco con agua. La gente se las ingenia: chisguetes de éter, talco, hollín, perfumes y hasta huevos rellenos de olor.',
+  },
+  {
+    cuando: '1960',
+    titulo: 'Solo los domingos',
+    texto:
+      'Tras años de desmanes, el gobierno de Manuel Prado reduce la fiesta de tres días a los domingos de febrero.',
+  },
+  {
+    cuando: 'Años setenta',
+    titulo: 'Vuelve la fiesta grande',
+    texto:
+      'Con el alcalde Adolfo Amorín Bueno el carnaval se reactiva, y desde entonces lo organiza un Comité Central del Carnaval.',
+  },
+  {
     cuando: 'Lo que cuentan los mayores',
     titulo: 'Martes de trompadas',
     texto:
@@ -35,6 +53,11 @@ export const historia = [
     titulo: 'De casa en casa',
     texto:
       'Las patrullas entraban a las casas cantando y los vecinos las esperaban con la chicha de patrulla. Cada barrio tenía entre tres y seis comparsas; hoy puede tener hasta 25.',
+  },
+  {
+    cuando: '2002',
+    titulo: 'Fiesta nacional',
+    texto: 'La Ley 27667, publicada en febrero, declara al Carnaval de Cajamarca fiesta nacional.',
   },
   {
     cuando: 'Antes de 2014',
@@ -128,7 +151,8 @@ export const personajes: Array<{ nombre: string; texto: string; color: Color }> 
   },
   {
     nombre: 'Ña Carnavalona y el Cilulo',
-    texto: 'La compañera del Ño y el Cilulo, que además da nombre a una de las canciones-danza de la fiesta.',
+    texto:
+      'La compañera del Ño, que se sumó a la fiesta en los años ochenta, y el Cilulo, que además da nombre a una de las canciones-danza.',
     color: 'amarillo',
   },
 ];
@@ -191,10 +215,18 @@ export const sabores: Array<{ nombre: string; texto: string }> = [
       'Repollo, papa, camote, yuca, racacha, res, tocino y carnero. El caldo va en un plato y lo sólido en otro.',
   },
   { nombre: 'Frito', texto: 'Menudencia de cerdo con azafrán; se come con papa y chicharrón.' },
-  { nombre: 'Chicha de jora', texto: 'La más pedida, servida en poto.' },
+  { nombre: 'Caldo verde', texto: 'Papa, huevo y queso en un caldo que el perejil y el paico pintan de verde.' },
+  { nombre: 'Cuy frito y chicharrón con mote', texto: 'Los platos de fiesta en la mesa cajamarquina.' },
+  { nombre: 'Humitas y cecina shilpida', texto: 'La cecina va deshilachada; las humitas, para el camino.' },
+  {
+    nombre: 'Chicha de jora',
+    texto:
+      'La más pedida, servida en poto. Las familias la preparan semanas antes en urpos, con jora, frutas y chancaca, y la dejan fermentar.',
+  },
   { nombre: 'Chicha de maní y chicha colorada', texto: 'Las del carnaval de antes.' },
   { nombre: 'Calientito y cañazo', texto: 'Para el frío que deja el agua.' },
-  { nombre: 'Manjar blanco', texto: 'El dulce emblema, también en alfajores y turrones.' },
+  { nombre: 'Manjar blanco', texto: 'El dulce emblema, también en alfajores, turrones y rosquitas.' },
+  { nombre: 'Quesillo con miel', texto: 'Quesillo fresco bañado en miel de caña.' },
 ];
 
 export const rasgosHabla = [
@@ -279,6 +311,21 @@ export const fuentes = [
     medio: 'RPP',
     titulo: 'Las alegres y pícaras coplas de Cajamarca',
     url: 'https://rpp.pe/peru/actualidad/las-alegres-y-picaras-coplas-de-cajamarca-noticia-669715',
+  },
+  {
+    medio: 'Carnavalcajamarca.com',
+    titulo: 'Historia del carnaval de Cajamarca (cita una tesis de la PUCP)',
+    url: 'https://carnavalcajamarca.com/historia-del-carnaval-de-cajamarca/',
+  },
+  {
+    medio: 'Carnavalcajamarca.com',
+    titulo: 'Platos típicos del carnaval de Cajamarca',
+    url: 'https://carnavalcajamarca.com/platos-tipicos-del-carnaval-de-cajamarca/',
+  },
+  {
+    medio: 'El Peruano (en Justia Perú)',
+    titulo: 'Ley 27667: declara al Carnaval de Cajamarca fiesta nacional',
+    url: 'https://peru.justia.com/federales/leyes/27667-feb-14-2002/gdoc',
   },
   {
     medio: 'Boletín de Arqueología PUCP',

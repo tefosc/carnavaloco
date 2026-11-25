@@ -5,6 +5,7 @@ import '../styles/global.css';
 import Analytics from '@vercel/analytics/astro';
 import Cabecera from '../components/Cabecera.astro';
 import Pie from '../components/Pie.astro';
+import Manchas from '../components/Manchas.astro';
 // La letra de los titulares se ve en el primer pantallazo: se precarga.
 import letraTitulares from '@fontsource-variable/big-shoulders-display/files/big-shoulders-display-latin-wght-normal.woff2?url';
 
@@ -59,6 +60,7 @@ const imagen = new URL(`/og/${og}.png`, Astro.site);
       <slot />
     </main>
     <Pie />
+    <Manchas />
     <!-- Se llena solo cuando no hay conexión -->
     <p class="sin-red" role="status" data-sin-red></p>
   </body>

@@ -40,55 +40,30 @@
 </style>
 
 <script>
+  import { crearMancha, PROPORCION, type TipoMancha } from '../lib/manchas';
+
   const COLORES = ['#ffe600', '#00b35c', '#1d2fd0', '#ff6a00', '#00b8c8', '#ffffff', '#13185a'];
   const MAX = 40;
-  const SVG = 'http://www.w3.org/2000/svg';
   const azar = (a: number, b: number) => a + Math.random() * (b - a);
-
-  function contorno(r: number) {
-    const n = 12;
-    const p = Array.from({ length: n }, (_, i) => {
-      const ang = (i / n) * Math.PI * 2;
-      const rr = r * azar(0.68, 1.22);
-      return [Math.cos(ang) * rr, Math.sin(ang) * rr];
-    });
-    const medio = (a: number[], b: number[]) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
-    const ini = medio(p[n - 1], p[0]);
-    let d = `M${ini[0].toFixed(1)} ${ini[1].toFixed(1)}`;
-    p.forEach((q, i) => {
-      const m = medio(q, p[(i + 1) % n]);
-      d += ` Q${q[0].toFixed(1)} ${q[1].toFixed(1)} ${m[0].toFixed(1)} ${m[1].toFixed(1)}`;
-    });
-    return d + 'Z';
-  }
+  // Al tocar salen salpicones, manos y globos reventados; la mano, un poco más chica
+  const TIPOS: { tipo: TipoMancha; ancho: [number, number] }[] = [
+    { tipo: 'salpicon', ancho: [150, 260] },
+    { tipo: 'salpicon', ancho: [150, 260] },
+    { tipo: 'mano', ancho: [110, 170] },
+    { tipo: 'globo', ancho: [150, 240] },
+  ];
 
   function salpicar(capa: HTMLElement, x: number, y: number) {
-    const r = azar(30, 74);
-    const lado = r * 3.2;
+    const { tipo, ancho: rango } = TIPOS[Math.floor(Math.random() * TIPOS.length)];
+    const ancho = azar(...rango);
+    const alto = ancho * PROPORCION[tipo];
     const color = COLORES[Math.floor(Math.random() * COLORES.length)];
-    const svg = document.createElementNS(SVG, 'svg');
+    const svg = crearMancha(tipo, color, ancho, Math.random);
     svg.classList.add('mancha');
-    svg.setAttribute('viewBox', `${-lado / 2} ${-lado / 2} ${lado} ${lado}`);
-    svg.setAttribute('width', String(lado));
-    svg.setAttribute('height', String(lado));
-    svg.style.left = `${x - lado / 2}px`;
-    svg.style.top = `${y - lado / 2}px`;
-    svg.style.rotate = `${azar(0, 360)}deg`;
-    const mancha = document.createElementNS(SVG, 'path');
-    mancha.setAttribute('d', contorno(r));
-    mancha.setAttribute('fill', color);
-    svg.append(mancha);
-    const gotas = Math.round(azar(4, 9));
-    for (let i = 0; i < gotas; i++) {
-      const a = azar(0, Math.PI * 2);
-      const dist = r * azar(1.1, 1.5);
-      const g = document.createElementNS(SVG, 'circle');
-      g.setAttribute('cx', (Math.cos(a) * dist).toFixed(1));
-      g.setAttribute('cy', (Math.sin(a) * dist).toFixed(1));
-      g.setAttribute('r', (r * azar(0.05, 0.14)).toFixed(1));
-      g.setAttribute('fill', color);
-      svg.append(g);
-    }
+    svg.style.left = `${x - ancho / 2}px`;
+    svg.style.top = `${y - alto / 2}px`;
+    // Las manos no salen de cabeza
+    svg.style.rotate = `${tipo === 'mano' ? azar(-35, 35) : azar(0, 360)}deg`;
     capa.append(svg);
     while (capa.childElementCount > MAX) capa.firstElementChild?.remove();
   }
