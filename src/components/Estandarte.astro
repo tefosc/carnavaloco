@@ -8,11 +8,12 @@ interface Props {
 
 const { barrio } = Astro.props;
 const { id, nombre, sector, apodo, aniversario, color } = barrio;
+const palabraMasLarga = Math.max(...nombre.split(' ').map((palabra) => palabra.length));
 ---
 
 <a class="estandarte flecos" href={`/barrios/${id}/`} data-color={color}>
   <span class="estandarte__sector" aria-hidden="true">{sector ?? '✶'}</span>
-  <span class="estandarte__nombre">{nombre}</span>
+  <span class="estandarte__nombre" style={`--largo:${palabraMasLarga}`}>{nombre}</span>
   {apodo && <span class="estandarte__apodo">{apodo}</span>}
   {aniversario && <span class="estandarte__aniversario">Cumple el {formatearAniversario(aniversario)}</span>}
   {!apodo && <span class="estandarte__invitacion">¿Cómo le dicen? Cuéntanos</span>}
@@ -32,6 +33,7 @@ const { id, nombre, sector, apodo, aniversario, color } = barrio;
     border-top: 10px solid var(--tinta);
     text-decoration: none;
     transition: translate 0.15s ease;
+    container-type: inline-size;
   }
 
   .estandarte[data-color='azul'] {
@@ -54,7 +56,7 @@ const { id, nombre, sector, apodo, aniversario, color } = barrio;
   .estandarte__nombre {
     font-family: var(--display);
     font-weight: 900;
-    font-size: clamp(1.8rem, 6.5vw, 2.4rem);
+    font-size: min(clamp(1.8rem, 6.5vw, 2.4rem), calc(100cqi / (var(--largo) * 0.56)));
     line-height: 0.95;
     text-transform: uppercase;
     overflow-wrap: anywhere;
