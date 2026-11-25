@@ -4,7 +4,7 @@ import CabezaPagina from '../../components/CabezaPagina.astro';
 import Estandarte from '../../components/Estandarte.astro';
 import Aniversarios from '../../components/Aniversarios.astro';
 import InvitacionBarrio from '../../components/InvitacionBarrio.astro';
-import { barrios, centrosPoblados, fuentesBarrios } from '../../data/barrios';
+import { barrios, centrosPoblados } from '../../data/barrios';
 import { enlaceWhatsapp } from '../../lib/whatsapp';
 
 const textoBuscable = (barrio: (typeof barrios)[number]) =>
@@ -83,20 +83,7 @@ const enlaceBarrioFaltante = enlaceWhatsapp('Mi barrio no aparece en la web del 
     </div>
   </section>
 
-  <section class="bloque fuentes-barrios" aria-labelledby="titulo-fuentes-barrios">
-    <div class="envoltura">
-      <h2 id="titulo-fuentes-barrios" class="fuentes-barrios__titulo">Fuentes</h2>
-      <ul>
-        {
-          fuentesBarrios.map((fuente) => (
-            <li>
-              <a href={fuente.url}>{fuente.titulo}</a> <span>{fuente.medio}</span>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <p class="envoltura enlace-fuentes" id="titulo-fuentes-barrios"><a href="/fuentes/#barrios">Fuentes de los barrios</a></p>
 </Base>
 
 <script>
@@ -202,24 +189,6 @@ const enlaceBarrioFaltante = enlaceWhatsapp('Mi barrio no aparece en la web del 
 
   .pueblos__lista dd {
     margin: 0.2rem 0 0;
-  }
-
-  .fuentes-barrios__titulo {
-    margin-bottom: 1.2rem;
-    font-size: 2rem;
-    text-transform: uppercase;
-  }
-
-  .fuentes-barrios ul {
-    list-style: none;
-    display: grid;
-    gap: 0.6rem;
-  }
-
-  .fuentes-barrios span {
-    font-size: 0.9rem;
-    font-weight: 600;
-    opacity: 0.75;
   }
 
   @media (min-width: 700px) {

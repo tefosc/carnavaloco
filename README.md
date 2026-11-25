@@ -29,7 +29,8 @@ Para ejecutar la prueba de navegador del modo sin conexión, instala Chromium co
 | `/barrios/`           | Pared de estandartes con los 24 sectores, buscador y pueblos      |
 | `/barrios/[barrio]/`  | Ficha de cada barrio: apodo, lema, aniversario y datos            |
 | `/habla/`             | El dejo cajamarquino, «dilo así» y glosario con buscador          |
-| `/historia/`          | Línea de tiempo y todas las fuentes                               |
+| `/historia/`          | Línea de tiempo del Carnaval                                          |
+| `/fuentes/`           | Referencias por tema y edición, y créditos fotográficos           |
 | `/carnaval-2027.ics`  | Calendario descargable con los cinco días                         |
 | `/og/<página>.png`    | Imágenes para compartir (se generan en el build)                  |
 

@@ -111,6 +111,10 @@ test('instalación automática, uso sin señal y actualización completa despué
   const banderolas = pagina.locator('[data-banderolas]');
   assert.equal(await banderolas.getByRole('listitem').count(), 5);
   await banderolas.getByRole('heading', { name: /Gran Corso/i }).waitFor();
+  await pagina.goto(origen + '/ediciones/2025/');
+  await pagina.getByRole('link', { name: 'Fuentes de la edición 2025' }).click();
+  await pagina.getByRole('heading', { name: 'Fuentes y créditos', level: 1 }).waitFor();
+  await pagina.locator('#edicion-2025[open] .referencias a').first().waitFor();
   await pagina.goto(origen + '/barrios/san-sebastian?fecha=2027-07-14');
   await pagina.getByRole('heading', { level: 1, name: /San Sebasti/i }).waitFor();
   await pagina.locator('a[href^="https://wa.me/"]:visible').first().click();

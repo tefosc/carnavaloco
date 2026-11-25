@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import CabezaPagina from '../components/CabezaPagina.astro';
 import Afiche from '../components/Afiche.astro';
 import Sello from '../components/Sello.astro';
-import { historia, fuentes } from '../data/carnaval';
+import { historia } from '../data/carnaval';
 import { fotos } from '../data/fotos';
 
 const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--turquesa)', 'var(--naranja)', 'var(--verde)'];
@@ -11,8 +11,8 @@ const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--turquesa)', 'var(--n
 
 <Base
   og="historia"
-  title="Historia y fuentes"
-  description="Historia del Carnaval de Cajamarca: de la copla española al carnaval moderno de 1930, la copla como patrimonio y los años de pandemia. Con sus fuentes."
+  title="Historia"
+  description="Historia del Carnaval de Cajamarca: de la copla española al carnaval moderno de 1930, la copla como patrimonio y los años de pandemia."
 >
   <CabezaPagina titulo="Historia" fondo="var(--tinta)" tintaTexto="var(--blanco)" relleno="var(--fucsia)" sombra="var(--amarillo)">
     <p>
@@ -57,25 +57,7 @@ const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--turquesa)', 'var(--n
     </div>
   </section>
 
-  <section class="bloque fuentes" aria-labelledby="titulo-fuentes">
-    <div class="envoltura">
-      <h2 id="titulo-fuentes" class="titulo-bloque">Fuentes</h2>
-      <p class="lectura fuentes__intro">
-        Lo que dice este sitio sale de estas notas y documentos. Cada edición del carnaval tiene además sus propias
-        fuentes en su página. Las fotos son de Pitxiquin en Wikimedia Commons, con licencia CC BY-SA 4.0.
-      </p>
-      <ul class="fuentes__lista">
-        {
-          fuentes.map((f) => (
-            <li>
-              <span class="fuentes__medio">{f.medio}</span>
-              <a href={f.url}>{f.titulo}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-  </section>
+  <p class="envoltura enlace-fuentes" id="titulo-fuentes"><a href="/fuentes/#historia">Fuentes de esta historia</a></p>
 </Base>
 
 <style>
@@ -143,34 +125,9 @@ const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--turquesa)', 'var(--n
     align-items: center;
   }
 
-  /* ---------- Fuentes ---------- */
-  .fuentes__intro {
-    margin-bottom: 2.5rem;
-  }
-
-  .fuentes__lista {
-    list-style: none;
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.4rem 3rem;
-  }
-
-  .fuentes__lista li {
-    display: grid;
-    gap: 0.2rem;
-    padding-top: 0.8rem;
-    border-top: 3px solid var(--tinta);
-  }
-
-  .fuentes__medio {
-    font-weight: 700;
-    font-size: 0.92rem;
-  }
-
   @media (max-width: 860px) {
     .hito,
-    .patio__grid,
-    .fuentes__lista {
+    .patio__grid {
       grid-template-columns: 1fr;
     }
   }
