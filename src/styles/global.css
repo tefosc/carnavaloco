@@ -37,6 +37,13 @@ html {
   scroll-padding-top: 1rem;
 }
 
+/* La cabecera fija del teléfono (Cabecera.astro) no debe tapar el destino de un enlace #ancla */
+@media (max-width: 760px) {
+  html {
+    scroll-padding-top: 5.5rem;
+  }
+}
+
 a,
 button,
 input,

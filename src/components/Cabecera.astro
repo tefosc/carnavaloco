@@ -171,6 +171,17 @@ const banderines = Array.from({ length: n }, (_, i) => {
   }
 
   @media (max-width: 760px) {
+    /* Fija arriba: el botón «Menú» queda a mano sin volver al inicio.
+       Si el menú abierto no cabe en pantallas bajas, se desplaza por dentro. */
+    .cabecera {
+      position: sticky;
+      top: 0;
+      z-index: 45;
+      max-height: 100dvh;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+
     .cabecera__fila {
       flex-direction: column;
       align-items: flex-start;
