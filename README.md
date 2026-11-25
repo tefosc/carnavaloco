@@ -81,7 +81,7 @@ Afiche chicha + raso de clon:
 - Colores planos del satín de los disfraces: fucsia, amarillo, verde loro, azul rey, naranja y turquesa; el texto en azul noche.
 - Titulares en Big Shoulders Display con contorno y sombra dura (`src/components/Chicha.astro`); texto en Bricolage Grotesque.
 - Bordes en zigzag de gola, flecos, banderolas, sellos redondos y afiches pegados (`src/styles/global.css` y `src/components/`).
-- Pintura por toda la web: cada sección lleva en los bordes salpicones, manos, globos reventados, chorreados, brochazos o talco (`src/lib/manchas.ts` y `src/components/Manchas.astro`), que entran al bajar con animaciones ligadas al scroll. Se reparten con una semilla por página, así cada página se pinta siempre igual. Una sección con `data-sin-manchas` queda limpia.
+- Pintura por toda la web: cada sección lleva en los bordes salpicones, manos, globos reventados, chorreados, brochazos o talco (`src/lib/manchas.ts` y `src/components/Manchas.astro`), que se pintan solas cuando aparecen en pantalla (IntersectionObserver): el salpicón revienta y suelta sus gotas, la mano se estampa, el chorreado cae y el brochazo se pinta de una pasada. Se reparten con una semilla por página, así cada página se pinta siempre igual. Una sección con `data-sin-manchas` queda limpia.
 - El movimiento respeta `prefers-reduced-motion`; la cinta de gritos se detiene al pasar el mouse.
 
 ## Fotos

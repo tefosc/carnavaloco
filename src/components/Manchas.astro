@@ -28,63 +28,75 @@
     opacity: 0.92;
   }
 
-  .mancha-deco--chorreado {
-    transform-origin: top center;
+  /* El centro y las gotas crecen desde el medio de la mancha (0,0 de su viewBox):
+     así las gotas salen volando hacia afuera */
+  .mancha-deco .centro,
+  .mancha-deco .gota,
+  .capa-pintura .mancha .centro,
+  .capa-pintura .mancha .gota {
+    transform-box: view-box;
+    transform-origin: 0 0;
   }
 
-  /* Entran al bajar: salpican, se estampan, chorrean o se pintan de una pasada.
-     Es decoración: donde el navegador no anima con el scroll, ya están pintadas. */
+  /* Cada mancha se pinta cuando aparece en pantalla (la marca el script con
+     .pintada): el salpicón revienta y suelta sus gotas, la mano se estampa,
+     el chorreado cae, el brochazo se pinta de una pasada y el talco se abre.
+     Con «reducir movimiento», ya están pintadas desde el principio. */
   @media (prefers-reduced-motion: no-preference) {
-    @supports ((animation-timeline: view()) and (animation-range: entry)) {
-      .mancha-deco {
-        animation: mancha-salpica auto linear backwards;
-        animation-timeline: view();
-        animation-range: entry 0% entry 100%;
-      }
+    .mancha-deco[data-espera] {
+      visibility: hidden;
+    }
 
-      .mancha-deco--mano {
-        animation-name: mancha-estampa;
-      }
+    .mancha-deco.pintada .centro {
+      animation: mancha-revienta 0.42s cubic-bezier(0.2, 1.6, 0.4, 1) var(--retraso, 0s) both;
+    }
 
-      .mancha-deco--chorreado {
-        animation-name: mancha-chorrea;
-      }
+    .mancha-deco.pintada .gota,
+    .capa-pintura .mancha .gota {
+      animation: mancha-vuela 0.5s cubic-bezier(0.12, 0.9, 0.3, 1.15) calc(var(--retraso, 0s) + var(--d, 0s)) both;
+    }
 
-      .mancha-deco--brochazo {
-        animation-name: mancha-pinta;
-      }
+    .mancha-deco--mano.pintada {
+      animation: mancha-estampa 0.55s cubic-bezier(0.3, 1.5, 0.5, 1) var(--retraso, 0s) both;
+    }
+
+    .mancha-deco--chorreado.pintada {
+      animation: mancha-chorrea 1.3s cubic-bezier(0.55, 0, 0.7, 1) var(--retraso, 0s) both;
+    }
+
+    .mancha-deco--brochazo.pintada {
+      animation: mancha-pinta 0.8s cubic-bezier(0.45, 0, 0.2, 1) var(--retraso, 0s) both;
     }
   }
 
-  @keyframes mancha-salpica {
+  @keyframes mancha-revienta {
+    from {
+      scale: 0;
+    }
+  }
+
+  @keyframes mancha-vuela {
     from {
       opacity: 0;
-      scale: 0.35;
-    }
-    70% {
-      opacity: 0.92;
-      scale: 1.06;
+      scale: 0.15;
     }
   }
 
   @keyframes mancha-estampa {
     from {
       opacity: 0;
-      scale: 1.4;
+      scale: 1.5;
     }
-    55% {
+    60% {
       opacity: 0.92;
-      scale: 0.95;
+      scale: 0.93;
     }
   }
 
+  /* La pintura baja desde el borde, como cae de verdad */
   @keyframes mancha-chorrea {
     from {
-      opacity: 0;
-      scale: 1 0.1;
-    }
-    30% {
-      opacity: 0.92;
+      clip-path: inset(0 0 100% 0);
     }
   }
 
@@ -177,6 +189,11 @@
       const altoMancha = ancho * PROPORCION[tipo];
       const svg = crearMancha(tipo, color, ancho, azar);
       svg.classList.add('mancha-deco', `mancha-deco--${tipo}`);
+      if (animar) {
+        // Espera escondida hasta que se vea; las que aparecen juntas no salen al mismo tiempo
+        svg.setAttribute('data-espera', '');
+        svg.style.setProperty('--retraso', `${(k * 0.12 + Math.random() * 0.12).toFixed(2)}s`);
+      }
       const izquierda = (indice + k) % 2 === 0;
 
       if (tipo === 'chorreado') {
@@ -205,5 +222,25 @@
     seccion.prepend(capa);
   }
 
+  const animar =
+    window.matchMedia('(prefers-reduced-motion: no-preference)').matches && 'IntersectionObserver' in window;
+
   document.querySelectorAll<HTMLElement>('main .bloque, footer.pie').forEach(decorar);
+
+  // Cada mancha se pinta cuando ya está a la vista (por encima del último 18 % de la
+  // pantalla), no cuando apenas asoma por abajo: así se ve cómo cae la pintura
+  if (animar) {
+    const observador = new IntersectionObserver(
+      (entradas) => {
+        for (const entrada of entradas) {
+          if (!entrada.isIntersecting) continue;
+          entrada.target.removeAttribute('data-espera');
+          entrada.target.classList.add('pintada');
+          observador.unobserve(entrada.target);
+        }
+      },
+      { rootMargin: '0px 0px -18% 0px', threshold: 0.15 },
+    );
+    document.querySelectorAll('.mancha-deco[data-espera]').forEach((m) => observador.observe(m));
+  }
 </script>

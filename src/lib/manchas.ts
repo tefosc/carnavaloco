@@ -60,10 +60,17 @@ function contorno(azar: Azar, r: number, puntos: number, picos = 0) {
   return `${d}Z`;
 }
 
+/**
+ * Las piezas que se animan por separado llevan clase: «centro» (lo que revienta
+ * primero) y «gota» (lo que sale volando). --d es cuánto tarda cada gota en
+ * llegar: las más lejanas, después. Ver Manchas.astro.
+ */
+const tarda = (segundos: number) => `--d:${segundos.toFixed(2)}s`;
+
 /** Salpicón: una mancha con puntas y gotas alrededor. */
 function salpicon(svg: SVGSVGElement, azar: Azar, color: string) {
   svg.setAttribute('viewBox', '-60 -60 120 120');
-  svg.append(el('path', { d: contorno(azar, 26, 18, 0.28), fill: color }));
+  svg.append(el('path', { d: contorno(azar, 26, 18, 0.28), fill: color, class: 'centro' }));
   const gotas = Math.round(entre(azar, 6, 11));
   for (let i = 0; i < gotas; i++) {
     const a = entre(azar, 0, Math.PI * 2);
@@ -79,6 +86,8 @@ function salpicon(svg: SVGSVGElement, azar: Azar, color: string) {
         ry: f(r),
         transform: `rotate(${f((a * 180) / Math.PI)} ${f(Math.cos(a) * d)} ${f(Math.sin(a) * d)})`,
         fill: color,
+        class: 'gota',
+        style: tarda(0.12 + ((d - 34) / 20) * 0.22),
       }),
     );
   }
@@ -87,7 +96,7 @@ function salpicon(svg: SVGSVGElement, azar: Azar, color: string) {
 /** Globo reventado: un centro chico y la pintura saliendo en rayos. */
 function globo(svg: SVGSVGElement, azar: Azar, color: string) {
   svg.setAttribute('viewBox', '-60 -60 120 120');
-  svg.append(el('path', { d: contorno(azar, 13, 10, 0.15), fill: color }));
+  svg.append(el('path', { d: contorno(azar, 13, 10, 0.15), fill: color, class: 'centro' }));
   const rayos = Math.round(entre(azar, 14, 22));
   for (let i = 0; i < rayos; i++) {
     const a = (i / rayos) * Math.PI * 2 + entre(azar, -0.15, 0.15);
@@ -103,6 +112,8 @@ function globo(svg: SVGSVGElement, azar: Azar, color: string) {
         ry: f(r),
         transform: `rotate(${f((a * 180) / Math.PI)} ${f(cx)} ${f(cy)})`,
         fill: color,
+        class: 'gota',
+        style: tarda(0.06 + ((d - 18) / 32) * 0.26),
       }),
     );
   }
@@ -112,7 +123,9 @@ function globo(svg: SVGSVGElement, azar: Azar, color: string) {
 function mano(svg: SVGSVGElement, azar: Azar, color: string) {
   svg.setAttribute('viewBox', '0 0 100 120');
   // El contorno sale centrado en 0,0: se lleva a donde va la palma
-  svg.append(el('path', { d: contorno(azar, 25, 12, 0), fill: color, transform: 'translate(54 80) scale(1 1.12)' }));
+  svg.append(
+    el('path', { d: contorno(azar, 25, 12, 0), fill: color, transform: 'translate(54 80) scale(1 1.12)', class: 'palma' }),
+  );
   // Cuatro dedos en abanico y el pulgar de costado
   const dedos = [
     { x: 34, y: 60, ang: -17, largo: 27, ancho: 12 },
@@ -133,6 +146,7 @@ function mano(svg: SVGSVGElement, azar: Azar, color: string) {
         rx: f(d.ancho / 2),
         transform: `rotate(${f(ang)} ${d.x} ${d.y})`,
         fill: color,
+        class: 'dedo',
       }),
     );
   }
@@ -185,7 +199,18 @@ function talco(svg: SVGSVGElement, azar: Azar, color: string) {
     // Más denso al centro
     const a = entre(azar, 0, Math.PI * 2);
     const d = 50 * Math.sqrt(azar()) * azar();
-    svg.append(el('circle', { cx: f(Math.cos(a) * d), cy: f(Math.sin(a) * d), r: f(entre(azar, 0.8, 3.2)), fill: color, 'fill-opacity': f(entre(azar, 0.5, 0.95)) }));
+    svg.append(
+      el('circle', {
+        cx: f(Math.cos(a) * d),
+        cy: f(Math.sin(a) * d),
+        r: f(entre(azar, 0.8, 3.2)),
+        fill: color,
+        'fill-opacity': f(entre(azar, 0.5, 0.95)),
+        class: 'gota',
+        // El polvo se abre desde el centro, sin orden fijo
+        style: tarda((d / 50) * 0.45 + azar() * 0.12),
+      }),
+    );
   }
 }
 
