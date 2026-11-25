@@ -10,6 +10,7 @@ Sitio sobre el Carnaval de Cajamarca: los cinco días, los carnavales de años a
 | `pnpm dev`     | Servidor de desarrollo en `localhost:4321`            |
 | `pnpm build`   | Genera el sitio estático en `./dist/`                 |
 | `pnpm preview` | Sirve el build localmente                             |
+| `npx skills install` | Instala las skills del asistente de IA desde `skills-lock.json` (sus carpetas no se suben; ver [PLAN.md](PLAN.md)) |
 
 Astro 7 pide Node ≥ 22.23.4. El `package.json` declara `devEngines.runtime` (Node 24), así que pnpm descarga ese Node solo para este proyecto.
 
