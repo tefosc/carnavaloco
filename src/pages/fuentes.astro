@@ -5,6 +5,7 @@ import { fuentesBarrios } from '../data/barrios';
 import { fuentes as fuentesHistoria } from '../data/carnaval';
 import { previas } from '../data/carnaval2027';
 import { creditoFotos, fotos } from '../data/fotos';
+import { fuentesGuia } from '../data/guia';
 
 interface Fuente {
   medio: string;
@@ -55,6 +56,12 @@ const secciones = [
     grupos: ediciones.map(({ data }) => data).sort((a, b) => b.anio - a.anio).map((edicion) => ({
       id: 'edicion-' + edicion.anio, titulo: String(edicion.anio), fuentes: edicion.fuentes,
     })),
+  },
+  {
+    id: 'guia',
+    titulo: 'Guía para visitantes',
+    descripcion: 'Transporte, altura, clima, salud y emergencias. Las marcadas «Verifícalo» en la guía son fuentes débiles o no leídas completas.',
+    fuentes: fuentesGuia.map((f) => ({ medio: f.medio, titulo: f.titulo, url: f.url, nota: f.fecha })),
   },
   { id: 'coplas', titulo: 'Coplas tradicionales', descripcion: 'Publicaciones donde se recogieron los versos del cancionero.', fuentes: [...referenciasCoplas.values()] },
   {

@@ -115,30 +115,27 @@ La Municipalidad Provincial de Cajamarca presenta el afiche, el programa y la ca
 
 ---
 
-## Guías que faltan
+## Guía para el que viene de fuera
 
-### Guía para el que viene de fuera
+**Hecha (primera versión):** [`/guia/`](src/pages/guia.astro), con los datos en `src/data/guia.ts`, en el menú, enlazada desde «Si vas» en `/2027/` y con sus fuentes en `/fuentes/`. Tiene seis secciones: cómo llegar, dónde quedarse, altura y clima, qué llevar, reglas y convivencia, y emergencias. Cada dato lleva su fuente; los de fuente débil llevan el aviso «Verifícalo». Se guarda sola para usarla sin señal.
 
-Es la idea grande que queda de la lista. `/2027/` tiene seis consejos cortos en «Si vas»; esto sería una página completa, por ejemplo `/guia/`. Iría enlazada desde la cabecera y desde «Si vas», con sus datos en `src/data/guia.ts`. Se guardaría sola para usarla sin señal: el service worker toma todas las páginas.
+**Lo que se descubrió al investigar:**
 
-**Cada dato con su fuente.** Lo que hay que investigar y citar:
+- **No hay reglas oficiales para el visitante.** La Ordenanza 908-CMPC (octubre de 2024) y su reglamento organizan el carnaval institucional (concursos, corso, comités); no dicen nada del agua, la pintura, los globos ni el alcohol que vende o consume el público. La guía lo dice así y no inventa normas. La costumbre de la pintura solo el primer día queda marcada «Verifícalo».
+- **`gob.pe` bloquea la lectura automática** (error 418, también en un navegador). Los datos de ahí (la nota del Minsa sobre el soroche, la página de teléfonos de emergencia) se tomaron de resúmenes de búsqueda y están marcados «Verifícalo».
 
-- [ ] **Cómo llegar** desde Lima, Trujillo y Chiclayo: avión (aerolíneas, tiempo) y bus (empresas, horas de viaje, tramos de altura).
-- [ ] **Clima en febrero**: lluvias, temperaturas de día y de noche. Fuente: SENAMHI.
-- [ ] **Altura**: Cajamarca está a unos 2750 m. Qué hacer contra el soroche, con una fuente de salud.
-- [ ] **Qué ropa llevar** para el agua y la pintura (ropa vieja, zapatos cerrados, impermeable) y **cómo proteger el celular y los documentos**.
-- [ ] **Reglas de la Municipalidad para el juego**: qué está permitido y qué no, la pintura solo el sábado, horarios, multas. Hay dos documentos oficiales para leer y resumir:
-  - [Ordenanza Municipal N.° 908-CMPC](https://cdn.www.gob.pe/uploads/document/file/7128344/6121691-ordenanza-municipal-n-908-cmpc.pdf)
-  - [Reglamento para la celebración de las festividades del Carnaval de Cajamarca](https://cdn.www.gob.pe/uploads/document/file/7128345/6121691-reglamento-para-la-celebracion-de-las-festividades-del-carnaval-de-cajamarca.pdf)
-- [ ] **Dónde quedarse** (zonas) y cuándo reservar. Ya está el dato de 2023: los hoteles pasaron el 90 % de reservas antes de la fiesta.
-- [ ] **Presupuesto aproximado**: pasajes, hospedaje, palcos del corso, globos. Ya se leyó [la guía de costos de carnavalcajamarca.com](https://carnavalcajamarca.com/cuanto-cuesta-viajar-al-carnaval-de-cajamarca-2027/), pero **no es confiable para citarla**: casi todas las cifras son estimaciones propias, sin fuente ni fecha, y se contradice entre sus dos tablas. Sirve solo de orden de magnitud:
-  - Bus Lima–Cajamarca: 14 a 16 horas; en 2026 se reportaron pasajes de S/ 70 a S/ 230 por tramo.
-  - Avión Lima–Cajamarca: 1 h 20 min; ida y vuelta de S/ 400 a S/ 650 en 2026.
-  - Hotel: unos S/ 294 por noche de promedio para febrero de 2027 (dato de Trivago, según ese sitio).
-  - Comida y movilidad: S/ 30–60 y S/ 10–25 por día, estimados.
-  - **No trae precios de palcos ni de globos.** Esos hay que sacarlos de otra fuente. El único dato fechado que tenemos es el de 2024 (globos seis por un sol, balde grande S/ 30, palcos de S/ 20 a S/ 100).
-  - Para la guía, conviene pedir los precios reales a las empresas de transporte y a los hoteles, o citar una fuente de prensa con fecha.
-- [ ] **Teléfonos útiles**: emergencias, policía, serenazgo, puestos de salud durante la fiesta.
+**Pendiente de la guía:**
+
+- [ ] **Abrir a mano en un navegador** y confirmar: [la nota del Minsa sobre mal de altura](https://www.gob.pe/institucion/minsa/noticias/1374711-minsa-recomendaciones-para-prevenir-el-mal-de-altura-durante-los-viajes-por-semana-santa) y [teléfonos de emergencia](https://www.gob.pe/547). Si coincide, quitar el «Verifícalo» (`verificar: true` en `src/data/guia.ts`).
+- [ ] **Aerolíneas y buses:** los vuelos y las horas de bus salen de agregadores sin fecha. Confirmar en las webs de LATAM, JetSMART, Star Perú, SKY y de las empresas de bus (Civa, Móvil Bus, Línea). Chiclayo–Cajamarca no tiene tiempo publicado.
+- [ ] **Clima:** se usó Climate-data.org vía Wikipedia. Cambiarlo por datos de SENAMHI.
+- [ ] **Preguntar a la Municipalidad** si hay normas sobre agua, pintura, alcohol y tránsito para el público (bando, decreto de alcaldía u otra ordenanza), y si la 908-CMPC sigue vigente. Se publica en municaj.gob.pe.
+- [ ] **Teléfono del serenazgo de Cajamarca:** solo apareció en una página de otra institución; no se publicó.
+- [ ] **Precios** de pasajes, hospedaje, palcos y globos: no hay fuente confiable (ver «Presupuesto», abajo). No se pusieron en la guía.
+- [ ] **Postas y centros de salud** de la ciudad: solo se nombra el Hospital II de EsSalud.
+- [ ] **Revisar todo en enero**, cuando salga el programa oficial, y cada año: la fecha de revisión está en `revisadoEn` de `src/data/guia.ts`.
+
+**Presupuesto (no incluido en la guía):** [la guía de costos de carnavalcajamarca.com](https://carnavalcajamarca.com/cuanto-cuesta-viajar-al-carnaval-de-cajamarca-2027/) no es confiable para citarla: casi todas las cifras son estimaciones propias sin fuente ni fecha, y se contradice entre sus dos tablas. Orden de magnitud: bus Lima–Cajamarca de S/ 70 a S/ 230 por tramo en 2026, avión de S/ 400 a S/ 650 ida y vuelta, hotel a unos S/ 294 por noche en febrero de 2027. Sin precios de palcos ni de globos (el único dato fechado es el de 2024: globos seis por un sol, balde grande S/ 30, palcos de S/ 20 a S/ 100). Para publicarlo, pedir los precios reales a empresas de transporte y hoteles, o citar prensa con fecha.
 
 ---
 

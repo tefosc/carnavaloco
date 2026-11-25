@@ -44,6 +44,12 @@ export const ogPaginas: Record<string, DatosOg> = {
     fondo: 'tinta',
     relleno: 'fucsia',
   },
+  guia: {
+    titulo: 'Guía',
+    bajada: 'Cómo llegar, dónde quedarse, la altura, qué llevar y a quién llamar. Con fuentes.',
+    fondo: 'azul',
+    relleno: 'amarillo',
+  },
   barrios: {
     titulo: 'Barrios',
     bajada: 'Cumbemayo, San Sebastián, San Pedro, La Merced y los demás.',
