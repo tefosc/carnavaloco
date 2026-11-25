@@ -3,6 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import CabezaPagina from '../components/CabezaPagina.astro';
 import JuegoCopla from '../components/JuegoCopla.astro';
+import ArmaCopla from '../components/ArmaCopla.astro';
 import { conBis } from '../lib/coplas';
 
 const ORDEN = ['invitación', 'picardía', 'contrapunto', 'amor', 'cajamarca', 'despedida'];
@@ -139,6 +140,8 @@ const rimaPar = (verso: string) => {
   </section>
 
   <JuegoCopla />
+
+  <ArmaCopla />
 
   <section class="bloque cancionero" aria-labelledby="titulo-cancionero">
     <div class="envoltura">

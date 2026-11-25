@@ -1,0 +1,587 @@
+---
+/**
+ * «Arma tu copla»: cuatro versos con ayuda para la rima y las sílabas, y una imagen
+ * en estilo chicha para descargar o compartir. Todo pasa en el navegador
+ * (src/lib/rima.ts y src/lib/afiche-copla.ts); el borrador queda en el teléfono.
+ */
+import { getCollection } from 'astro:content';
+import { ANCHO, ALTO, PALETAS } from '../lib/afiche-copla';
+import { partirVerso } from '../lib/rima';
+
+const coplas = (await getCollection('coplas')).map((c) => c.data);
+const glosario = (await getCollection('glosario')).map((g) => g.data);
+
+// Finales que se repiten en las coplas de carnaval, para que siempre haya sugerencias
+const deSiempre = [
+  'botella', 'estrella', 'bella', 'ella', 'doncella',
+  'sombrero', 'carnero', 'entero', 'primero', 'lucero', 'dinero', 'quiero', 'aguacero',
+  'carnaval', 'final', 'igual', 'corral', 'real', 'total',
+  'alegría', 'día', 'mía', 'todavía', 'policía',
+  'mojado', 'pintado', 'bailado', 'enamorado', 'cansado', 'olvidado',
+  'pintura', 'locura', 'ternura', 'hermosura', 'cintura',
+  'corazón', 'canción', 'balcón', 'montón', 'razón',
+  'cantar', 'bailar', 'mojar', 'jugar', 'olvidar', 'llorar',
+  'cholita', 'bonita', 'chiquita', 'ahorita',
+  'serpentina', 'vecina', 'esquina', 'cocina',
+  'mañana', 'ventana', 'semana', 'campana', 'gana',
+  'cerveza', 'cabeza', 'tristeza',
+  'querida', 'vida', 'comida', 'despedida',
+  'amores', 'flores', 'colores', 'cantores',
+];
+
+// Palabras para sugerir rimas: las de siempre, los finales de verso de las coplas y el glosario
+const palabras = [
+  ...deSiempre,
+  ...coplas.flatMap((c) => c.versos.map((v) => partirVerso(v)?.palabra ?? '')),
+  ...glosario.flatMap((g) => g.palabra.split('/').map((p) => p.trim())),
+]
+  .map((p) => p.replace(/[¡!¿?]/g, '').toLowerCase())
+  .filter((p, i, todas) => /^[\p{L}]{3,}$/u.test(p) && todas.indexOf(p) === i);
+
+// Entradas prestadas: los dos primeros versos de cada copla de cuatro
+const entradas = coplas.filter((c) => c.versos.length === 4).map((c) => c.versos.slice(0, 2));
+
+// Copla de ejemplo (ocho sílabas cada verso; riman guitarra y para)
+const ejemplo = ['Aquisito, allá en mi barrio,', 'ya se escucha la guitarra;', 'saca el balde, cholashita,', 'que esta tarde no se para.'];
+const nombres = ['Primer verso', 'Segundo verso', 'Tercer verso', 'Cuarto verso'];
+const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
+---
+
+<section class="arma bloque fondo-turquesa" aria-labelledby="titulo-arma" data-arma>
+  <div class="envoltura arma__grid">
+    <div class="arma__form">
+      <h2 id="titulo-arma" class="titulo-bloque">Arma tu copla</h2>
+      <p class="lectura arma__intro">
+        Cuatro versos de unas ocho sílabas; el segundo rima con el cuarto. Cuando esté lista, bájala como imagen o
+        mándala por WhatsApp. Queda guardada en tu teléfono, aunque cierres la página.
+      </p>
+
+      <form class="arma__campos" data-arma-form>
+        <fieldset class="arma__versos">
+          <legend class="visualmente-oculto">Tus cuatro versos</legend>
+          {
+            nombres.map((nombre, i) => (
+              <div class="arma__verso">
+                <label for={`arma-verso-${i}`}>{nombre}</label>
+                <div class="arma__fila">
+                  <input
+                    id={`arma-verso-${i}`}
+                    type="text"
+                    maxlength="42"
+                    autocomplete="off"
+                    enterkeyhint={i < 3 ? 'next' : 'done'}
+                    placeholder={ejemplo[i]}
+                    aria-describedby={`arma-silabas-${i}`}
+                    data-verso={i}
+                  />
+                  <span class="arma__silabas" id={`arma-silabas-${i}`} data-silabas={i}>
+                    <span data-silabas-numero>–</span>
+                    <span class="visualmente-oculto"> sílabas, más o menos</span>
+                  </span>
+                </div>
+              </div>
+            ))
+          }
+        </fieldset>
+
+        <p class="arma__rima" aria-live="polite" data-rima></p>
+
+        <div class="arma__sugerencias" data-sugerencias-caja hidden>
+          <p data-sugerencias-titulo></p>
+          <div class="arma__palabras" role="group" aria-labelledby="arma-sugerencias-ayuda" data-sugerencias></div>
+          <p class="arma__ayuda" id="arma-sugerencias-ayuda">Toca una para ponerla al final del cuarto verso.</p>
+        </div>
+
+        <p class="arma__acciones-form">
+          <button type="button" class="boton boton--hueco" data-entrada>Préstame una entrada</button>
+          <button type="button" class="boton boton--hueco" data-borrar>Borrar</button>
+        </p>
+
+        <div class="arma__verso">
+          <label for="arma-firma">Firma (si quieres)</label>
+          <input id="arma-firma" type="text" maxlength="40" autocomplete="off" placeholder="Patrulla de tu barrio" data-firma />
+        </div>
+
+        <fieldset class="arma__colores">
+          <legend>Color del afiche</legend>
+          {
+            colores.map((c, i) => (
+              <label class="arma__color" style={`--muestra:var(--${c})`}>
+                <input type="radio" name="arma-color" value={c} checked={i === 0} data-color />
+                <span>{c}</span>
+              </label>
+            ))
+          }
+        </fieldset>
+      </form>
+    </div>
+
+    <div class="arma__vista">
+      <canvas
+        class="arma__lienzo"
+        width={ANCHO}
+        height={ALTO}
+        role="img"
+        aria-label="Vista previa del afiche con tu copla"
+        data-arma-lienzo></canvas>
+      <p class="arma__botones">
+        <button type="button" class="boton" data-compartir hidden>Compartir</button>
+        <button type="button" class="boton" data-descargar>Descargar imagen</button>
+      </p>
+      <p class="arma__estado" role="status" data-arma-estado></p>
+    </div>
+  </div>
+
+  <script type="application/json" data-arma-datos set:html={JSON.stringify({ palabras, entradas, ejemplo })} />
+</section>
+
+<style>
+  .arma__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 0.9fr);
+    gap: 2.5rem 4rem;
+    align-items: start;
+  }
+
+  .arma__intro {
+    margin-bottom: 2rem;
+  }
+
+  .arma__campos {
+    display: grid;
+    gap: 1.4rem;
+  }
+
+  .arma__versos {
+    display: grid;
+    gap: 1rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .arma__verso {
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .arma__verso label {
+    font-weight: 700;
+  }
+
+  .arma__fila {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.8rem;
+    align-items: center;
+  }
+
+  .arma input[type='text'] {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.5rem 0.8rem;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    color: var(--tinta);
+    font: inherit;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .arma input[type='text']::placeholder {
+    color: rgb(19 24 90 / 0.45);
+  }
+
+  .arma input[type='text']:focus-visible {
+    outline: 3px solid var(--fucsia);
+    outline-offset: 2px;
+  }
+
+  /* Círculo de sílabas, como en «Cómo se arma»: verde si son 8, amarillo si se acerca */
+  .arma__silabas {
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.5rem;
+  }
+
+  .arma__silabas[data-nivel='justo'] {
+    background: var(--verde);
+  }
+
+  .arma__silabas[data-nivel='cerca'] {
+    background: var(--amarillo);
+  }
+
+  .arma__rima {
+    font-weight: 700;
+    font-size: 1.1rem;
+  }
+
+  .arma__rima:empty,
+  .arma__estado:empty {
+    display: none;
+  }
+
+  .arma__sugerencias {
+    display: grid;
+    gap: 0.6rem;
+    padding: 1rem 1.2rem;
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  .arma__sugerencias[hidden] {
+    display: none;
+  }
+
+  .arma__palabras {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .arma__palabras :global(button) {
+    min-height: 44px;
+    padding: 0.3rem 0.8rem 0.2rem;
+    border: 2px solid var(--amarillo);
+    background: transparent;
+    color: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.3rem;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .arma__palabras :global(button:hover) {
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+
+  .arma__ayuda {
+    font-size: 0.92rem;
+  }
+
+  .arma__acciones-form,
+  .arma__botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .arma__colores {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin: 0;
+    padding: 0;
+    border: 0;
+  }
+
+  .arma__colores legend {
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+  }
+
+  .arma__color {
+    position: relative;
+    cursor: pointer;
+  }
+
+  .arma__color input {
+    position: absolute;
+    opacity: 0;
+  }
+
+  .arma__color span {
+    display: inline-block;
+    min-height: 44px;
+    padding: 0.45rem 0.9rem 0.35rem;
+    border: 3px solid var(--tinta);
+    border-bottom: 10px solid var(--muestra);
+    background: var(--blanco);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.2rem;
+    text-transform: uppercase;
+  }
+
+  .arma__color input:checked + span {
+    background: var(--muestra);
+  }
+
+  /* Sobre el azul rey, la letra oscura no se lee */
+  .arma__color input[value='azul']:checked + span {
+    color: var(--blanco);
+  }
+
+  .arma__color input:focus-visible + span {
+    outline: 3px solid var(--fucsia);
+    outline-offset: 2px;
+  }
+
+  .arma__vista {
+    display: grid;
+    gap: 1.2rem;
+    position: sticky;
+    top: 1.5rem;
+  }
+
+  .arma__lienzo {
+    width: 100%;
+    height: auto;
+    border: 4px solid var(--tinta);
+    box-shadow: 10px 10px 0 var(--tinta);
+    rotate: 1.5deg;
+  }
+
+  .arma__estado {
+    font-weight: 700;
+  }
+
+  @media (max-width: 860px) {
+    .arma__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .arma__vista {
+      position: static;
+    }
+
+    .arma__lienzo {
+      rotate: 0deg;
+    }
+  }
+</style>
+
+<script>
+  import { cargarLetras, dibujarCopla, type Paleta } from '../lib/afiche-copla';
+  import { claveAsonante, claveConsonante, partirVerso, rimaEntre, silabasMetricas } from '../lib/rima';
+
+  const GUARDADO = 'arma-tu-copla';
+
+  function iniciar(raiz: HTMLElement) {
+    const uno = <T extends Element>(s: string) => raiz.querySelector<T>(s)!;
+    const datos = JSON.parse(uno<HTMLScriptElement>('[data-arma-datos]').textContent ?? '{}') as {
+      palabras: string[];
+      entradas: string[][];
+      ejemplo: string[];
+    };
+    const form = uno<HTMLFormElement>('[data-arma-form]');
+    const versos = [...raiz.querySelectorAll<HTMLInputElement>('[data-verso]')];
+    const firma = uno<HTMLInputElement>('[data-firma]');
+    const colores = [...raiz.querySelectorAll<HTMLInputElement>('[data-color]')];
+    const lienzo = uno<HTMLCanvasElement>('[data-arma-lienzo]');
+    const rima = uno<HTMLElement>('[data-rima]');
+    const cajaSugerencias = uno<HTMLElement>('[data-sugerencias-caja]');
+    const tituloSugerencias = uno<HTMLElement>('[data-sugerencias-titulo]');
+    const sugerencias = uno<HTMLElement>('[data-sugerencias]');
+    const botonCompartir = uno<HTMLButtonElement>('[data-compartir]');
+    const botonDescargar = uno<HTMLButtonElement>('[data-descargar]');
+    const estado = uno<HTMLElement>('[data-arma-estado]');
+
+    const color = () => (colores.find((c) => c.checked)?.value ?? 'fucsia') as Paleta;
+    const textos = () => versos.map((v) => v.value.trim());
+    const completa = () => textos().every(Boolean);
+
+    /* ---------- Borrador en el teléfono ---------- */
+    try {
+      const guardado = JSON.parse(localStorage.getItem(GUARDADO) ?? 'null');
+      if (guardado) {
+        versos.forEach((v, i) => (v.value = guardado.versos?.[i] ?? ''));
+        firma.value = guardado.firma ?? '';
+        colores.forEach((c) => (c.checked = c.value === guardado.color));
+        if (!colores.some((c) => c.checked)) colores[0].checked = true;
+      }
+    } catch {
+      // Sin almacenamiento (modo privado): se arma igual, solo que no queda guardada
+    }
+    const guardar = () => {
+      try {
+        localStorage.setItem(GUARDADO, JSON.stringify({ versos: textos(), firma: firma.value, color: color() }));
+      } catch {
+        // Sin almacenamiento: no pasa nada
+      }
+    };
+
+    /* ---------- Sílabas, rima y sugerencias ---------- */
+    function revisar() {
+      versos.forEach((v, i) => {
+        const caja = uno<HTMLElement>(`[data-silabas="${i}"]`);
+        const n = v.value.trim() ? silabasMetricas(v.value) : 0;
+        caja.querySelector('[data-silabas-numero]')!.textContent = n ? String(n) : '–';
+        caja.dataset.nivel = n === 8 ? 'justo' : n === 7 || n === 9 ? 'cerca' : '';
+      });
+
+      const [, segundo, , cuarto] = textos();
+      const p2 = partirVerso(segundo)?.palabra;
+      const p4 = partirVerso(cuarto)?.palabra;
+      if (p2 && p4) {
+        const tipo = rimaEntre(segundo, cuarto);
+        rima.textContent =
+          tipo === 'consonante'
+            ? `Riman perfecto: «${p2}» con «${p4}».`
+            : tipo === 'asonante'
+              ? `Riman por las vocales: «${p2}» con «${p4}». Así riman muchas coplas.`
+              : `Todavía no riman «${p2}» y «${p4}»: el final del cuarto verso tiene que sonar como el del segundo.`;
+      } else {
+        rima.textContent = '';
+      }
+
+      // Palabras que riman con el segundo verso: primero las de rima perfecta
+      const clave = p2 ? claveAsonante(p2) : '';
+      const perfecta = p2 ? claveConsonante(p2) : '';
+      const lista = clave
+        ? datos.palabras
+            .filter((p) => claveAsonante(p) === clave && p !== p2!.toLowerCase())
+            .sort((a, b) => Number(claveConsonante(b) === perfecta) - Number(claveConsonante(a) === perfecta))
+            .slice(0, 12)
+        : [];
+      cajaSugerencias.hidden = lista.length === 0;
+      if (lista.length) {
+        tituloSugerencias.textContent = `Riman con «${p2}»:`;
+        sugerencias.replaceChildren(
+          ...lista.map((palabra) => {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = palabra;
+            b.addEventListener('click', () => ponerAlFinal(palabra));
+            return b;
+          }),
+        );
+      }
+    }
+
+    function ponerAlFinal(palabra: string) {
+      const cuarto = versos[3];
+      const partes = partirVerso(cuarto.value);
+      if (partes && rimaEntre(versos[1].value, cuarto.value)) {
+        // Ya rimaba: se cambia una rima por otra
+        cuarto.value = `${partes.antes}${palabra}${partes.despues}`;
+        cuarto.focus();
+      } else if (partes) {
+        // A medio escribir: la palabra va al final, antes de la puntuación
+        cuarto.value = cuarto.value.trimEnd().replace(/([^\p{L}]*)$/u, ` ${palabra}$1`);
+        cuarto.focus();
+      } else {
+        // Vacío: la palabra queda al final y se escribe antes
+        cuarto.value = ` ${palabra}.`;
+        cuarto.focus();
+        cuarto.setSelectionRange(0, 0);
+      }
+      actualizar();
+    }
+
+    /* ---------- Afiche ---------- */
+    const direccion = `${location.host}/coplas`;
+    let pendiente = 0;
+    function pintar() {
+      cancelAnimationFrame(pendiente);
+      pendiente = requestAnimationFrame(() => {
+        const ejemplo = !textos().some(Boolean);
+        const lineas = versos.map((v, i) => v.value.trim() || (ejemplo ? datos.ejemplo[i] : ''));
+        dibujarCopla(lienzo, { versos: lineas, firma: firma.value, paleta: color(), ejemplo, direccion });
+        lienzo.setAttribute(
+          'aria-label',
+          ejemplo ? 'Vista previa del afiche, con una copla de ejemplo' : `Vista previa del afiche: ${lineas.join(' / ')}`,
+        );
+      });
+    }
+
+    function actualizar() {
+      revisar();
+      pintar();
+      guardar();
+      estado.textContent = '';
+    }
+
+    form.addEventListener('input', actualizar);
+    form.addEventListener('submit', (e) => e.preventDefault());
+    // Enter pasa al verso siguiente
+    versos.forEach((v, i) =>
+      v.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          (versos[i + 1] ?? firma).focus();
+        }
+      }),
+    );
+
+    uno<HTMLButtonElement>('[data-entrada]').addEventListener('click', () => {
+      const [a, b] = datos.entradas[Math.floor(Math.random() * datos.entradas.length)];
+      versos[0].value = a;
+      versos[1].value = b;
+      actualizar();
+      versos[2].focus();
+    });
+
+    uno<HTMLButtonElement>('[data-borrar]').addEventListener('click', () => {
+      versos.forEach((v) => (v.value = ''));
+      firma.value = '';
+      actualizar();
+      versos[0].focus();
+    });
+
+    /* ---------- Descargar y compartir ---------- */
+    const archivo = async () => {
+      const blob = await new Promise<Blob | null>((r) => lienzo.toBlob(r, 'image/png'));
+      if (!blob) throw new Error('No se pudo crear la imagen');
+      return new File([blob], 'copla-carnaval-cajamarca.png', { type: 'image/png' });
+    };
+
+    const listaParaSalir = () => {
+      if (completa()) return true;
+      estado.textContent = 'Faltan versos: una copla tiene cuatro.';
+      versos.find((v) => !v.value.trim())?.focus();
+      return false;
+    };
+
+    botonDescargar.addEventListener('click', async () => {
+      if (!listaParaSalir()) return;
+      const url = URL.createObjectURL(await archivo());
+      const enlace = document.createElement('a');
+      enlace.href = url;
+      enlace.download = 'copla-carnaval-cajamarca.png';
+      enlace.click();
+      setTimeout(() => URL.revokeObjectURL(url), 10_000);
+      estado.textContent = 'Listo: la imagen está en tus descargas.';
+    });
+
+    // Compartir solo aparece donde el navegador puede mandar imágenes (casi siempre, en el teléfono)
+    const prueba = new File([new Blob()], 'copla.png', { type: 'image/png' });
+    if (navigator.canShare?.({ files: [prueba] })) botonCompartir.hidden = false;
+
+    botonCompartir.addEventListener('click', async () => {
+      if (!listaParaSalir()) return;
+      try {
+        await navigator.share({
+          files: [await archivo()],
+          title: 'Mi copla del carnaval',
+          text: `Arma la tuya en ${location.origin}/coplas/`,
+        });
+        estado.textContent = '¡Copla enviada!';
+      } catch (error) {
+        // Cerrar el menú de compartir no es un error
+        if (!(error instanceof DOMException && error.name === 'AbortError')) {
+          estado.textContent = 'No se pudo compartir; prueba con «Descargar imagen».';
+          console.error(error);
+        }
+      }
+    });
+
+    revisar();
+    cargarLetras().finally(pintar);
+  }
+
+  const raiz = document.querySelector<HTMLElement>('[data-arma]');
+  if (raiz) iniciar(raiz);
+</script>

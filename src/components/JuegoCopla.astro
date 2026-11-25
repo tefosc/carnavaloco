@@ -5,47 +5,7 @@
  * salen de otras coplas con otra rima.
  */
 import { getCollection } from 'astro:content';
-
-const partir = (verso: string) => {
-  const m = verso.match(/^(.*?)([\p{L}]+)([^\p{L}]*)$/u);
-  return m ? { antes: m[1], palabra: m[2], despues: m[3] } : null;
-};
-
-/**
- * Rima asonante: las vocales desde la sílaba con acento hasta el final.
- * Junta los diptongos (medio → e-o) y aplica las reglas de acentuación:
- * tilde escrita, llana si termina en vocal, n o s; aguda en lo demás.
- */
-function claveRima(palabra: string) {
-  const p = palabra.toLowerCase();
-  const nucleos: { vocal: string; tilde: boolean }[] = [];
-  const fuerte = (v: string) => 'aeo'.includes(v);
-  let previo = false;
-  for (const ch of p) {
-    const base = ch.normalize('NFD').replace(/[̀-ͯ]/g, '');
-    const esVocal = 'aeiou'.includes(base) && ch !== 'ü';
-    const tilde = /[áéíóú]/.test(ch);
-    if (!esVocal) {
-      previo = false;
-      continue;
-    }
-    const ultimo = nucleos.at(-1);
-    // Diptongo: vocal débil sin tilde junto a otra vocal, en la misma sílaba
-    if (previo && ultimo && !tilde && !ultimo.tilde && (!fuerte(base) || !fuerte(ultimo.vocal))) {
-      if (fuerte(base) || (!fuerte(base) && !fuerte(ultimo.vocal))) ultimo.vocal = base;
-    } else {
-      nucleos.push({ vocal: base, tilde });
-    }
-    previo = true;
-  }
-  if (nucleos.length === 0) return '';
-  let tonica = nucleos.findIndex((n) => n.tilde);
-  if (tonica === -1) tonica = /[aeiouns]$/.test(p) && nucleos.length > 1 ? nucleos.length - 2 : nucleos.length - 1;
-  return nucleos
-    .slice(tonica)
-    .map((n) => n.vocal)
-    .join('');
-}
+import { claveAsonante as claveRima, partirVerso as partir } from '../lib/rima';
 
 const rondas = (await getCollection('coplas'))
   .map((c) => c.data)
