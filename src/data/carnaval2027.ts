@@ -23,6 +23,7 @@ export interface Dia {
   texto: string;
   hora: string | null;
   horaInicio?: string;
+  recorridoConfirmado?: boolean;
   lugar: string;
   /** Lo que pasó en ediciones anteriores, para saber qué esperar. */
   antes: string;

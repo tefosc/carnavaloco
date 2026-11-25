@@ -108,6 +108,10 @@ test('instalación automática, uso sin señal y actualización completa despué
   assert.equal(await ingreso.locator('[data-unidad="dias"]').textContent(), '1');
   await pagina.goto(origen + '/?fecha=2027-02-06');
   await ingreso.getByText('Hoy', { exact: true }).waitFor();
+  const pasacalle = pagina.locator('[data-pasacalle]');
+  assert.equal(await pasacalle.locator('[data-parada]').count(), 5);
+  await pasacalle.locator('[aria-current="date"]').getByText('Hoy', { exact: true }).waitFor();
+  assert.equal(await pasacalle.locator('[aria-current="date"]').getAttribute('data-parada'), '-4');
   await pagina.goto(origen + '/barrios/san-sebastian?fecha=2027-07-14');
   await pagina.getByRole('heading', { level: 1, name: /San Sebasti/i }).waitFor();
   await pagina.locator('a[href^="https://wa.me/"]:visible').first().click();
