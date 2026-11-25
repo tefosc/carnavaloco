@@ -105,6 +105,7 @@ La Municipalidad Provincial de Cajamarca presenta el afiche, el programa y la ca
 - [ ] Llenar las `fecha` de las actividades previas: pregón, bando, concurso de tradiciones y elección de reinas.
 - [ ] **Gran Corso**: confirmar el recorrido y el sentido. Ahora se dibuja de norte a sur por la Vía de Evitamiento, pero es una suposición. Para cambiarlo, edita el punto de salida en `src/data/recorridos.ts`. Si el recorrido cambia de calles, ver «Mapa de recorridos» en el README.
 - [ ] Revisar los demás recorridos: los tramos punteados del mapa son aproximados.
+- [ ] **Serenata por el 173.º aniversario de Cajamarca**: carnavalcajamarca.com dice (12 de nov. de 2026) que sería el **sábado 2 de enero de 2027** en la explanada del Qhapaq Ñan, y no en la Plaza de Armas. Lo anunció el alcalde electo; no hay hora ni artistas. **No está confirmada en otra fuente** (la creación del departamento fue el 3 de enero de 1854, así que la fecha es creíble). Confirmarla con la Municipalidad o el Gobierno Regional antes de ponerla en `previas` de `src/data/carnaval2027.ts`.
 
 ### Después del carnaval (desde el 11 de febrero de 2027)
 
@@ -129,7 +130,13 @@ Es la idea grande que queda de la lista. `/2027/` tiene seis consejos cortos en 
   - [Ordenanza Municipal N.° 908-CMPC](https://cdn.www.gob.pe/uploads/document/file/7128344/6121691-ordenanza-municipal-n-908-cmpc.pdf)
   - [Reglamento para la celebración de las festividades del Carnaval de Cajamarca](https://cdn.www.gob.pe/uploads/document/file/7128345/6121691-reglamento-para-la-celebracion-de-las-festividades-del-carnaval-de-cajamarca.pdf)
 - [ ] **Dónde quedarse** (zonas) y cuándo reservar. Ya está el dato de 2023: los hoteles pasaron el 90 % de reservas antes de la fiesta.
-- [ ] **Presupuesto aproximado**: pasajes, hospedaje, palcos del corso, globos. Para empezar, carnavalcajamarca.com tiene una página de costos, todavía sin leer.
+- [ ] **Presupuesto aproximado**: pasajes, hospedaje, palcos del corso, globos. Ya se leyó [la guía de costos de carnavalcajamarca.com](https://carnavalcajamarca.com/cuanto-cuesta-viajar-al-carnaval-de-cajamarca-2027/), pero **no es confiable para citarla**: casi todas las cifras son estimaciones propias, sin fuente ni fecha, y se contradice entre sus dos tablas. Sirve solo de orden de magnitud:
+  - Bus Lima–Cajamarca: 14 a 16 horas; en 2026 se reportaron pasajes de S/ 70 a S/ 230 por tramo.
+  - Avión Lima–Cajamarca: 1 h 20 min; ida y vuelta de S/ 400 a S/ 650 en 2026.
+  - Hotel: unos S/ 294 por noche de promedio para febrero de 2027 (dato de Trivago, según ese sitio).
+  - Comida y movilidad: S/ 30–60 y S/ 10–25 por día, estimados.
+  - **No trae precios de palcos ni de globos.** Esos hay que sacarlos de otra fuente. El único dato fechado que tenemos es el de 2024 (globos seis por un sol, balde grande S/ 30, palcos de S/ 20 a S/ 100).
+  - Para la guía, conviene pedir los precios reales a las empresas de transporte y a los hoteles, o citar una fuente de prensa con fecha.
 - [ ] **Teléfonos útiles**: emergencias, policía, serenazgo, puestos de salud durante la fiesta.
 
 ---
@@ -162,7 +169,8 @@ Antes de poner anuncios:
 - [ ] **Más coplas tradicionales con fuente.** Hoy hay 4 tradicionales y 14 escritas para el sitio. Las dos páginas de coplas de carnavalcajamarca.com son solo videos, sin versos escritos. Hay que buscar en cancioneros, notas de prensa o grabaciones con transcripción.
 - [ ] **Botón para compartir cada copla** del cancionero.
 - [ ] **Versión en inglés** para turistas, por lo menos de `/2027/` y de la guía.
-- [ ] **Más fotos** con licencia libre, sobre todo de comparsas, del corso y de la yunza.
+- [ ] **Más fotos** con licencia libre, sobre todo de comparsas, del corso y de la yunza. La galería de carnavalcajamarca.com no sirve: son 4 entradas de 2021 («Rostros del Carnaval» 2018 a 2020 y el centro histórico), sin crédito ni licencia, en un sitio con todos los derechos reservados. No se pueden reutilizar.
+- [ ] **Noticias del carnaval.** Ese sitio tiene una sección de noticias, pero solo dos son de 2027 (el Gran Corso por la Vía de Evitamiento, ya en el mapa, y la serenata). El resto es de 2023 a 2026; lo útil (más del 90 % de los hoteles reservados en 2023) ya está en la web. Para novedades de 2027 conviene seguir la Municipalidad Provincial de Cajamarca y Andina.
 
 ## Cosas a tener en cuenta
 
