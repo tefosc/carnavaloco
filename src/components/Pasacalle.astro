@@ -2,12 +2,12 @@
 import { ANIO, dias } from '../data/carnaval2027';
 import { diaDeCarnaval, formatearFecha, momentoDelCarnaval } from '../lib/fechas';
 
-const afiches: Record<string, { frase: string; alt: string }> = {
-  sabado: { frase: 'Sale el Ño y la calle se llena de pintura.', alt: 'Jóvenes con el rostro pintado celebran en una calle cajamarquina' },
-  domingo: { frase: 'Cada barrio sale con su patrulla, sus coplas y su comparsa.', alt: 'Una comparsa desfila con trajes bordados y tocados dorados' },
-  lunes: { frase: 'Carros alegóricos, reinas y comparsas toman la ciudad.', alt: 'Carro alegórico con figuras cajamarquinas y un ave azul frente a las tribunas' },
-  martes: { frase: 'Las viudas lloran al Ño entre bromas y actuaciones.', alt: 'Dos viudas representan su duelo junto al ataúd del Ño' },
-  miercoles: { frase: 'Se lee el testamento y el Ño se despide entre llamas.', alt: 'Un vecino lee el testamento junto al muñeco del Ño Carnavalón' },
+const frases: Record<string, string> = {
+  sabado: 'Sale el Ño y la calle se llena de pintura.',
+  domingo: 'Cada barrio sale con su patrulla, sus coplas y su comparsa.',
+  lunes: 'Carros alegóricos, reinas y comparsas toman la ciudad.',
+  martes: 'Las viudas lloran al Ño entre bromas y actuaciones.',
+  miercoles: 'Se lee el testamento y el Ño se despide entre llamas.',
 };
 
 const formatoDia = new Intl.DateTimeFormat('es-PE', { weekday: 'long', timeZone: 'UTC' });
@@ -16,7 +16,6 @@ const momento = momentoDelCarnaval(ANIO);
 
 <ol class="pasacalle" data-pasacalle>
   {dias.map((dia) => {
-    const afiche = afiches[dia.id];
     const fecha = diaDeCarnaval(ANIO, dia.offset);
     const hoy = momento.fase === 'durante' && momento.offset === dia.offset;
     return (
@@ -30,17 +29,11 @@ const momento = momentoDelCarnaval(ANIO);
             <span class="parada__hoy" hidden={!hoy}>Hoy</span>
           </div>
           <h3>{dia.titulo}</h3>
-          <p>{afiche?.frase ?? dia.texto}</p>
+          <p>{frases[dia.id] ?? dia.texto}</p>
           {dia.recorridoConfirmado && (
             <a href={'/2027/?dia=' + dia.id + '#recorridos'} hidden={!hoy}>Ver recorrido</a>
           )}
         </div>
-        {afiche && (
-          <figure class="parada__imagen">
-            <img src={'/pasacalle/' + dia.id + '.webp'} alt={afiche.alt} width="1120" height="630" loading="lazy" decoding="async" class="parada__foto" />
-            <figcaption>Recreación generada con IA</figcaption>
-          </figure>
-        )}
       </li>
     );
   })}
@@ -94,7 +87,7 @@ const momento = momentoDelCarnaval(ANIO);
 
   .parada--sabado { grid-column: 1 / 8; rotate: -1deg; }
   .parada--domingo { grid-column: 8 / -1; rotate: 1deg; margin-top: 1.65rem; }
-  .parada--lunes { grid-column: 1 / -1; display: grid; grid-template-columns: 5fr 7fr; }
+  .parada--lunes { grid-column: 1 / -1; }
   .parada--martes { grid-column: 2 / 7; }
   .parada--miercoles { grid-column: 7 / -1; rotate: 0.65deg; margin-top: 1.4rem; }
 
@@ -149,40 +142,6 @@ const momento = momentoDelCarnaval(ANIO);
   .parada p { max-width: 34ch; font-weight: 650; }
   .parada a { justify-self: start; color: inherit; font-weight: 800; }
 
-  .parada__imagen {
-    display: grid;
-    grid-template-rows: 1fr auto;
-    margin: auto 0 0;
-    background: var(--tinta);
-    color: var(--blanco);
-  }
-
-  .parada__imagen figcaption {
-    padding: 0.45rem 0.75rem;
-    font-size: 0.82rem;
-  }
-
-  .parada--lunes .parada__imagen {
-    margin-top: 0;
-  }
-
-  .parada__foto {
-    width: 100%;
-    height: clamp(9rem, 20vw, 17rem);
-    object-fit: cover;
-    border-top: 4px solid var(--tinta);
-    margin-top: auto;
-  }
-
-  .parada--lunes .parada__foto {
-    height: 100%;
-    max-height: 24rem;
-    object-position: center 25%;
-    min-height: 15rem;
-    border-top: 0;
-    border-left: 4px solid var(--tinta);
-  }
-
   @media (max-width: 700px) {
     .pasacalle {
       grid-template-columns: minmax(0, 1fr);
@@ -202,11 +161,5 @@ const momento = momentoDelCarnaval(ANIO);
       rotate: none;
     }
 
-    .parada--lunes .parada__foto {
-      height: 12rem;
-      min-height: 0;
-      border-top: 4px solid var(--tinta);
-      border-left: 0;
-    }
   }
 </style>
