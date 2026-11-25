@@ -1,7 +1,7 @@
 import { ahoraEnNavegador, hoyEnPeru } from './fechas';
-import { etiquetaFaltan, formatearAniversario, proximosAniversarios, type ProximoAniversario } from './barrios';
+import { formatearAniversario, partirFaltan, proximosAniversarios, type ProximoAniversario } from './barrios';
 
-const CANTIDAD = 3;
+const CANTIDAD = 8;
 const formatoLista = new Intl.ListFormat('es', { style: 'long', type: 'conjunction' });
 
 function titulo(cumplen: ProximoAniversario[]): string {
@@ -10,18 +10,27 @@ function titulo(cumplen: ProximoAniversario[]): string {
   return cumplen.length === 1 ? `¡Hoy cumple años ${nombres}!` : `¡Hoy cumplen años ${nombres}!`;
 }
 
-function crearItem({ barrio, aniversario, faltan }: ProximoAniversario): HTMLLIElement {
-  const nombre = document.createElement('strong');
-  nombre.textContent = barrio.nombre;
+function crearTexto(etiqueta: keyof HTMLElementTagNameMap, clase: string, texto: string): HTMLElement {
+  const elemento = document.createElement(etiqueta);
+  elemento.className = clase;
+  elemento.textContent = texto;
+  return elemento;
+}
 
-  const fecha = document.createElement('span');
-  fecha.textContent = `${formatearAniversario(aniversario)} · ${etiquetaFaltan(faltan)}`;
+function crearItem({ barrio, aniversario, faltan }: ProximoAniversario): HTMLLIElement {
+  const { numero, unidad } = partirFaltan(faltan);
 
   const enlace = document.createElement('a');
   enlace.className = 'aniversarios__item';
+  enlace.classList.toggle('aniversarios__item--hoy', faltan === 0);
   enlace.href = `/barrios/${barrio.id}/`;
   enlace.dataset.color = barrio.color;
-  enlace.append(nombre, fecha);
+  enlace.append(
+    crearTexto('span', 'aniversarios__dias', numero),
+    crearTexto('span', 'aniversarios__unidad', unidad),
+    crearTexto('strong', 'aniversarios__nombre', barrio.nombre),
+    crearTexto('span', 'aniversarios__fecha', formatearAniversario(aniversario)),
+  );
 
   const item = document.createElement('li');
   item.append(enlace);

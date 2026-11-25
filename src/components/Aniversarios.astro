@@ -21,8 +21,7 @@
 
   .aniversarios__grid {
     display: grid;
-    gap: 1rem 2rem;
-    align-items: center;
+    gap: 1.2rem;
   }
 
   .aniversarios__titulo {
@@ -41,18 +40,33 @@
   .aniversarios__lista {
     list-style: none;
     display: flex;
-    flex-wrap: wrap;
-    gap: 0.7rem;
+    gap: 1rem;
+    margin-inline: calc(-1 * var(--borde));
+    padding: 0.4rem var(--borde) 1.2rem;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scroll-padding-inline: var(--borde);
+    scrollbar-width: thin;
+    scrollbar-color: var(--amarillo) transparent;
+  }
+
+  .aniversarios__lista > li {
+    flex: none;
+    scroll-snap-align: start;
   }
 
   .aniversarios__item {
     display: grid;
+    align-content: start;
     gap: 0.1rem;
-    min-width: 11rem;
-    padding: 0.7rem 1rem;
+    width: min(15rem, 68vw);
+    min-height: 11.5rem;
+    padding: 0.9rem 1.1rem 1.1rem;
     background: var(--c);
     color: var(--tinta);
     border: 3px solid var(--tinta);
+    box-shadow: 5px 5px 0 var(--blanco);
     text-decoration: none;
   }
 
@@ -60,27 +74,46 @@
     color: var(--blanco);
   }
 
-  .aniversarios__item strong {
-    font-family: var(--display);
-    font-weight: 800;
-    font-size: 1.4rem;
-    text-transform: uppercase;
-    line-height: 1;
+  .aniversarios__item--hoy {
+    outline: 4px solid var(--amarillo);
+    outline-offset: 3px;
   }
 
-  .aniversarios__item span {
-    font-size: 0.9rem;
-    font-weight: 600;
+  .aniversarios__dias {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 4.2rem;
+    line-height: 0.85;
+    color: var(--blanco);
+    -webkit-text-stroke: 2px var(--tinta);
+    paint-order: stroke fill;
+    text-shadow: 3px 3px 0 var(--tinta);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .aniversarios__unidad {
+    min-height: 1.2em;
+    font-size: 0.8rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .aniversarios__nombre {
+    margin-top: 0.4rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.7rem;
+    line-height: 0.95;
+    text-transform: uppercase;
+  }
+
+  .aniversarios__fecha {
+    font-weight: 700;
   }
 
   .aniversarios__item:hover {
     translate: 0 -3px;
-  }
-
-  @media (min-width: 900px) {
-    .aniversarios__grid {
-      grid-template-columns: auto 1fr;
-    }
   }
 
   @media (prefers-reduced-motion: reduce) {

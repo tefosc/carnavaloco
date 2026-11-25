@@ -27,10 +27,9 @@ export function formatearAniversario({ dia, mes }: Aniversario): string {
   return `${dia} de ${MESES[mes - 1]}`;
 }
 
-export function etiquetaFaltan(faltan: number): string {
-  if (faltan === 0) return 'Hoy';
-  if (faltan === 1) return 'Mañana';
-  return `en ${faltan} días`;
+export function partirFaltan(faltan: number): { numero: string; unidad: string } {
+  if (faltan === 0) return { numero: 'Hoy', unidad: '' };
+  return { numero: String(faltan), unidad: faltan === 1 ? 'día' : 'días' };
 }
 
 export function diasParaAniversario(hoy: Date, { dia, mes }: Aniversario): number {
