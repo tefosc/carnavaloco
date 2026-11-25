@@ -4,9 +4,15 @@
  * con flecos abajo. Las fechas se calculan con la Pascua y el
  * script las corrige si el sitio se construyó hace tiempo.
  */
+import Mascara from './Mascara.astro';
 import { programa } from '../data/carnaval';
 import { anioProximoCarnaval, diaDeCarnaval } from '../lib/fechas';
 
+interface Props {
+  portada?: boolean;
+}
+
+const { portada = false } = Astro.props;
 const anio = anioProximoCarnaval();
 const formatoDia = new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' });
 const formatoMes = new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' });
@@ -17,7 +23,7 @@ const dias = programa.map((d) => {
 });
 ---
 
-<div class="banderolas" data-banderolas data-anio={anio}>
+<div class:list={["banderolas", { "banderolas--portada": portada }]} data-banderolas data-anio={anio}>
   <svg class="banderolas__cuerda" viewBox="0 0 1000 40" preserveAspectRatio="none" aria-hidden="true">
     <path d="M0 6 Q500 46 1000 6" fill="none" stroke="currentColor" stroke-width="3"></path>
   </svg>
@@ -25,6 +31,58 @@ const dias = programa.map((d) => {
     {
       dias.map((d, i) => (
         <li class="banderola flecos claro" data-color={d.color} style={`--i:${i}`}>
+          {portada && d.offset === -4 && <span class="banderola__pintura" data-pintura-banderola aria-hidden="true"></span>}
+          {portada && d.offset === -3 && (
+            <span class="banderola__clon" aria-hidden="true">
+              <Mascara class="banderola__cucurucho" cucuruchoAlto />
+              <svg class="banderola__aleteo" viewBox="0 0 185 160" focusable="false">
+                <path d="M12 16C39 27 54 25 75 39C92 49 115 51 148 39L122 78L132 122Q111 144 82 146Q51 138 35 105Z" fill="currentColor" opacity=".5" />
+                <path d="M16 24Q55 63 89 65Q115 62 140 46M26 45Q55 86 86 92Q107 87 122 78M35 69Q60 110 82 119Q105 113 126 99M44 97Q67 132 82 137Q107 134 128 116" fill="none" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" />
+              </svg>
+            </span>
+          )}
+          {portada && d.offset === -2 && (
+            <span class="banderola__corso" aria-hidden="true">
+              <svg class="banderola__reina" viewBox="15 20 108 145" focusable="false">
+                  <path d="M62 50L58 33L68 39L75 29L82 39L93 33L89 50Z" fill="currentColor" />
+                  <path d="M63 57C63 41 88 41 88 57C88 70 83 77 75 77C67 77 63 70 63 57Z" fill="currentColor" />
+                  <path d="M69 75L79 75L83 83Q94 90 102 110L114 150Q76 163 39 149L51 111Q56 92 65 83Z" fill="currentColor" />
+                  <path d="M82 84L65 111L59 106L75 81Z" fill="#ffe600" />
+                  <path d="M63 87L41 105L23 85M86 87L102 103" fill="none" stroke="currentColor" stroke-width="6" stroke-linecap="round" stroke-linejoin="round" />
+              </svg>
+              <svg class="banderola__carro" viewBox="0 0 270 200" focusable="false">
+                <path d="M41 131C72 129 96 113 113 94L76 87 49 67C82 76 113 78 146 82C158 68 158 48 172 33C184 19 209 22 225 37L254 44L224 53C215 60 212 78 204 94C192 122 160 140 132 146C100 153 69 148 41 131Z" fill="currentColor" opacity=".66" />
+                <path d="M66 114Q110 129 156 102Q175 91 187 74M90 120Q121 126 153 112M52 143Q120 162 180 138" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                <path d="M12 151Q134 166 261 150V187Q135 201 12 185Z" fill="currentColor" opacity=".62" />
+                <path d="M20 175Q34 156 49 175T78 175T107 175T136 175T165 175T194 175T223 175T252 175" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" />
+                <circle cx="204" cy="39" r="3" fill="currentColor" />
+                <circle cx="224" cy="135" r="10" fill="currentColor" opacity=".65" />
+                <circle cx="246" cy="126" r="7" fill="currentColor" opacity=".48" />
+              </svg>
+            </span>
+          )}
+          {portada && d.offset === -1 && (
+            <span class="banderola__velorio" aria-hidden="true">
+              <svg viewBox="0 0 230 190" focusable="false">
+                <path d="M78 133L104 108L186 103L215 122L187 151L102 158Z" fill="currentColor" opacity=".5" />
+                <path d="M78 119L104 94L186 89L215 108L187 137L102 144ZM104 126L118 108L181 101M137 119L171 114M156 106L151 128" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M47 101H63V150H47ZM187 39H203V82H187Z" fill="currentColor" opacity=".72" />
+                <path d="M54 91C40 87 49 77 55 66C56 76 67 86 54 91ZM194 30C180 26 189 16 195 5C196 15 207 25 194 30Z" fill="currentColor" />
+                <path d="M27 164Q98 166 137 156Q178 146 217 155" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" opacity=".55" />
+              </svg>
+            </span>
+          )}
+          {portada && d.offset === 0 && (
+            <span class="banderola__entierro" aria-hidden="true">
+              <svg viewBox="0 0 250 205" focusable="false">
+                <path d="M32 52Q42 33 64 39L152 57Q172 62 160 81L122 154L42 137Q26 133 32 119L57 65Q40 68 32 61Z" fill="currentColor" opacity=".52" />
+                <path d="M68 71L138 86M62 88L130 103M55 105L99 115M122 154Q108 149 119 135L146 141Q151 149 122 154Z" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+                <path d="M164 175C143 157 142 141 151 125Q155 141 166 139C160 118 181 99 181 74C198 88 200 107 199 124Q213 119 215 108C231 129 233 154 221 169C206 188 181 188 164 175Z" fill="currentColor" />
+                <path d="M179 177C167 163 175 150 183 144Q185 153 191 153C190 142 200 134 202 124C214 138 213 160 205 171Q194 184 179 177Z" fill="#ffe600" opacity=".7" />
+                <path d="M157 190L220 184M179 163L227 191M163 86L155 73M217 87L228 73" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" />
+              </svg>
+            </span>
+          )}
           <p class="banderola__dia">{d.dia}</p>
           <p class="banderola__fecha">
             <span class="banderola__numero" data-offset={d.offset} data-parte="dia">
@@ -112,6 +170,155 @@ const dias = programa.map((d) => {
     line-height: 1.45;
   }
 
+  .banderolas--portada .banderola[data-color='fucsia'] {
+    --tinta-b: #100c2c;
+    isolation: isolate;
+  }
+
+  .banderola__pintura {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .banderola__pintura :global(svg) {
+    position: absolute;
+    filter: blur(2.5px);
+    opacity: 0.34;
+  }
+
+  .banderola__pintura :global(svg:first-child) {
+    top: 10%;
+    right: -22%;
+    width: 76%;
+    height: auto;
+    rotate: -24deg;
+  }
+
+  .banderola__pintura :global(svg:last-child) {
+    right: 15%;
+    bottom: -13%;
+    width: 54%;
+    height: auto;
+    rotate: 27deg;
+    opacity: 0.26;
+  }
+
+  .banderolas--portada .banderola[data-color='verde'] {
+    isolation: isolate;
+  }
+
+  .banderola__clon {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .banderola__clon :global(.banderola__cucurucho) {
+    position: absolute;
+    right: -20%;
+    bottom: -53%;
+    width: min(85%, 16rem);
+    rotate: -17deg;
+    opacity: 0.25;
+    filter: grayscale(1) brightness(1.65) blur(0.4px);
+  }
+
+  .banderola__aleteo {
+    position: absolute;
+    bottom: -20%;
+    left: -22%;
+    width: min(80%, 15rem);
+    color: #baffb0;
+    rotate: -24deg;
+    opacity: 0.3;
+    filter: blur(0.5px);
+  }
+
+  .banderolas--portada .banderola[data-color='amarillo'] {
+    isolation: isolate;
+  }
+
+  .banderola__corso,
+  .banderola__velorio,
+  .banderola__entierro {
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+  }
+
+  .banderola__corso svg {
+    position: absolute;
+    color: #ba7200;
+    opacity: 0.23;
+    filter: blur(0.5px);
+  }
+
+  .banderola__reina {
+    bottom: -10%;
+    left: -4%;
+    width: min(38%, 8rem);
+    rotate: 9deg;
+  }
+
+  .banderola__carro {
+    right: -5%;
+    bottom: -8%;
+    width: min(72%, 16rem);
+    rotate: -12deg;
+  }
+
+  .banderolas--portada .banderola[data-color='turquesa'],
+  .banderolas--portada .banderola[data-color='naranja'] {
+    isolation: isolate;
+  }
+
+  .banderola__velorio svg,
+  .banderola__entierro svg {
+    position: absolute;
+    right: -12%;
+    bottom: -11%;
+    width: min(91%, 15rem);
+    filter: blur(0.5px);
+  }
+
+  .banderola__velorio svg {
+    color: var(--turquesa);
+    opacity: 0.22;
+    rotate: -12deg;
+  }
+
+  .banderola__entierro svg {
+    color: #ffc846;
+    opacity: 0.52;
+    rotate: -9deg;
+  }
+
+  .banderolas--portada .banderola[data-color='amarillo'] .banderola__numero {
+    font-size: clamp(2.6rem, 4.5vw, 4rem);
+  }
+
+  .banderolas--portada .banderola[data-color='amarillo'] h3 {
+    font-size: clamp(2.05rem, 3.2vw, 2.85rem);
+    line-height: 0.95;
+  }
+
+  .banderolas--portada .banderola[data-color='turquesa'] {
+    --tinta-b: var(--blanco);
+    background: var(--tinta);
+    border-top-color: var(--turquesa);
+  }
+
+  .banderolas--portada .banderola[data-color='turquesa'] h3 {
+    color: var(--turquesa);
+  }
+
   @media (max-width: 1000px) {
     .banderolas__lista {
       grid-template-columns: repeat(2, 1fr);
@@ -144,6 +351,14 @@ const dias = programa.map((d) => {
 
 <script>
   import { anioProximoCarnaval, diaDeCarnaval } from '../lib/fechas';
+  import { azarConSemilla, crearMancha } from '../lib/manchas';
+
+  document.querySelectorAll('[data-pintura-banderola]').forEach((pintura) => {
+    pintura.append(
+      crearMancha('mano', 'var(--amarillo)', 160, azarConSemilla(41)),
+      crearMancha('mano', '#ffc0dc', 128, azarConSemilla(73)),
+    );
+  });
 
   const formatos = {
     dia: new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' }),

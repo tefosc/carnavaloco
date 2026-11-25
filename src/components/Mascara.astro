@@ -5,8 +5,9 @@
  */
 interface Props {
   class?: string;
+  cucuruchoAlto?: boolean;
 }
-const { class: clase } = Astro.props;
+const { class: clase, cucuruchoAlto = false } = Astro.props;
 
 // Golas (cuellos de vuelos) generadas con arcos.
 const vuelos = (x: number, y: number, n: number, ancho: number) =>
@@ -24,7 +25,7 @@ const lentejuelas = Array.from({ length: 9 }, (_, i) => {
 });
 ---
 
-<svg class={clase} viewBox="0 0 400 520" role="img" aria-labelledby="mascara-titulo">
+<svg class={clase} viewBox={cucuruchoAlto ? "0 -150 400 670" : "0 0 400 520"} role="img" aria-labelledby="mascara-titulo">
   <title id="mascara-titulo">Máscara de malla pintada con cucurucho de colores, como las del carnaval de Cajamarca</title>
   <defs>
     <pattern id="malla" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
@@ -91,15 +92,21 @@ const lentejuelas = Array.from({ length: 9 }, (_, i) => {
   <path d="M180 422 Q200 440 220 422 Q200 430 180 422 Z" fill="#c81e4a" stroke="var(--tinta)" stroke-width="2.5" stroke-linejoin="round"></path>
 
   <!-- Cucurucho -->
-  <path d="M200 18 L116 200 Q200 226 284 200 Z" fill="url(#rayas)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"></path>
+  <path
+    d={cucuruchoAlto ? "M200 -110 L116 200 Q200 226 284 200 Z" : "M200 18 L116 200 Q200 226 284 200 Z"}
+    fill="url(#rayas)"
+    stroke="var(--tinta)"
+    stroke-width="4"
+    stroke-linejoin="round"></path>
   <!-- Cinta del sombrero -->
   <path d="M110 198 Q200 232 290 198 L296 222 Q200 258 104 222 Z" fill="var(--azul)" stroke="var(--tinta)" stroke-width="4" stroke-linejoin="round"></path>
   {lentejuelas.map((l) => <circle cx={l.x} cy={l.y + 10} r="5" fill={l.color} stroke="var(--tinta)" stroke-width="1.5" />)}
 
-  <!-- Pompón -->
-  <g stroke="var(--tinta)" stroke-width="3">
-    <circle cx="200" cy="18" r="17" fill="var(--turquesa)"></circle>
-    <circle cx="190" cy="10" r="6" fill="var(--amarillo)"></circle>
-    <circle cx="208" cy="24" r="5" fill="var(--naranja)"></circle>
-  </g>
+  {!cucuruchoAlto && (
+    <g stroke="var(--tinta)" stroke-width="3">
+      <circle cx="200" cy="18" r="17" fill="var(--turquesa)"></circle>
+      <circle cx="190" cy="10" r="6" fill="var(--amarillo)"></circle>
+      <circle cx="208" cy="24" r="5" fill="var(--naranja)"></circle>
+    </g>
+  )}
 </svg>
