@@ -1,0 +1,171 @@
+---
+import { agendaPortada } from '../lib/agenda-portada';
+
+const agenda = agendaPortada();
+const tarjetas = [
+  { id: 'siguiente', evento: agenda.siguiente },
+  { id: 'ingreso', evento: agenda.ingreso },
+];
+---
+
+<div class="agenda-portada" data-agenda-portada>
+  <div class="bando" data-bando hidden={!agenda.mostrarBando}>
+    <strong>Gran Bando</strong>
+    <span>Fecha por confirmar</span>
+  </div>
+  {tarjetas.map(({ id, evento }) => (
+    <article class="evento" data-evento={id} hidden={!evento || (id === 'ingreso' && agenda.siguiente?.id === evento.id)}>
+      <h2 data-titulo>{evento?.titulo}</h2>
+      <p class="fecha" data-fecha>{evento?.fechaTexto}</p>
+      <p class="estado" data-estado hidden={!evento?.estado}>{evento?.estado}</p>
+      <div class="cuenta" role="timer" data-reloj hidden={Boolean(evento?.estado)}>
+        <span><strong data-unidad="dias">{evento?.dias}</strong> <span data-dias-label>{evento?.dias === 1 ? 'día' : 'días'}</span></span>
+        <span data-exacta hidden={!evento?.usaHora}><strong data-unidad="horas">{evento?.horas}</strong> h</span>
+        <span data-exacta hidden={!evento?.usaHora}><strong data-unidad="minutos">{evento?.minutos}</strong> min</span>
+        <span data-exacta hidden={!evento?.usaHora}><strong data-unidad="segundos">{evento?.segundos}</strong> s</span>
+      </div>
+      <a data-enlace href={evento?.enlace ?? '/2027/'}>{evento?.enlace.includes('?dia=') ? 'Ver recorrido' : 'Ver programa 2027'}</a>
+    </article>
+  ))}
+</div>
+
+<script>
+  import { agendaPortada } from '../lib/agenda-portada';
+  import { ahoraEnNavegador } from '../lib/fechas';
+
+  const panel = document.querySelector('[data-agenda-portada]');
+  if (panel) {
+    const bando = panel.querySelector<HTMLElement>('[data-bando]')!;
+    const siguiente = panel.querySelector<HTMLElement>('[data-evento="siguiente"]')!;
+    const ingreso = panel.querySelector<HTMLElement>('[data-evento="ingreso"]')!;
+    const movimiento = matchMedia('(prefers-reduced-motion: no-preference)');
+
+    function mostrar(tarjeta: HTMLElement, evento: ReturnType<typeof agendaPortada>['siguiente']) {
+      tarjeta.hidden = !evento;
+      if (!evento) return;
+      const titulo = tarjeta.querySelector('[data-titulo]')!;
+      const fecha = tarjeta.querySelector('[data-fecha]')!;
+      const estado = tarjeta.querySelector<HTMLElement>('[data-estado]')!;
+      const enlace = tarjeta.querySelector<HTMLAnchorElement>('[data-enlace]')!;
+      const reloj = tarjeta.querySelector<HTMLElement>('[data-reloj]')!;
+      titulo.textContent = evento.titulo;
+      fecha.textContent = evento.fechaTexto;
+      estado.textContent = evento.estado;
+      estado.hidden = !evento.estado;
+      reloj.hidden = Boolean(evento.estado);
+      enlace.href = evento.enlace;
+      enlace.textContent = evento.enlace.includes('?dia=') ? 'Ver recorrido' : 'Ver programa 2027';
+      tarjeta.querySelector('[data-dias-label]')!.textContent = evento.dias === 1 ? 'día' : 'días';
+      tarjeta.querySelectorAll<HTMLElement>('[data-exacta]').forEach((unidad) => {
+        unidad.hidden = !evento.usaHora;
+      });
+
+      const unidades = ['dias', 'horas', 'minutos', 'segundos'] as const;
+      for (const unidad of unidades) {
+        const cifra = tarjeta.querySelector<HTMLElement>('[data-unidad="' + unidad + '"]')!;
+        const valor = String(evento[unidad]).padStart(unidad === 'dias' ? 1 : 2, '0');
+        if (cifra.textContent === valor) continue;
+        cifra.textContent = valor;
+        if (movimiento.matches && !cifra.closest('[hidden]')) {
+          cifra.animate([{ transform: 'perspective(8rem) rotateX(-38deg)' }, { transform: 'none' }], {
+            duration: 230, easing: 'ease-out',
+          });
+        }
+      }
+    }
+
+    function actualizar() {
+      const agenda = agendaPortada(ahoraEnNavegador());
+      bando.hidden = !agenda.mostrarBando;
+      mostrar(siguiente, agenda.siguiente);
+      mostrar(ingreso, agenda.siguiente?.id === agenda.ingreso.id ? null : agenda.ingreso);
+      return Boolean(agenda.siguiente?.usaHora || agenda.ingreso.usaHora);
+    }
+
+    function actualizarReloj() {
+      const conSegundos = actualizar();
+      window.setTimeout(actualizarReloj, conSegundos ? 1000 - Date.now() % 1000 : 60_000);
+    }
+
+    actualizarReloj();
+  }
+</script>
+
+<style>
+  .agenda-portada {
+    display: grid;
+    gap: 0.65rem;
+    position: relative;
+    z-index: 2;
+    container-type: inline-size;
+  }
+
+  .bando {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem 1rem;
+    padding: 0.55rem 0.85rem;
+    background: var(--amarillo);
+    color: var(--tinta);
+    border: 3px solid var(--tinta);
+  }
+
+  .bando strong, h2 {
+    font-family: var(--display);
+    font-weight: 900;
+    text-transform: uppercase;
+  }
+
+  .bando strong { font-size: 1.4rem; }
+
+  .evento {
+    display: grid;
+    justify-items: start;
+    gap: 0.6rem;
+    padding: clamp(0.9rem, 4cqi, 1.45rem);
+    border: 5px solid var(--tinta);
+    outline: 2px dashed var(--fucsia);
+    outline-offset: -9px;
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  .evento:first-of-type { border-color: var(--amarillo); }
+  [hidden] { display: none; }
+
+  h2 {
+    color: var(--amarillo);
+    font-size: clamp(1.75rem, 8cqi, 3.1rem);
+    line-height: 1.03;
+    text-wrap: balance;
+  }
+
+  .fecha { font-weight: 650; }
+  .fecha::first-letter { text-transform: uppercase; }
+
+  .cuenta {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.25rem 0.85rem;
+  }
+
+  .cuenta, .estado, a { font-weight: 800; }
+
+  .cuenta strong, .estado {
+    display: inline-block;
+    color: var(--amarillo);
+    font: 900 clamp(2.2rem, 10cqi, 4rem)/1 var(--display);
+    font-variant-numeric: tabular-nums;
+  }
+
+  a {
+    color: var(--blanco);
+    text-underline-offset: 0.24em;
+    padding-block: 0.45rem;
+  }
+
+  a:hover { color: var(--amarillo); }
+</style>

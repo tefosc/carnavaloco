@@ -7,7 +7,7 @@ import MapaRecorridos from '../components/MapaRecorridos.astro';
 import HoyEnElCarnaval from '../components/HoyEnElCarnaval.astro';
 import Instalar from '../components/Instalar.astro';
 import { ANIO, programaOficial, dias, previas, consejos } from '../data/carnaval2027';
-import { diaDeCarnaval, momentoDelCarnaval } from '../lib/fechas';
+import { diaDeCarnaval, formatearFecha, momentoDelCarnaval } from '../lib/fechas';
 
 const formatoDia = new Intl.DateTimeFormat('es-PE', { weekday: 'long', timeZone: 'UTC' });
 const formatoNumero = new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' });
@@ -132,7 +132,7 @@ googleCalendar.searchParams.set('details', `Programa día por día: ${new URL(`/
         {
           previas.map((p) => (
             <li>
-              <p class="previas__cuando">{p.fecha ?? p.cuando}</p>
+              <p class="previas__cuando">{p.fecha ? formatearFecha(new Date(p.fecha + 'T00:00:00Z')) : p.cuando}</p>
               <h3>{p.titulo}</h3>
               <p>{p.texto}</p>
             </li>

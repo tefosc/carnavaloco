@@ -102,6 +102,12 @@ test('instalación automática, uso sin señal y actualización completa despué
   sinRed = true;
   await contexto.setOffline(true);
   pagina = await contexto.newPage();
+  await pagina.goto(origen + '/?fecha=2027-02-05');
+  const ingreso = pagina.locator('[data-evento="ingreso"]');
+  await ingreso.getByRole('timer').getByText('día', { exact: true }).waitFor();
+  assert.equal(await ingreso.locator('[data-unidad="dias"]').textContent(), '1');
+  await pagina.goto(origen + '/?fecha=2027-02-06');
+  await ingreso.getByText('Hoy', { exact: true }).waitFor();
   await pagina.goto(origen + '/barrios/san-sebastian?fecha=2027-07-14');
   await pagina.getByRole('heading', { level: 1, name: /San Sebasti/i }).waitFor();
   await pagina.locator('a[href^="https://wa.me/"]:visible').first().click();

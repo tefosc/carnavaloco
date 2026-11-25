@@ -22,6 +22,7 @@ export interface Dia {
   corto: string;
   texto: string;
   hora: string | null;
+  horaInicio?: string;
   lugar: string;
   /** Lo que pasó en ediciones anteriores, para saber qué esperar. */
   antes: string;
@@ -87,9 +88,11 @@ export const dias: Dia[] = [
 ];
 
 export interface Previa {
+  id?: string;
   cuando: string;
-  /** Fecha exacta cuando se anuncie, por ejemplo "sábado 16 de enero". */
   fecha: string | null;
+  horaInicio?: string;
+  fuente?: string;
   titulo: string;
   texto: string;
 }
@@ -110,6 +113,7 @@ export const previas: Previa[] = [
   {
     cuando: 'Enero',
     fecha: null,
+    id: 'bando',
     titulo: 'Gran Bando carnestolendo',
     texto: 'Barrios e instituciones desfilan por las calles. En 2026 salieron más de cincuenta mil personas.',
   },

@@ -3,7 +3,7 @@ import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
 import Chicha from '../components/Chicha.astro';
 import Afiche from '../components/Afiche.astro';
-import Sello from '../components/Sello.astro';
+import AgendaPortada from '../components/AgendaPortada.astro';
 import Cinta from '../components/Cinta.astro';
 import Banderolas from '../components/Banderolas.astro';
 import CartelEdicion from '../components/CartelEdicion.astro';
@@ -12,7 +12,6 @@ import Pintura from '../components/Pintura.astro';
 import HoyEnElCarnaval from '../components/HoyEnElCarnaval.astro';
 import Aniversarios from '../components/Aniversarios.astro';
 import { fotos } from '../data/fotos';
-import { anioProximoCarnaval, momentoDelCarnaval } from '../lib/fechas';
 import { conBis } from '../lib/coplas';
 
 const frases = (await getCollection('frases')).map((f) => f.data);
@@ -23,10 +22,6 @@ const pancarta = coplas.find((c) => c.id === 'lima-trujillo')!;
 
 const ediciones = (await getCollection('ediciones')).map((e) => e.data).sort((a, b) => b.anio - a.anio);
 const giros = [-3, 2, -1.5, 3.5, -2.5, 1, -3.5, 2.5, -1, 3];
-
-// Valor del día del build; en el navegador lo corrige src/lib/hoy.ts
-const momento = momentoDelCarnaval(anioProximoCarnaval());
-const faltan = momento.fase === 'antes' ? momento.faltan : 0;
 
 const palabras = [
   { palabra: '¡Alalau!', dice: '¡qué frío!', color: 'var(--amarillo)' },
@@ -66,6 +61,7 @@ const palabras = [
         </div>
       </div>
       <div class="portada__visual">
+        <AgendaPortada />
         <Afiche
           foto={fotos.patrullaCorriendo}
           giro={3}
@@ -74,17 +70,6 @@ const palabras = [
           sizes="(min-width: 900px) 46vw, 92vw"
           class="portada__afiche"
         />
-        <Sello anillo="Próximo carnaval ✶ Próximo carnaval ✶ " color="var(--verde)" class="portada__sello">
-          <span class="cuenta__numero" data-cuenta-dias data-anio="proximo">{faltan}</span>
-          <span
-            class="cuenta__texto"
-            data-cuenta-texto
-            data-uno="día para el ingreso del Ño"
-            data-varios="días para el ingreso del Ño"
-          >
-            {faltan === 1 ? 'día' : 'días'} para el ingreso del Ño
-          </span>
-        </Sello>
       </div>
     </div>
     <Pintura />
@@ -245,43 +230,49 @@ const palabras = [
   }
 
   .portada__visual {
-    position: relative;
+    display: grid;
+    gap: 1rem;
+    min-width: 0;
   }
 
   .portada :global(.portada__afiche img) {
     aspect-ratio: 4 / 5;
   }
 
-  .portada :global(.portada__sello) {
-    position: absolute;
-    left: -2.5rem;
-    bottom: -2.5rem;
-  }
-
-  .cuenta__numero {
-    font-size: clamp(2.6rem, 4.6vw, 3.6rem);
-    font-weight: 900;
-    font-variant-numeric: tabular-nums;
-  }
-
-  .cuenta__texto {
-    font-size: 0.95rem;
-  }
-
   @media (max-width: 900px) {
     .portada__grid {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
+      gap: 1.2rem;
     }
 
+    .portada__texto,
     .portada__visual {
-      max-width: 520px;
-      margin-inline: auto 0;
-      width: 88%;
+      display: contents;
     }
 
-    .portada :global(.portada__sello) {
-      left: -1.5rem;
-      bottom: -1.5rem;
+    .portada__titulo {
+      order: 1;
+      margin-bottom: 0;
+    }
+
+    .portada :global(.agenda-portada) {
+      order: 2;
+    }
+
+    .portada__entrada {
+      order: 3;
+    }
+
+    .portada__acciones {
+      order: 4;
+      margin-top: 0;
+    }
+
+    .portada :global(.portada__afiche) {
+      order: 5;
+      width: 92%;
+      max-width: 520px;
+      margin-inline: auto;
     }
   }
 

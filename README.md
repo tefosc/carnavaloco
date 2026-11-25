@@ -53,7 +53,7 @@ src/data/
 
 `src/content.config.ts` valida los JSON: si algo no cumple el formato, `pnpm build` falla y dice qué campo está mal.
 
-**Horarios del 2027:** cuando la Municipalidad publique el programa oficial (a inicios de enero), edita `src/data/carnaval2027.ts`: pon la `hora` de cada día (por ejemplo `'10:00 a. m.'`), corrige `lugar` si cambia, llena la `fecha` de las actividades previas y cambia `programaOficial` a `true`. Mientras `hora` sea `null`, la página muestra «Por confirmar».
+**Horarios del 2027:** cuando la Municipalidad publique el programa oficial (a inicios de enero), edita `src/data/carnaval2027.ts`: pon la `hora` de cada día (por ejemplo `'10:00 a. m.'`), corrige `lugar` si cambia, llena la `fecha` de las actividades previas en formato `AAAA-MM-DD` y cambia `programaOficial` a `true`. Mientras `hora` sea `null`, la página muestra «Por confirmar». Para activar la cuenta exacta usa `horaInicio` en formato `HH:mm` (hora de Perú). Si una previa se confirma antes del programa completo, añade su fecha y el enlace oficial en `fuente`.
 
 **Hoy en el carnaval:** del sábado al miércoles, el inicio y `/2027/` cambian solos la cuenta regresiva por lo que toca ese día (hora, lugar, qué viene mañana y su ruta en el mapa), con la fecha de Perú. Lo hace `src/lib/hoy.ts` al abrir la página, así que no hace falta volver a publicar cada día. Para ver cómo queda un día antes de tiempo, agrega `?fecha=` a la dirección: por ejemplo `/?fecha=2027-02-08` o `/2027/?fecha=2027-02-09`.
 
