@@ -1,15 +1,13 @@
 ---
-import { Image } from 'astro:assets';
 import { ANIO, dias } from '../data/carnaval2027';
-import { fotos, type Foto } from '../data/fotos';
 import { diaDeCarnaval, formatearFecha, momentoDelCarnaval } from '../lib/fechas';
 
-const afiches: Record<string, { frase: string; foto?: Foto }> = {
-  sabado: { frase: 'Sale el Ño y la calle se llena de pintura.', foto: fotos.globosEnLaCalle },
-  domingo: { frase: 'Cada barrio sale con su patrulla, sus coplas y su comparsa.', foto: fotos.musicosDeNoche },
-  lunes: { frase: 'Carros alegóricos, reinas y comparsas toman la ciudad.', foto: fotos.disfrazAbanico },
-  martes: { frase: 'Las viudas lloran al Ño entre bromas y actuaciones.' },
-  miercoles: { frase: 'Se lee el testamento y el Ño se despide entre llamas.' },
+const afiches: Record<string, { frase: string; alt: string }> = {
+  sabado: { frase: 'Sale el Ño y la calle se llena de pintura.', alt: 'Jóvenes con el rostro pintado celebran en una calle cajamarquina' },
+  domingo: { frase: 'Cada barrio sale con su patrulla, sus coplas y su comparsa.', alt: 'Una comparsa desfila con trajes bordados y tocados dorados' },
+  lunes: { frase: 'Carros alegóricos, reinas y comparsas toman la ciudad.', alt: 'Carro alegórico con figuras cajamarquinas y un ave azul frente a las tribunas' },
+  martes: { frase: 'Las viudas lloran al Ño entre bromas y actuaciones.', alt: 'Dos viudas representan su duelo junto al ataúd del Ño' },
+  miercoles: { frase: 'Se lee el testamento y el Ño se despide entre llamas.', alt: 'Un vecino lee el testamento junto al muñeco del Ño Carnavalón' },
 };
 
 const formatoDia = new Intl.DateTimeFormat('es-PE', { weekday: 'long', timeZone: 'UTC' });
@@ -37,15 +35,11 @@ const momento = momentoDelCarnaval(ANIO);
             <a href={'/2027/?dia=' + dia.id + '#recorridos'} hidden={!hoy}>Ver recorrido</a>
           )}
         </div>
-        {afiche?.foto && (
-          <Image
-            src={afiche.foto.src}
-            alt={afiche.foto.alt}
-            widths={[480, 800, 1200]}
-            sizes="(min-width: 900px) 36vw, 90vw"
-            loading="lazy"
-            class="parada__foto"
-          />
+        {afiche && (
+          <figure class="parada__imagen">
+            <img src={'/pasacalle/' + dia.id + '.webp'} alt={afiche.alt} width="1120" height="630" loading="lazy" decoding="async" class="parada__foto" />
+            <figcaption>Recreación generada con IA</figcaption>
+          </figure>
         )}
       </li>
     );
@@ -154,6 +148,23 @@ const momento = momentoDelCarnaval(ANIO);
   .parada--lunes h3 { font-size: clamp(2.7rem, 6vw, 5.6rem); }
   .parada p { max-width: 34ch; font-weight: 650; }
   .parada a { justify-self: start; color: inherit; font-weight: 800; }
+
+  .parada__imagen {
+    display: grid;
+    grid-template-rows: 1fr auto;
+    margin: auto 0 0;
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  .parada__imagen figcaption {
+    padding: 0.45rem 0.75rem;
+    font-size: 0.82rem;
+  }
+
+  .parada--lunes .parada__imagen {
+    margin-top: 0;
+  }
 
   .parada__foto {
     width: 100%;
