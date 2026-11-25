@@ -11,16 +11,26 @@ self.addEventListener('install', (evento) => {
       await caches.delete(NUCLEO);
       throw error;
     }
+    await self.skipWaiting();
   })());
 });
 
 self.addEventListener('activate', (evento) => {
   evento.waitUntil((async () => {
-    const nombres = await caches.keys();
-    await Promise.all(nombres.filter((nombre) => nombre !== NUCLEO && (
-      nombre.startsWith(PREFIJO) || /^carnaval-[a-f0-9]{12}$/.test(nombre) || nombre === 'carnaval-vistos'
-    )).map((nombre) => caches.delete(nombre)));
+    const ediciones = (await caches.keys()).filter((nombre) => (
+      nombre.startsWith(PREFIJO) || /^carnaval-[a-f0-9]{12}$/.test(nombre)
+    ) && nombre !== NUCLEO);
+    const anterior = ediciones.pop();
+    await Promise.all(ediciones.map((nombre) => caches.delete(nombre)));
+    await caches.delete('carnaval-vistos');
+
+    const clientes = anterior ? await self.clients.matchAll({ type: 'window', includeUncontrolled: true }) : [];
     await self.clients.claim();
+    for (const cliente of clientes) {
+      if (new URL(cliente.url).pathname === '/') {
+        void cliente.navigate(cliente.url).catch(() => {});
+      }
+    }
   })());
 });
 
@@ -40,6 +50,11 @@ async function responder(request, url) {
     return navegacion && guardado.redirected
       ? new Response(guardado.body, { status: guardado.status, headers: guardado.headers })
       : guardado;
+  }
+
+  if (ruta.startsWith('/_astro/')) {
+    const recursoAnterior = await caches.match(ruta, { ignoreVary: true });
+    if (recursoAnterior) return recursoAnterior;
   }
 
   const fotoLigera = Object.hasOwn(FOTOS_LIGERAS, ruta) ? FOTOS_LIGERAS[ruta] : undefined;

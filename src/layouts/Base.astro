@@ -116,7 +116,14 @@ const imagen = new URL(`/og/${og}.png`, Astro.site);
     }
   }
 
-  if (servicio) servicio.addEventListener('controllerchange', () => revisarRed());
+  if (servicio) {
+    servicio.addEventListener('controllerchange', () => revisarRed());
+    document.addEventListener('visibilitychange', async () => {
+      if (document.hidden || !navigator.onLine) return;
+      const registro = await servicio.getRegistration();
+      if (registro?.active) await registro.update().catch(() => {});
+    });
+  }
   addEventListener('online', () => { revisarRed(); void guardar(); });
   addEventListener('offline', () => revisarRed());
   revisarRed();

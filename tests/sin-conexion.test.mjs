@@ -174,28 +174,20 @@ test('instalación automática, uso sin señal y actualización completa despué
   await pagina.goto(origen + '/ediciones/2026/');
   await pagina.getByRole('heading', { level: 1, name: /2026/ }).waitFor();
 
+  await pagina.goto(origen + '/');
+  await pagina.evaluate(() => { window.name = 'portada-abierta'; });
+  await writeFile(join(nueva, 'index.html'), '<!doctype html><title>Portada actualizada</title><h1>Portada actualizada</h1>');
   corteActualizacion = false;
   sinRed = false;
-  const trabajadorEnEspera = contexto.waitForEvent('serviceworker');
   await contexto.setOffline(false);
   await pagina.evaluate(async () => await (await navigator.serviceWorker.ready).update());
-  const trabajadorActualizado = await trabajadorEnEspera;
-  await pagina.waitForFunction(async () => Boolean((await navigator.serviceWorker.ready).waiting));
-  const activada = trabajadorActualizado.evaluate((version) => new Promise((resolver) => {
-    const comprobar = async () => {
-      if ((await caches.keys()).join() === 'carnaval-edicion-' + version && self.registration.active?.state === 'activated') {
-        resolver();
-      } else {
-        setTimeout(comprobar, 100);
-      }
-    };
-    void comprobar();
-  }), versionNueva);
-  await pagina.close();
-  await activada;
+  await pagina.getByRole('heading', { name: 'Portada actualizada' }).waitFor();
+  assert.equal(await pagina.evaluate(() => window.name), 'portada-abierta');
+  const guardadas = await pagina.evaluate(() => caches.keys());
+  assert.ok(guardadas.includes('carnaval-edicion-' + versionNueva));
+  assert.ok(guardadas.includes(cacheAnterior));
   sinRed = true;
   await contexto.setOffline(true);
-  pagina = await contexto.newPage();
   await pagina.goto(origen + '/novedad/');
   await pagina.getByRole('heading', { name: 'Página nueva' }).waitFor();
   assert.deepEqual(await pagina.evaluate(async () => (await fetch('/novedad.json')).json()), { nueva: true });
