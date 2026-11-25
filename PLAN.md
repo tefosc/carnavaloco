@@ -63,7 +63,7 @@ Para actualizarlas a la última versión: `npx skills update -p` (cambia `skills
 
 ### Pintura
 
-- Manchas por toda la web: salpicones, manos pintadas, globos reventados, chorreados, brochazos y talco, en los bordes de cada sección. Aparecen al bajar.
+- Manchas por toda la web: salpicones, manos pintadas, globos reventados, chorreados, brochazos y talco, en los bordes de cada sección. Cada una se pinta sola cuando aparece en pantalla: el salpicón revienta y suelta sus gotas, la mano se estampa, el chorreado cae.
 - En la portada, «Echar pintura» o tocar el fondo deja manchas y manos.
 
 ### Historial
@@ -80,6 +80,8 @@ Para actualizarlas a la última versión: `npx skills update -p` (cambia `skills
 | `4ca61c0` | Funciona sin señal y se instala como app |
 | `03dc08a` | «Arma tu copla» |
 | `43e6477` | Pintura por toda la web; datos nuevos de historia y comida |
+| `cb06636` | Este plan y cómo instalar las skills |
+| `fa188de` | Las manchas se pintan solas al aparecer en pantalla |
 
 ---
 
@@ -129,6 +131,29 @@ Es la idea grande que queda de la lista. `/2027/` tiene seis consejos cortos en 
 - [ ] **Dónde quedarse** (zonas) y cuándo reservar. Ya está el dato de 2023: los hoteles pasaron el 90 % de reservas antes de la fiesta.
 - [ ] **Presupuesto aproximado**: pasajes, hospedaje, palcos del corso, globos. Para empezar, carnavalcajamarca.com tiene una página de costos, todavía sin leer.
 - [ ] **Teléfonos útiles**: emergencias, policía, serenazgo, puestos de salud durante la fiesta.
+
+---
+
+## Anuncios
+
+Para que la web se sostenga. Hay dos caminos, y se pueden combinar:
+
+- **Auspiciadores locales**: hoteles, restaurantes, empresas de transporte, tiendas de disfraces o de máscaras. Se arregla directo con ellos y se muestran como afiches en el estilo de la web, sin rastreo de visitantes. Es lo que mejor encaja con el diseño y con la gente que entra a la página.
+- **Red de anuncios** (por ejemplo, Google AdSense): pone los anuncios sola, pero se ven genéricos y cargan scripts de terceros.
+
+Antes de poner anuncios:
+
+- [ ] **Dominio propio** (ver «Ya», arriba). Las redes de anuncios piden que el sitio esté en un dominio que uno controla, y `*.vercel.app` no lo es.
+- [ ] **Política de privacidad**: una página que diga qué datos se recogen. Hace falta sobre todo con anuncios que rastrean (cookies), y en el Perú rige la Ley 29733 de Protección de Datos Personales. Si los anuncios son personalizados, también un aviso para aceptar o rechazar cookies.
+- [ ] **Archivo `ads.txt`** en la raíz, si se usa una red de anuncios (lo pide la red; va en `public/`).
+- [ ] **Lugares donde poner los anuncios** sin romper la página:
+  - Entre secciones, no en medio del texto.
+  - En `/2027/` y en la futura guía para el que viene de fuera, que es donde entra la gente que viaja.
+  - Nunca dentro de «Arma tu copla» ni en la imagen que se descarga.
+- [ ] **Reservar el espacio de cada anuncio** con un alto fijo, para que la página no salte cuando carga.
+- [ ] **Marcarlos como «Publicidad»** o «Auspicia», para que no se confundan con el contenido.
+- [ ] **Sin conexión**: los anuncios no se guardan en el teléfono. El service worker deja pasar lo de otros dominios, así que sin señal su espacio queda vacío. Hay que decidir si se esconde o se muestra un afiche del auspiciador guardado con la página.
+- [ ] **Medir**: con Vercel Analytics se puede ver cuánta gente pasa por cada página antes de ofrecer espacios a auspiciadores.
 
 ---
 
