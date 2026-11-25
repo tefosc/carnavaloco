@@ -29,6 +29,10 @@ import { creditoFotos } from '../data/fotos';
       <a href="/historia/">Historia y fuentes</a>
     </nav>
   </div>
+  <section class="envoltura" data-borradores-whatsapp hidden aria-label="Borradores de WhatsApp">
+    <h2>Borradores de WhatsApp</h2>
+    <ul></ul>
+  </section>
   <p class="envoltura pie__creditos">
     Fotos: {creditoFotos.autor},{' '}
     <a href={creditoFotos.categoriaUrl}>Wikimedia Commons</a>,{' '}
@@ -100,3 +104,86 @@ import { creditoFotos } from '../data/fotos';
     }
   }
 </style>
+
+<script>
+  const panel = document.querySelector<HTMLElement>('[data-borradores-whatsapp]');
+  const lista = panel?.querySelector('ul');
+  const clave = 'carnaval-borradores-whatsapp';
+
+  function enlaceValido(href: string) {
+    try {
+      const url = new URL(href);
+      return url.origin === 'https://wa.me' && Boolean(url.searchParams.get('text'));
+    } catch {
+      return false;
+    }
+  }
+
+  function leerBorradores(): string[] {
+    try {
+      const guardados: unknown = JSON.parse(localStorage.getItem(clave) ?? '[]');
+      if (!Array.isArray(guardados)) return [];
+      return guardados.filter((href) => typeof href === 'string' && enlaceValido(href));
+    } catch {
+      return [];
+    }
+  }
+
+  const borradores = new Set(leerBorradores());
+
+  function persistir() {
+    try {
+      localStorage.setItem(clave, JSON.stringify([...borradores]));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  function mostrar() {
+    if (!panel || !lista) return;
+    panel.hidden = borradores.size === 0;
+    lista.replaceChildren();
+    for (const href of borradores) {
+      const fila = document.createElement('li');
+      const mensaje = new URL(href).searchParams.get('text');
+      const enlace = document.createElement(navigator.onLine ? 'a' : 'span');
+      enlace.textContent = mensaje;
+      if (enlace instanceof HTMLAnchorElement) {
+        enlace.href = href;
+        enlace.target = '_blank';
+        enlace.rel = 'noopener';
+      }
+      const quitar = document.createElement('button');
+      quitar.type = 'button';
+      quitar.textContent = 'Quitar';
+      quitar.setAttribute('aria-label', 'Quitar borrador: ' + mensaje);
+      quitar.addEventListener('click', () => {
+        borradores.delete(href);
+        persistir();
+        mostrar();
+      });
+      fila.append(enlace, ' ', quitar);
+      lista.append(fila);
+    }
+  }
+
+  document.addEventListener('click', (evento) => {
+    const enlace = evento.target instanceof Element && evento.target.closest<HTMLAnchorElement>('a[href]');
+    if (evento.defaultPrevented || navigator.onLine || !enlace || !enlaceValido(enlace.href)) return;
+    evento.preventDefault();
+    borradores.add(enlace.href);
+    const guardado = persistir();
+    mostrar();
+    const aviso = document.querySelector('[data-sin-red]');
+    if (aviso) {
+      aviso.textContent = guardado
+        ? 'Borrador guardado en el pie de página. Ábrelo cuando vuelva la conexión.'
+        : 'Borrador disponible en el pie de esta página hasta que la cierres.';
+    }
+  });
+
+  addEventListener('online', mostrar);
+  addEventListener('offline', mostrar);
+  mostrar();
+</script>

@@ -8,6 +8,10 @@ astro dev --background
 
 Manage the background server with `astro dev stop`, `astro dev status`, and `astro dev logs`.
 
+## Offline support
+
+The production build automatically precaches local pages and assets. When adding a feature that depends on network data, include a local fallback for its offline flow. Extend the browser tests when adding or changing an offline flow, and run pnpm test:offline.
+
 ## Documentation
 
 Full documentation: https://docs.astro.build

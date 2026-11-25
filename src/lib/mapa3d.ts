@@ -1,10 +1,3 @@
-/**
- * Mapa 3D de los recorridos con MapLibre. Se carga solo cuando alguien toca
- * "Ver en 3D": así nadie descarga la librería si no la usa.
- *
- * Datos: calles y edificios de OpenFreeMap (OpenStreetMap), relieve de
- * Mapterhorn y rutas propias (/mapa/recorridos.geojson). Ninguno pide clave.
- */
 import {
   Map,
   Marker,
@@ -190,6 +183,38 @@ function estilo(lineas: Coleccion): StyleSpecification {
   };
 }
 
+function estiloLocal(lineas: Coleccion): StyleSpecification {
+  const categorias = ['menores', 'mayores', 'rios'] as const;
+  return {
+    version: 8,
+    sources: {
+      calles: {
+        type: 'geojson',
+        data: '/mapa/calles.geojson',
+        attribution: '<a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>',
+      },
+      recorridos: { type: 'geojson', data: lineas },
+      elegida: { type: 'geojson', data: vacio() },
+    },
+    layers: [
+      { id: 'fondo', type: 'background', paint: { 'background-color': C.fondo } },
+      ...categorias.map((tipo): LayerSpecification => ({
+        id: tipo,
+        type: 'line',
+        source: 'calles',
+        filter: ['==', ['get', 'tipo'], tipo],
+        paint: {
+          'line-color': tipo === 'rios' ? C.turquesa : C.blanco,
+          'line-opacity': tipo === 'menores' ? 0.22 : 0.5,
+          'line-width': ['interpolate', ['linear'], ['zoom'], 11, 0.7, 16, tipo === 'menores' ? 2 : 4],
+        },
+      })),
+      ...capasDeRuta('rutas', 'recorridos'),
+      ...capasDeRuta('elegida', 'elegida'),
+    ],
+  };
+}
+
 export interface Mapa3D {
   /** Va al recorrido de un día y lo dibuja desde donde sale. */
   recorrer: (dia: string) => void;
@@ -298,13 +323,19 @@ function cortar(tramos: TramoMedido[], s: number) {
 
 const suave = (t: number) => (t < 0.5 ? 2 * t * t : 1 - (-2 * t + 2) ** 2 / 2);
 
-export async function abrirMapa3D(contenedor: HTMLElement, rutas: Coleccion, tranquilo: boolean): Promise<Mapa3D> {
+export async function abrirMapa3D(
+  contenedor: HTMLElement,
+  rutas: Coleccion,
+  tranquilo: boolean,
+  usarCallesLocales: boolean,
+): Promise<Mapa3D> {
   const rasgos = rutas.features;
   const lineas = rasgos.filter((f) => f.geometry.type === 'LineString');
   const todo = limitesDe(rasgos, null);
+  const datos: Coleccion = { type: 'FeatureCollection', features: lineas };
   const mapa = new Map({
     container: contenedor,
-    style: estilo({ type: 'FeatureCollection', features: lineas }),
+    style: usarCallesLocales ? estiloLocal(datos) : estilo(datos),
     bounds: todo,
     fitBoundsOptions: VISTA_GENERAL,
     maxPitch: 80,

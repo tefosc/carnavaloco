@@ -1,24 +1,27 @@
-/**
- * Integración de Astro: al terminar el build escribe /sw.js con la lista de lo que
- * se guarda en el teléfono para usar la web sin señal (ver trabajador.js).
- *
- * Se guardan al instalar todas las páginas, los estilos, los scripts y las letras
- * (cerca de 1 MB). Las fotos se guardan a medida que se ven, y el mapa 3D queda
- * fuera: sin internet tampoco tendría calles ni relieve.
- */
 import { createHash } from 'node:crypto';
 import { readFile, readdir, writeFile } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 
-/**
- * Archivos de /_astro/ que no se guardan al instalar: MapLibre pesa 1,6 MB y necesita
- * red, y las letras para vietnamita nunca se descargan en este sitio.
- */
-const NO_GUARDAR = /mapa3d|maplibre|vietnamese/;
-const GUARDAR = /\.(css|js|woff2)$/;
-/** Además de las páginas y /_astro/. */
-const EXTRAS = ['/favicon.svg', '/manifest.webmanifest', '/iconos/icono-192.png', '/iconos/icono-512.png'];
+const rutaPublica = (archivo) =>
+  '/' + archivo.replace(/(^|\/)index\.html$/, '$1').split('/').map(encodeURIComponent).join('/');
+
+function fotosLigeras(documentos, rutas) {
+  const ligeras = new Set();
+  const alternativas = new Map();
+  for (const html of documentos) {
+    for (const [, srcset] of html.matchAll(/\bsrcset="([^"]+)"/g)) {
+      const candidatas = srcset.split(',').map((entrada) => entrada.trim().match(/^(\S+)\s+(\d+)w$/));
+      if (candidatas.some((c) => !c || !c[1].startsWith('/_astro/') || !rutas.has(c[1]))) continue;
+      candidatas.sort((a, b) => Number(a[2]) - Number(b[2]));
+      const ligera = candidatas[0][1];
+      ligeras.add(ligera);
+      for (const [, url] of candidatas.slice(1)) alternativas.set(url, ligera);
+    }
+  }
+  for (const url of ligeras) alternativas.delete(url);
+  return Object.fromEntries(alternativas);
+}
 
 async function archivos(carpeta, base = carpeta) {
   const entradas = await readdir(carpeta, { withFileTypes: true });
@@ -37,32 +40,27 @@ export default function sinConexion() {
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
         const raiz = fileURLToPath(dir);
-        const todos = await archivos(raiz);
+        const archivosLocales = (await archivos(raiz)).sort().filter((a) => a !== 'sw.js' && !a.startsWith('og/'));
+        const publicados = new Map(archivosLocales.map((a) => [rutaPublica(a), a]));
+        if (!publicados.has('/sin-conexion/')) throw new Error('Falta la página /sin-conexion/');
 
-        // index.html → su URL con barra final; 404.html no hace falta (hay /sin-conexion/)
-        const paginas = todos
-          .filter((a) => a.endsWith('index.html'))
-          .map((a) => `/${a.slice(0, -'index.html'.length)}`);
-        const recursos = todos
-          .filter((a) => a.startsWith('_astro/') && GUARDAR.test(a) && !NO_GUARDAR.test(a))
-          .map((a) => `/${a}`);
-        const extras = EXTRAS.filter((u) => todos.includes(u.slice(1)));
-        const lista = [...paginas.sort(), ...recursos.sort(), ...extras];
-
-        if (!paginas.includes('/sin-conexion/')) throw new Error('Falta la página /sin-conexion/');
-
-        // La versión cambia si cambia cualquier archivo guardado o el propio worker:
-        // así cada despliegue con cambios renueva lo guardado en los teléfonos
-        const archivoDe = (url) => path.join(raiz, url.endsWith('/') ? `${url}index.html` : url);
-        const contenidos = await Promise.all(lista.map((url) => readFile(archivoDe(url))));
+        const documentos = await Promise.all(
+          archivosLocales.filter((a) => a.endsWith('.html')).map((a) => readFile(path.join(raiz, a), 'utf8')),
+        );
+        const alternativas = fotosLigeras(documentos, publicados);
+        const lista = [...publicados.keys()].filter((url) => !Object.hasOwn(alternativas, url));
+        const contenidos = await Promise.all(lista.map((url) => readFile(path.join(raiz, publicados.get(url)))));
         const plantilla = await readFile(new URL('./trabajador.js', import.meta.url), 'utf8');
-        const hash = createHash('sha256').update(plantilla);
-        lista.forEach((url, i) => hash.update(url).update(contenidos[i]));
+        const hash = createHash('sha256').update(plantilla).update(JSON.stringify({ lista, alternativas }));
+        contenidos.forEach((contenido) => hash.update(contenido.length + ':').update(contenido));
         const version = hash.digest('hex').slice(0, 12);
 
-        const codigo = plantilla
-          .replace("'__VERSION__'", JSON.stringify(version))
-          .replace('[/*__GUARDAR_AL_INSTALAR__*/]', JSON.stringify(lista, null, 2));
+        const cabecera = [
+          'const VERSION = ' + JSON.stringify(version) + ';',
+          'const GUARDAR_AL_INSTALAR = ' + JSON.stringify(lista, null, 2) + ';',
+          'const FOTOS_LIGERAS = ' + JSON.stringify(alternativas, null, 2) + ';',
+        ];
+        const codigo = [...cabecera, '', plantilla].join('\n');
         await writeFile(path.join(raiz, 'sw.js'), codigo);
 
         const peso = contenidos.reduce((suma, c) => suma + c.length, 0);

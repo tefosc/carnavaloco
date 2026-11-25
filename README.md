@@ -14,6 +14,8 @@ Sitio sobre el Carnaval de Cajamarca: los cinco días, los carnavales de años a
 
 Astro 7 pide Node ≥ 22.23.4. El `package.json` declara `devEngines.runtime` (Node 24), así que pnpm descarga ese Node solo para este proyecto.
 
+Para ejecutar la prueba de navegador del modo sin conexión, instala Chromium con `pnpm exec playwright install chromium` y ejecuta `pnpm test:offline`. La prueba verifica la descarga inicial, el calendario, los mapas, el afiche y la recuperación después de una actualización interrumpida.
+
 ## Páginas
 
 | Ruta                  | Contenido                                                         |
@@ -55,7 +57,9 @@ src/data/
 
 **Hoy en el carnaval:** del sábado al miércoles, el inicio y `/2027/` cambian solos la cuenta regresiva por lo que toca ese día (hora, lugar, qué viene mañana y su ruta en el mapa), con la fecha de Perú. Lo hace `src/lib/hoy.ts` al abrir la página, así que no hace falta volver a publicar cada día. Para ver cómo queda un día antes de tiempo, agrega `?fecha=` a la dirección: por ejemplo `/?fecha=2027-02-08` o `/2027/?fecha=2027-02-09`.
 
-**Sin conexión:** al abrir la web una vez con internet queda guardada en el teléfono (todas las páginas, estilos, scripts y letras, cerca de 1,4 MB), y se abre aunque en el corso no haya señal. Las fotos se guardan a medida que se ven; el mapa 3D necesita internet. Lo hace un service worker que `integraciones/sin-conexion/` escribe en `/sw.js` al terminar el build, con la lista real de archivos; cada despliegue con cambios trae una versión nueva y borra la anterior. Si no hay señal y la página no está guardada, se muestra `/sin-conexion/`. En `pnpm dev` no se registra, para ver siempre lo último. La web también se puede instalar como app (`manifest.webmanifest`, íconos en `src/pages/iconos/`).
+**Sin conexión:** la primera visita con internet guarda automáticamente la edición completa en segundo plano. Al aparecer «Listo para usar sin señal» ya se pueden abrir páginas nunca visitadas, descargar el calendario, crear afiches de coplas y consultar los recorridos. Las fotos tienen una versión liviana guardada. La vista inclinada usa las calles locales; el relieve y los edificios detallados requieren internet. Los enlaces de WhatsApp que se abran sin señal se guardan como borradores en el pie de página para retomarlos manualmente.
+
+El build genera el inventario a partir de los archivos publicados. Nuevas páginas, datos y recursos locales se incluyen sin editar el service worker. Las imágenes para redes de `/og/` se consumen desde servicios externos y quedan fuera de la descarga inicial. Si una función nueva depende de un servicio externo, necesita datos locales o una alternativa sin conexión. Una actualización fallida conserva la edición anterior. Una actualización completa se activa al cerrar todas las pestañas y ventanas instaladas de la edición anterior. El service worker funciona en producción (HTTPS o localhost), por lo que se prueba con `pnpm build` y `pnpm preview`.
 
 **Barrios:** cada barrio de `barrios.ts` genera su ficha en `/barrios/<id>/` y su imagen para compartir en `/og/barrio-<id>.png`. Para completar uno, llena `apodo`, `lema` y `hechos`; mientras `apodo` esté vacío, su estandarte invita a contarlo por WhatsApp. El aniversario de cada sector alimenta la franja «Hoy cumple años» de la portada y de `/barrios/`, un carrusel horizontal con los próximos 8 cumpleaños (`src/lib/aniversarios.ts`); con `?fecha=2027-07-14` se ve cómo queda ese día. Los botones de WhatsApp abren un contacto a elegir hasta que se llene `contacto.whatsapp`.
 
@@ -80,7 +84,7 @@ Las calles salen de OpenStreetMap y se procesan con `scripts/mapa-osm.py`, que d
 
 Para cambiar una ruta, edita `src/data/recorridos.ts`: el mapa plano y el 3D leen de ahí. Cada día es una lista de tramos en el orden en que avanza el desfile, porque al elegir un día su ruta se dibuja desde donde sale. Las avenidas de OpenStreetMap vienen en pedazos (cada sentido por separado); `avenidaDesde(trazo, punto)` las une en una sola línea que empieza en ese punto, y los huecos sin datos quedan punteados. El sentido del Gran Corso (de norte a sur) es una suposición: cuando salga el programa oficial, cambia su punto de salida si hace falta.
 
-**Mapa 3D:** el botón «Ver en 3D» carga MapLibre (`src/lib/mapa3d.ts`) solo cuando alguien lo toca, así la página no pesa más para quien no lo usa. Usa calles y edificios de [OpenFreeMap](https://openfreemap.org), relieve de [Mapterhorn](https://mapterhorn.com) y las rutas de `/mapa/recorridos.geojson`, que se genera en el build desde `recorridos.ts` con la misma proyección del mapa plano. Ninguno de los tres pide clave ni cuenta. Si el navegador no puede abrir el 3D (sin WebGL, por ejemplo), se queda el mapa plano con un aviso.
+**Mapa 3D:** el botón «Ver en 3D» carga MapLibre (`src/lib/mapa3d.ts`) solo cuando alguien lo toca. El service worker prepara la librería en segundo plano. Usa calles y edificios de [OpenFreeMap](https://openfreemap.org), relieve de [Mapterhorn](https://mapterhorn.com) y las rutas de `/mapa/recorridos.geojson`, que se genera en el build desde `recorridos.ts` con la misma proyección del mapa plano. Ninguno de los tres pide clave ni cuenta. Sin señal, la vista inclinada usa las calles guardadas en `/mapa/calles.geojson`. Si el navegador no puede abrir el 3D (sin WebGL, por ejemplo), se queda el mapa plano con un aviso.
 
 ## Diseño
 
