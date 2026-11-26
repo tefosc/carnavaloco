@@ -34,7 +34,7 @@ Para actualizarlas a la última versión: `npx skills update -p` (cambia `skills
 
 - Web en Astro 7, estática, publicada en Vercel desde la rama `main`.
 - Estilo «afiche chicha + raso de clon»: colores planos del satín de los disfraces, titulares con contorno y sombra dura, bordes en zigzag, banderolas, sellos y afiches pegados.
-- Páginas: inicio, **2027**, la fiesta, ediciones 2017–2026 (una página por año), barrios, coplas, habla, historia y fuentes, 404 y «sin señal».
+- Páginas: inicio, **2027**, guía para visitantes, la fiesta, ediciones 2017–2026 (una página por año), barrios, coplas, habla, historia y fuentes, 404 y «sin señal».
 - Fotos de Wikimedia Commons con su crédito, y una sección de fuentes con todo lo citado. En el texto no se pone «según tal medio».
 - Imagen para compartir en WhatsApp y redes, distinta para cada página; sitemap, `robots.txt` y Vercel Analytics (falta activarlo en el panel, ver abajo).
 
@@ -58,7 +58,7 @@ Para actualizarlas a la última versión: `npx skills update -p` (cambia `skills
 
 ### Para usar en la fiesta
 
-- **Funciona sin señal**: con abrir la web una vez con internet, queda guardada en el teléfono. Las páginas, los estilos y las letras pesan cerca de 1 MB. Si se pierde la conexión, aparece un aviso.
+- **Funciona sin señal**: con abrir la web una vez con internet, queda guardada en el teléfono. El mapa 3D queda fuera de la descarga y solo está disponible con internet (sin señal se usa el mapa plano). Si se pierde la conexión, aparece un aviso.
 - **Se puede instalar como app** desde Chrome en Android, con su ícono. En el teléfono sale un botón flotante «Instalar app» abajo a la derecha, en todas las páginas (se puede cerrar con la ×; no vuelve por dos semanas), y otro en «Si vas», en `/2027/`. La lógica está en `src/lib/instalar.ts`.
 - **Menú del teléfono**: botón «Menú» (hamburguesa) en la cabecera; los enlaces se abren y se cierran con él, y también con Escape. Sin JavaScript quedan a la vista.
 

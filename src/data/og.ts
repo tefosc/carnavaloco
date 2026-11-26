@@ -55,4 +55,10 @@ export const ogPaginas: Record<string, DatosOg> = {
     bajada: 'Cumbemayo, San Sebastián, San Pedro, La Merced y los demás.',
     fondo: 'turquesa',
   },
+  fuentes: {
+    titulo: 'Fuentes',
+    bajada: 'Documentos, crónicas y créditos fotográficos del Carnaval de Cajamarca.',
+    fondo: 'tinta',
+    relleno: 'amarillo',
+  },
 };

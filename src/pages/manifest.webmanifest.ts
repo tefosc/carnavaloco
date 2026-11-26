@@ -23,6 +23,7 @@ export const GET: APIRoute = () =>
       ],
       shortcuts: [
         { name: 'Programa 2027', url: '/2027/' },
+        { name: 'Guía para visitantes', url: '/guia/' },
         { name: 'Coplas', url: '/coplas/' },
         { name: 'Habla cajamarquina', url: '/habla/' },
       ],

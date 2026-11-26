@@ -670,6 +670,10 @@ const etiquetas = etiquetasMapa.map((e) => ({
     });
 
     botonVer3d.addEventListener('click', async () => {
+      if (!navigator.onLine) {
+        estado.textContent = 'El mapa 3D necesita internet. Aquí tienes el mapa plano.';
+        return;
+      }
       botonVer3d.disabled = true;
       botonVer3d.textContent = 'Cargando el 3D…';
       estado.textContent = '';
@@ -684,24 +688,17 @@ const etiquetas = etiquetasMapa.map((e) => ({
         completarTodo();
         contenedor.hidden = false;
         plano.hidden = true;
-        let usarCallesLocales = !navigator.onLine;
-        try {
-          mapa3d = await abrirMapa3D(contenedor, rutas, tranquilo, usarCallesLocales);
-        } catch (error) {
-          if (usarCallesLocales) throw error;
-          usarCallesLocales = true;
-          mapa3d = await abrirMapa3D(contenedor, rutas, tranquilo, usarCallesLocales);
-        }
+        mapa3d = await abrirMapa3D(contenedor, rutas, tranquilo);
         botonVer3d.hidden = true;
         botonPlano.hidden = false;
-        estado.textContent = usarCallesLocales
-          ? 'Vista inclinada con las calles y recorridos guardados. El relieve y los edificios requieren conexión.'
-          : 'Mapa 3D listo. Arrastra para moverlo; en el teléfono, usa dos dedos.';
+        estado.textContent = 'Mapa 3D listo. Arrastra para moverlo; en el teléfono, usa dos dedos.';
         if (activo) mapa3d.recorrer(activo);
       } catch (error) {
         console.error(error);
         mostrarPlano();
-        estado.textContent = 'Este navegador no pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
+        estado.textContent = !navigator.onLine
+          ? 'El mapa 3D necesita internet. Aquí tienes el mapa plano.'
+          : 'No se pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
       }
     });
 

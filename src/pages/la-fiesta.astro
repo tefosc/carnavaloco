@@ -8,10 +8,11 @@ import Afiche from '../components/Afiche.astro';
 import Pintura from '../components/Pintura.astro';
 import { personajes, costumbres, musica, sabores } from '../data/carnaval';
 import { fotos } from '../data/fotos';
-import { anioProximoCarnaval, diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
+import { anioProximoCarnaval, momentoDelCarnaval } from '../lib/fechas';
 
 const anio = anioProximoCarnaval();
-const faltan = Math.max(0, Math.ceil((inicioEnPeru(diaDeCarnaval(anio, -4)) - Date.now()) / 86_400_000));
+const momento = momentoDelCarnaval(anio);
+const faltan = momento.fase === 'antes' ? momento.faltan : 0;
 const coloresOrquesta = ['var(--amarillo)', 'var(--fucsia)', 'var(--turquesa)', 'var(--naranja)', 'var(--verde)', 'var(--blanco)'];
 ---
 
@@ -34,8 +35,10 @@ const coloresOrquesta = ['var(--amarillo)', 'var(--fucsia)', 'var(--turquesa)', 
       Carnavalón el sábado a su entierro el Miércoles de Ceniza. Después, cada barrio tumba su yunza.
     </p>
     <Sello slot="lado" anillo="Carnaval de Cajamarca ✶ Carnaval de Cajamarca ✶ " color="var(--amarillo)" giro={8}>
-      <span class="cuenta__numero" data-cuenta-dias>{faltan}</span>
-      <span class="cuenta__texto">días para que empiece</span>
+      <span class="cuenta__numero" data-cuenta-dias data-anio="proximo">{faltan}</span>
+      <span class="cuenta__texto" data-cuenta-texto data-uno="día para que empiece" data-varios="días para que empiece">
+        {faltan === 1 ? 'día para que empiece' : 'días para que empiece'}
+      </span>
     </Sello>
   </CabezaPagina>
   <Pintura />
@@ -134,13 +137,9 @@ const coloresOrquesta = ['var(--amarillo)', 'var(--fucsia)', 'var(--turquesa)', 
 </Base>
 
 <script>
-  import { anioProximoCarnaval, diaDeCarnaval, inicioEnPeru } from '../lib/fechas';
+  import { aplicarHoy } from '../lib/hoy';
 
-  const el = document.querySelector<HTMLElement>('[data-cuenta-dias]');
-  if (el) {
-    const faltan = Math.ceil((inicioEnPeru(diaDeCarnaval(anioProximoCarnaval(), -4)) - Date.now()) / 86_400_000);
-    el.textContent = faltan > 0 ? String(faltan) : '¡Hoy!';
-  }
+  aplicarHoy();
 </script>
 
 <style>

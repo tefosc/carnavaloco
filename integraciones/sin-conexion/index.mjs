@@ -34,13 +34,16 @@ async function archivos(carpeta, base = carpeta) {
   return listas.flat();
 }
 
+// Recursos excluidos del precache: imágenes para redes (/og/) y el mapa 3D (solo con internet).
+const SOLO_CON_RED = /^(?:og\/|mapa\/|_astro\/(?:mapa3d|maplibre-gl-worker)\b)/;
+
 export default function sinConexion() {
   return {
     name: 'sin-conexion',
     hooks: {
       'astro:build:done': async ({ dir, logger }) => {
         const raiz = fileURLToPath(dir);
-        const archivosLocales = (await archivos(raiz)).sort().filter((a) => a !== 'sw.js' && !a.startsWith('og/'));
+        const archivosLocales = (await archivos(raiz)).sort().filter((a) => a !== 'sw.js' && !SOLO_CON_RED.test(a));
         const publicados = new Map(archivosLocales.map((a) => [rutaPublica(a), a]));
         if (!publicados.has('/sin-conexion/')) throw new Error('Falta la página /sin-conexion/');
 

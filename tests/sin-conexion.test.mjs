@@ -26,6 +26,8 @@ const tipos = {
 test('instalación automática, uso sin señal y actualización completa después de un fallo', { timeout: 120_000 }, async (t) => {
   const base = resolve('dist');
   const trabajador = await readFile(join(base, 'sw.js'), 'utf8');
+  const guardados = JSON.parse(trabajador.match(/const GUARDAR_AL_INSTALAR = (\[[\s\S]*?\]);/)[1]);
+  assert.ok(!guardados.some((url) => /mapa3d|maplibre-gl-worker|^\/mapa\//.test(url)));
   const fotosLigeras = JSON.parse(trabajador.match(/const FOTOS_LIGERAS = (\{[\s\S]*?\});/)[1]);
   const fotoGrande = Object.keys(fotosLigeras)[0];
   assert.ok(fotoGrande);
@@ -120,6 +122,17 @@ test('instalación automática, uso sin señal y actualización completa despué
   await pagina.locator('a[href^="https://wa.me/"]:visible').first().click();
   assert.match(await pagina.locator('[data-sin-red]').textContent(), /Borrador guardado/);
 
+  await pagina.goto(origen + '/guia/');
+  await pagina.getByRole('heading', { level: 1, name: /Guía/i }).waitFor();
+  await pagina.getByRole('heading', { level: 2, name: /Cómo llegar/i }).waitFor();
+
+  await pagina.goto(origen + '/la-fiesta/?fecha=2027-02-05');
+  assert.equal(await pagina.locator('[data-cuenta-dias]').textContent(), '1');
+  assert.equal(await pagina.locator('[data-cuenta-texto]').textContent(), 'día para que empiece');
+  await pagina.goto(origen + '/la-fiesta/?fecha=2027-02-06');
+  assert.equal(await pagina.locator('[data-cuenta-dias]').textContent(), 'Hoy');
+  assert.equal(await pagina.locator('[data-cuenta-texto]').textContent(), 'Entra el Ño');
+
   await pagina.goto(origen + '/2027/');
   await pagina.getByText('Listo para usar sin señal.', { exact: true }).waitFor();
   await pagina.locator('[data-mapa-plano]').waitFor();
@@ -134,18 +147,18 @@ test('instalación automática, uso sin señal y actualización completa despué
   assert.match(calendario, /BEGIN:VCALENDAR/);
   assert.ok(fotoCoincide);
 
-  t.diagnostic('Barrio, borrador, calendario y foto verificados sin red.');
+  t.diagnostic('Guía, barrio, borrador, calendario y foto verificados sin red.');
   const descargaCalendario = pagina.waitForEvent('download');
   await pagina.getByRole('link', { name: 'Descargar calendario' }).click();
   assert.match((await descargaCalendario).suggestedFilename(), /\.ics$/);
   t.diagnostic('Descarga del calendario verificada.');
   await pagina.locator('[data-ver-3d]').click();
-  await pagina.getByText(/Vista inclinada con las calles y recorridos guardados/).waitFor();
+  await pagina.getByText('El mapa 3D necesita internet. Aquí tienes el mapa plano.', { exact: true }).waitFor();
+  await pagina.locator('[data-mapa-plano]').waitFor({ state: 'visible' });
+  await pagina.locator('[data-contenedor-3d]').waitFor({ state: 'hidden' });
   await pagina.locator('[data-dia]').first().click();
-  await pagina.locator('[data-ver-plano]').click();
-  await pagina.locator('[data-mapa-plano]').waitFor();
 
-  t.diagnostic('Vista inclinada y mapa plano verificados.');
+  t.diagnostic('Mapa plano sin red y bloqueo del mapa 3D verificados.');
   await pagina.goto(origen + '/coplas/');
   await pagina.locator('[data-verso="0"]').fill('Canta alegre Cajamarca');
   await pagina.locator('[data-verso="1"]').fill('Hoy florece el carnaval');

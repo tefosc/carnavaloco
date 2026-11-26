@@ -35,7 +35,7 @@ export const dias: Dia[] = [
     offset: -4,
     titulo: 'Ingreso del Ño Carnavalón',
     corto: 'Entra el Ño',
-    texto: 'El rey de la fiesta entra a la ciudad y empieza el juego. Es el único día con pintura permitida.',
+    texto: 'El rey de la fiesta entra a la ciudad y empieza el juego. Por costumbre, es el único día en que se juega con pintura.',
     hora: null,
     lugar: 'Entra por el barrio Santa Elena, la portada de la ciudad, por la avenida Independencia.',
     antes: 'En 2024 el recorrido terminó en el complejo Qhapaq Ñan con un concierto de más de seis horas.',
@@ -156,7 +156,7 @@ export const consejos = [
   },
   {
     titulo: 'Pintura, solo el sábado',
-    texto: 'El resto de días se juega con agua, talco y serpentina.',
+    texto: 'Por costumbre, el resto de días se juega con agua, talco y serpentina.',
   },
   {
     titulo: 'El celular, en bolsa',
