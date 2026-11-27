@@ -5,6 +5,7 @@
  */
 import { Image } from 'astro:assets';
 import type { Foto } from '../data/fotos';
+import { idiomaDesdeUrl, type Idioma } from '../i18n';
 
 interface Props {
   foto: Foto;
@@ -15,6 +16,7 @@ interface Props {
   class?: string;
   marco?: string;
   carga?: 'eager' | 'lazy';
+  idioma?: Idioma;
 }
 
 const {
@@ -25,14 +27,16 @@ const {
   class: clase,
   marco = 'var(--blanco)',
   carga = 'lazy',
+  idioma: idiomaProp,
 } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
 ---
 
 <div class:list={['afiche', clase]} style={`--giro:${giro}deg;--marco:${marco}`}>
   <div class="afiche__foto trama">
     <Image
       src={foto.src}
-      alt={foto.alt}
+      alt={idioma === 'en' ? foto.altEn : foto.alt}
       widths={[480, 800, 1200, 1600]}
       sizes={sizes}
       loading={carga}

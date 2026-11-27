@@ -1,13 +1,16 @@
 ---
 import { enlaceWhatsapp } from '../lib/whatsapp';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 
 interface Props {
   pregunta: string;
   mensaje: string;
   boton?: string;
+  idioma?: Idioma;
 }
 
-const { pregunta, mensaje, boton = 'Contarlo por WhatsApp' } = Astro.props;
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const { pregunta, mensaje, boton = t(idioma).barrios.contarWhatsapp } = Astro.props;
 ---
 
 <aside class="invitacion">

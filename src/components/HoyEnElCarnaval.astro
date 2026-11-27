@@ -5,26 +5,35 @@
  * muestra el de hoy (solo del sábado al miércoles). Sin JavaScript no aparece.
  */
 import Chicha from './Chicha.astro';
-import { ANIO, dias, previas } from '../data/carnaval2027';
+import { ANIO, diasDe, previasDe } from '../data/carnaval2027';
+import { LOCALE_INTL, idiomaDesdeUrl, rutaDe, t, type Idioma } from '../i18n';
 import { diaDeCarnaval } from '../lib/fechas';
 
 interface Props {
   /** En la página del programa, los enlaces llevan a sus propias secciones. */
   enPrograma?: boolean;
+  idioma?: Idioma;
 }
 
-const { enPrograma = false } = Astro.props;
-// «lunes 8 de febrero», sin la coma que pone Intl después del día de la semana
-const parte = (opciones: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat('es-PE', { ...opciones, timeZone: 'UTC' });
+const { enPrograma = false, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).hoy;
+const dias = diasDe(idioma);
+const previas = previasDe(idioma);
+const locale = LOCALE_INTL[idioma];
+const parte = (opciones: Intl.DateTimeFormatOptions) => new Intl.DateTimeFormat(locale, { ...opciones, timeZone: 'UTC' });
 const fecha = {
   format: (d: Date) =>
-    // El mes suelto sale con mayúscula («Febrero»)
-    `${parte({ weekday: 'long' }).format(d)} ${parte({ day: 'numeric' }).format(d)} de ${parte({ month: 'long' }).format(d).toLowerCase()}`,
+    idioma === 'en'
+      ? `${parte({ weekday: 'long' }).format(d)}, ${parte({ month: 'long' }).format(d)} ${parte({ day: 'numeric' }).format(d)}`
+      : // «lunes 8 de febrero», sin la coma que pone Intl después del día de la semana
+        `${parte({ weekday: 'long' }).format(d)} ${parte({ day: 'numeric' }).format(d)} de ${parte({ month: 'long' }).format(d).toLowerCase()}`,
 };
-const yunzas = previas.find((p) => p.cuando === 'Después del miércoles');
+const yunzas = previas.at(-1);
+const ruta2027 = rutaDe('2027', idioma);
 ---
 
-<section class="hoy bloque zigzag-abajo" data-hoy hidden aria-label="Hoy en el carnaval">
+<section class="hoy bloque zigzag-abajo" data-hoy hidden aria-label={txt.regionAria}>
   {
     dias.map((d, i) => {
       const manana = dias[i + 1];
@@ -32,7 +41,7 @@ const yunzas = previas.find((p) => p.cuando === 'Después del miércoles');
         <article class="hoy__dia" data-hoy-dia={d.id} aria-labelledby={`hoy-${d.id}`} hidden>
           <div class="envoltura hoy__grid">
             <div class="hoy__que">
-              <p class="hoy__cuando">Hoy, {fecha.format(diaDeCarnaval(ANIO, d.offset))}</p>
+              <p class="hoy__cuando">{txt.hoyComa} {fecha.format(diaDeCarnaval(ANIO, d.offset))}</p>
               <Chicha
                 como="h2"
                 id={`hoy-${d.id}`}
@@ -43,34 +52,34 @@ const yunzas = previas.find((p) => p.cuando === 'Después del miércoles');
               />
               <p class="entrada hoy__texto">{d.texto}</p>
               <p class="hoy__acciones">
-                <a class="boton boton--tinta" href={enPrograma ? '#recorridos' : `/${ANIO}/?dia=${d.id}#recorridos`}>
-                  Ver por dónde pasa
+                <a class="boton boton--tinta" href={enPrograma ? '#recorridos' : `${ruta2027}?dia=${d.id}#recorridos`}>
+                  {txt.verRecorrido}
                 </a>
                 {!enPrograma && (
-                  <a class="boton boton--hueco" href={`/${ANIO}/#programa`}>
-                    Programa completo
+                  <a class="boton boton--hueco" href={`${ruta2027}#programa`}>
+                    {txt.programaCompleto}
                   </a>
                 )}
               </p>
             </div>
             <dl class="hoy__datos claro">
               <div>
-                <dt>Hora</dt>
-                <dd class:list={{ 'hoy__por-confirmar': !d.hora }}>{d.hora ?? 'Por confirmar'}</dd>
+                <dt>{txt.hora}</dt>
+                <dd class:list={{ 'hoy__por-confirmar': !d.hora }}>{d.hora ?? txt.porConfirmar}</dd>
               </div>
               <div>
-                <dt>Dónde</dt>
+                <dt>{txt.donde}</dt>
                 <dd>{d.lugar}</dd>
               </div>
               {manana ? (
                 <div>
-                  <dt>Mañana</dt>
+                  <dt>{txt.manana}</dt>
                   <dd>{manana.titulo}</dd>
                 </div>
               ) : (
                 yunzas && (
                   <div>
-                    <dt>Después</dt>
+                    <dt>{txt.despues}</dt>
                     <dd>
                       {yunzas.titulo}: {yunzas.texto.charAt(0).toLowerCase() + yunzas.texto.slice(1)}
                     </dd>

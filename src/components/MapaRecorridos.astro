@@ -9,8 +9,17 @@
  * el día elegido sirve para los dos mapas.
  */
 import mapa from '../data/mapa.json';
-import { diasMapa as dias, etiquetasMapa, trazoDe } from '../data/recorridos';
+import { diasMapaDe, etiquetasMapaDe, trazoDe } from '../data/recorridos';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).mapa;
+const dias = diasMapaDe(idioma);
+const etiquetasMapa = etiquetasMapaDe(idioma);
 const { ancho, alto } = mapa;
 
 // El anillo de salida, con su cartel encima, tiene que caber en el mapa. Si la ruta
@@ -19,9 +28,9 @@ const MARGEN = 30;
 const cabe = ([x, y]: number[]) => x >= MARGEN && x <= ancho - MARGEN && y >= MARGEN + 40 && y <= alto - MARGEN;
 const salidas = dias.map((d) => {
   const inicio = d.tramos[0].puntos[0];
-  if (cabe(inicio)) return { punto: inicio, cartel: 'Sale' };
+  if (cabe(inicio)) return { punto: inicio, cartel: txt.sale };
   const entrada = d.tramos.flatMap((t) => t.puntos).find(cabe) ?? inicio;
-  return { punto: entrada, cartel: d.vieneDe ? `Viene de ${d.vieneDe}` : 'Entra' };
+  return { punto: entrada, cartel: d.vieneDe ? txt.vieneDe(d.vieneDe) : txt.entra };
 });
 
 const etiquetas = etiquetasMapa.map((e) => ({
@@ -36,7 +45,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
   <!-- Sin JavaScript los botones no harían nada: el script muestra la barra -->
   <div class="mapa__barra" data-barra hidden>
     <div class="mapa__dias" role="group" aria-labelledby="mapa-elegir">
-      <span class="mapa__dias-titulo" id="mapa-elegir">Ver el recorrido:</span>
+      <span class="mapa__dias-titulo" id="mapa-elegir">{txt.verRecorrido}</span>
       {
         dias.map((d) => (
           <button
@@ -51,23 +60,20 @@ const etiquetas = etiquetasMapa.map((e) => ({
           </button>
         ))
       }
-      <button type="button" class="mapa__dia" data-todos aria-pressed="true">Todos</button>
+      <button type="button" class="mapa__dia" data-todos aria-pressed="true">{txt.todos}</button>
     </div>
-    <button type="button" class="boton" data-ver-3d>Ver en 3D</button>
-    <button type="button" class="boton boton--hueco" data-ver-plano hidden>Volver al plano</button>
+    <button type="button" class="boton" data-ver-3d>{txt.ver3d}</button>
+    <button type="button" class="boton boton--hueco" data-ver-plano hidden>{txt.volverPlano}</button>
     <p class="mapa__estado" aria-live="polite" data-estado></p>
   </div>
 
   <div class="mapa__3d" data-contenedor-3d hidden></div>
 
   <div class="mapa__plano" data-mapa-plano>
-    <div class="mapa__marco" tabindex="0" aria-label="Mapa de recorridos; se puede desplazar hacia los lados">
+    <div class="mapa__marco" tabindex="0" aria-label={txt.marcoAria}>
       <svg viewBox={`0 0 ${ancho} ${alto}`} role="img" aria-labelledby="mapa-titulo mapa-desc">
-        <title id="mapa-titulo">Mapa de recorridos del Carnaval de Cajamarca</title>
-        <desc id="mapa-desc">
-          Calles de Cajamarca con las rutas de cada día: la avenida Independencia, la Plaza de Armas, la Vía de
-          Evitamiento, Santa Apolonia y la carretera a Baños del Inca.
-        </desc>
+        <title id="mapa-titulo">{txt.svgTitulo}</title>
+        <desc id="mapa-desc">{txt.svgDesc}</desc>
         <rect width={ancho} height={alto} fill="var(--tinta)"></rect>
         <path d={mapa.rios} class="mapa__rios"></path>
         <path d={mapa.menores} class="mapa__menores"></path>
@@ -132,7 +138,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
     </div>
     <!-- Fuera del marco que se desplaza: así queda siempre en la esquina, también en el teléfono -->
     <p class="mapa__credito">
-      <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>
+      <a href="https://www.openstreetmap.org/copyright">{txt.creditoOsm}</a>
     </p>
   </div>
 
@@ -149,10 +155,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
         ))
       }
     </ol>
-    <p class="mapa__nota">
-      Las avenidas en trazo lleno son las reales; los tramos punteados son aproximados. El recorrido exacto sale en el
-      programa oficial.
-    </p>
+    <p class="mapa__nota">{txt.nota}</p>
   </figcaption>
 </figure>
 
@@ -521,6 +524,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
 <script>
   import type { Mapa3D } from '../lib/mapa3d';
   import { diaDeHoy } from '../lib/hoy';
+  import { idiomaEnNavegador, rutaGeojson, t } from '../i18n';
 
   /** Punteado de los tramos aproximados: el mismo que .ruta--aprox en CSS. */
   const PUNTEADO = [10, 9];
@@ -545,6 +549,8 @@ const etiquetas = etiquetasMapa.map((e) => ({
   }
 
   function iniciar(figura: HTMLElement) {
+    const idioma = idiomaEnNavegador();
+    const txt = t(idioma).mapa;
     const uno = <T extends Element>(selector: string) => figura.querySelector<T>(selector)!;
     const barra = uno<HTMLElement>('[data-barra]');
     const botonesDia = [...figura.querySelectorAll<HTMLButtonElement>('[data-dia]')];
@@ -634,7 +640,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
       });
 
       const nombre = botonesDia.find((b) => b.dataset.dia === dia)?.dataset.nombre;
-      estado.textContent = nombre ? `${nombre}. El círculo marca por dónde sale.` : 'Se ven todos los recorridos.';
+      estado.textContent = nombre ? txt.estadoDia(nombre) : txt.estadoTodos;
 
       completarTodo();
       if (animar && !plano.hidden && dia && !tranquilo) dibujar(dia, { conCabeza: true });
@@ -653,7 +659,7 @@ const etiquetas = etiquetasMapa.map((e) => ({
       botonPlano.hidden = true;
       botonVer3d.hidden = false;
       botonVer3d.disabled = false;
-      botonVer3d.textContent = 'Ver en 3D';
+      botonVer3d.textContent = txt.ver3d;
       if (activo && !tranquilo) dibujar(activo, { conCabeza: true });
     }
 
@@ -671,16 +677,16 @@ const etiquetas = etiquetasMapa.map((e) => ({
 
     botonVer3d.addEventListener('click', async () => {
       if (!navigator.onLine) {
-        estado.textContent = 'El mapa 3D necesita internet. Aquí tienes el mapa plano.';
+        estado.textContent = txt.necesitaInternet;
         return;
       }
       botonVer3d.disabled = true;
-      botonVer3d.textContent = 'Cargando el 3D…';
+      botonVer3d.textContent = txt.cargando3d;
       estado.textContent = '';
       try {
         const [{ abrirMapa3D }, rutas] = await Promise.all([
           import('../lib/mapa3d'),
-          fetch('/mapa/recorridos.geojson').then((r) => {
+          fetch(rutaGeojson(idioma)).then((r) => {
             if (!r.ok) throw new Error(`No se pudo leer las rutas (${r.status})`);
             return r.json();
           }),
@@ -688,17 +694,15 @@ const etiquetas = etiquetasMapa.map((e) => ({
         completarTodo();
         contenedor.hidden = false;
         plano.hidden = true;
-        mapa3d = await abrirMapa3D(contenedor, rutas, tranquilo);
+        mapa3d = await abrirMapa3D(contenedor, rutas, tranquilo, idioma);
         botonVer3d.hidden = true;
         botonPlano.hidden = false;
-        estado.textContent = 'Mapa 3D listo. Arrastra para moverlo; en el teléfono, usa dos dedos.';
+        estado.textContent = txt.listo3d;
         if (activo) mapa3d.recorrer(activo);
       } catch (error) {
         console.error(error);
         mostrarPlano();
-        estado.textContent = !navigator.onLine
-          ? 'El mapa 3D necesita internet. Aquí tienes el mapa plano.'
-          : 'No se pudo abrir el mapa 3D. Aquí sigue el mapa plano.';
+        estado.textContent = !navigator.onLine ? txt.necesitaInternet : txt.error3d;
       }
     });
 

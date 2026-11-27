@@ -5,7 +5,12 @@
     "significado": "El hijo o la hija menor; el último de la familia.",
     "ejemplo": "La shulca de la casa siempre se sale con la suya.",
     "origen": "Quechua (sullka, «menor»)",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "The youngest child in a family.",
+      "ejemplo": "“The shulca of the house always gets her way.”",
+      "origen": "Quechua (sullka, “younger”)"
+    }
   },
   {
     "id": "misho",
@@ -13,7 +18,12 @@
     "significado": "Gato.",
     "ejemplo": "El misho se escondió bajo la cama apenas vio los baldes.",
     "origen": "Registrado para Cajamarca en el Diccionario de Peruanismos",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Cat.",
+      "ejemplo": "“The misho hid under the bed the second it saw the water buckets.”",
+      "origen": "Documented for Cajamarca in the Dictionary of Peruvianisms"
+    }
   },
   {
     "id": "cholasho",
@@ -21,35 +31,56 @@
     "significado": "Muchachito / muchachita. Llevan el diminutivo -ash-, herencia del culle, la antigua lengua de la región.",
     "ejemplo": "Ese cholasho ya está pintado de pies a cabeza.",
     "origen": "Sufijo de origen culle",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Young boy / young girl. Uses the -ash- diminutive inherited from Culle, the region’s extinct pre-Spanish language.",
+      "ejemplo": "“That cholasho is already painted head to toe.”",
+      "origen": "Culle-origin suffix"
+    }
   },
   {
     "id": "aquisito",
     "palabra": "aquisito",
     "significado": "Aquí cerquita. El diminutivo hace que todo quede más cerca… aunque no siempre.",
     "ejemplo": "Aquisito nomás es la plaza, vamos caminando.",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Right nearby. The diminutive makes everything sound just around the corner—even when it isn’t.",
+      "ejemplo": "“The plaza is aquisito nomás, let’s walk.”"
+    }
   },
   {
     "id": "nomas",
     "palabra": "nomás",
     "significado": "Suaviza invitaciones y órdenes: «tranquilo», «sin problema». Tiene su propio diminutivo: nomasito.",
     "ejemplo": "Pase nomás, siéntese nomasito.",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Softens invitations and requests (“go right ahead,” “no problem”). Even has its own diminutive: nomasito.",
+      "ejemplo": "“Come on in (pase nomás), take a seat (siéntese nomasito).”"
+    }
   },
   {
     "id": "ahoritita",
     "palabra": "ahoritita",
     "significado": "Ya mismo. Más urgente que «ahorita»… en teoría.",
     "ejemplo": "Ahoritita salimos con la patrulla.",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Right this second. More urgent than ahorita—at least in theory.",
+      "ejemplo": "“We’re heading out with the troupe ahoritita.”"
+    }
   },
   {
     "id": "pues",
     "palabra": "pues / pe",
     "significado": "Muletilla que remata la frase y le da confianza.",
     "ejemplo": "¡Ya pues, vamos a jugar carnaval!",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Friendly filler word at the end of a sentence that adds warmth or emphasis.",
+      "ejemplo": "“Come on (ya pues), let’s go play carnival!”"
+    }
   },
   {
     "id": "no-na",
@@ -57,7 +88,12 @@
     "significado": "Señor / señora. Trato antiguo, de respeto y cariño a la vez.",
     "ejemplo": "Ño Carnavalón y Ña Carnavalona.",
     "origen": "Castellano antiguo",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Old-fashioned forms of “Mr.” / “Mrs.” (from señor / señora), blending respect and affection.",
+      "ejemplo": "“Ño Carnavalón and Ña Carnavalona.”",
+      "origen": "Old Spanish"
+    }
   },
   {
     "id": "taita",
@@ -65,7 +101,12 @@
     "significado": "Papá; también trato respetuoso para un mayor.",
     "ejemplo": "El taita ya sacó su guitarra.",
     "origen": "Andino",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Dad; also a respectful term for an older man.",
+      "ejemplo": "“Taita already brought out his guitar.”",
+      "origen": "Andean"
+    }
   },
   {
     "id": "poto",
@@ -73,7 +114,12 @@
     "significado": "Mate o recipiente de calabaza para servir la chicha. Su doble sentido alimenta muchas coplas.",
     "ejemplo": "Sírvame un potito de chicha, comadre.",
     "origen": "Regional del norte peruano",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Dried gourd bowl used to serve chicha. Its double meaning (also Peruvian slang for backside) fuels plenty of cheeky coplas.",
+      "ejemplo": "“Pour me a little poto of chicha, friend.”",
+      "origen": "Northern Peruvian regionalism"
+    }
   },
   {
     "id": "llanques",
@@ -81,14 +127,23 @@
     "significado": "Sandalias rústicas, parte de la vestimenta tradicional.",
     "ejemplo": "Con llanques se baila mejor la cashua.",
     "origen": "Quechua (llanqui)",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Traditional rustic sandals worn with regional attire.",
+      "ejemplo": "“The cashua dance is best danced in llanques.”",
+      "origen": "Quechua (llanqui)"
+    }
   },
   {
     "id": "jugar-carnaval",
     "palabra": "jugar carnaval",
     "significado": "Mojar, pintar y empolvar a los demás (y dejarse) durante la fiesta.",
     "ejemplo": "¿Todavía no has jugado carnaval? Ahoritita te toca.",
-    "categoria": "habla"
+    "categoria": "habla",
+    "en": {
+      "significado": "Literally “to play carnival”—splashing, painting, and dusting others with talcum powder (and getting hit back).",
+      "ejemplo": "“Haven’t played carnival yet? Your turn is coming right up.”"
+    }
   },
   {
     "id": "alalau",
@@ -96,7 +151,12 @@
     "significado": "¡Qué frío! Ideal para cuando te cae el balde de agua helada.",
     "ejemplo": "¡Alalau, esa agua viene del puquio!",
     "origen": "Quechua",
-    "categoria": "exclamación"
+    "categoria": "exclamación",
+    "en": {
+      "significado": "“So cold!” What you shout when an icy bucket of water hits you.",
+      "ejemplo": "“Alalau, that water came straight from a mountain spring!”",
+      "origen": "Quechua"
+    }
   },
   {
     "id": "achachau",
@@ -104,7 +164,12 @@
     "significado": "¡Qué calor! / ¡Cómo quema!",
     "ejemplo": "¡Achachau, el sol del mediodía!",
     "origen": "Quechua",
-    "categoria": "exclamación"
+    "categoria": "exclamación",
+    "en": {
+      "significado": "“So hot!” / “That burns!”",
+      "ejemplo": "“Achachau, that midday sun!”",
+      "origen": "Quechua"
+    }
   },
   {
     "id": "atatau",
@@ -112,98 +177,150 @@
     "significado": "¡Qué asco! / ¡Qué feo!",
     "ejemplo": "¡Atatau, me echaron pintura con barro!",
     "origen": "Quechua",
-    "categoria": "exclamación"
+    "categoria": "exclamación",
+    "en": {
+      "significado": "“Yuck!” / “How gross!”",
+      "ejemplo": "“Atatau, they threw muddy paint on me!”",
+      "origen": "Quechua"
+    }
   },
   {
     "id": "nanau",
     "palabra": "¡ñañau!",
     "significado": "¡Qué rico! Para la comida, la chicha… y la fiesta entera.",
     "ejemplo": "¡Ñañau, qué rico carnaval!",
-    "categoria": "exclamación"
+    "categoria": "exclamación",
+    "en": {
+      "significado": "“Delicious!” / “How awesome!” Used for food, chicha, and the whole festival.",
+      "ejemplo": "“Ñañau, what a great carnival!”"
+    }
   },
   {
     "id": "calientito",
     "palabra": "calientito",
     "significado": "Bebida caliente con su chorrito de aguardiente, para el frío que deja el agua.",
     "ejemplo": "Un calientito y de vuelta a la plaza.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "Hot herbal drink spiked with sugarcane liquor, to warm up after getting drenched.",
+      "ejemplo": "“One calientito and back out to the plaza.”"
+    }
   },
   {
     "id": "chicha-de-patrulla",
     "palabra": "chicha de patrulla",
     "significado": "La chicha que los vecinos guardaban para la patrulla que llegaba cantando de casa en casa. Una costumbre que se va perdiendo.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "Homemade fermented corn beer that neighbors saved for singing troupes going house to house—a fading tradition."
+    }
   },
   {
     "id": "gitana",
     "palabra": "gitana",
     "significado": "Personaje de la patrulla: un hombre vestido de mujer, puesto ahí para la burla.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "Traditional troupe character: a man dressed in women’s clothes for carnival satire."
+    }
   },
   {
     "id": "virrey",
     "palabra": "virrey",
     "significado": "El que manda en la patrulla, espada en mano. Se ríe de la autoridad colonial.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "The “viceroy” who leads a troupe sword in hand, mocking Spanish colonial authority."
+    }
   },
   {
     "id": "patrulla",
     "palabra": "patrulla",
     "significado": "Grupo de amigos o vecinos que recorre las calles cantando coplas, saltando y jugando con agua y pintura.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "A troupe of friends or neighbors roaming the streets singing coplas, dancing, and playing with water and paint."
+    }
   },
   {
     "id": "comparsa",
     "palabra": "comparsa",
     "significado": "Grupo organizado por barrio: todos visten igual, bailan y cantan coplas. Compiten en damas, varones, mixta, infantil y vestimenta típica.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "An organized neighborhood parade group wearing matching costumes, dancing, and competing in official categories."
+    }
   },
   {
     "id": "contrapunto",
     "palabra": "contrapunto",
     "significado": "Duelo cantado: dos grupos se responden copla a copla hasta que uno se queda sin respuesta.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "A sung verse duel: two groups trade satirical coplas back and forth until one runs out of comebacks."
+    }
   },
   {
     "id": "clon",
     "palabra": "clon",
     "significado": "Personaje tipo arlequín que encabeza la comparsa: traje ancho y colorido, careta, silbato y cucurucho. Hay clon mayor, segundo y tercero.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "Harlequin-like character leading a troupe in a bright baggy suit, wire mask, whistle, and tall conical hat (cucurucho)."
+    }
   },
   {
     "id": "cucurucho",
     "palabra": "cucurucho",
     "significado": "El gran sombrero cónico del clon.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "The tall, pointed cone hat worn by the carnival clon."
+    }
   },
   {
     "id": "viudas",
     "palabra": "viudas",
     "significado": "Quienes lloran (con mucho teatro) al Ño Carnavalón en su velorio y entierro.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "The melodramatic “widows” who wail and mourn Ño Carnavalón during his wake and burial."
+    }
   },
   {
     "id": "yunza",
     "palabra": "yunza / umsha / cortamonte",
     "significado": "Árbol adornado con regalos. Se baila a su alrededor y, en cada vuelta, una pareja le da un golpe hasta tumbarlo.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "A tree hung with gifts. Couples dance around it in a circle, taking turns swinging a machete until it falls."
+    }
   },
   {
     "id": "corso",
     "palabra": "corso",
     "significado": "Gran desfile del lunes de carnaval, con carros alegóricos, reinas y comparsas.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "Monday’s grand carnival parade featuring decorated floats, carnival queens, and marching troupes."
+    }
   },
   {
     "id": "bando",
     "palabra": "bando carnestolendo",
     "significado": "Pregón que, semanas antes, anuncia por las calles que el carnaval se viene.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "A massive pre-carnival street parade held weeks earlier to announce that carnival is coming."
+    }
   },
   {
     "id": "testamento",
     "palabra": "testamento",
     "significado": "Documento burlón que deja el Ño Carnavalón antes de morir: «hereda» a las autoridades cosas picantes y sarcásticas.",
-    "categoria": "fiesta"
+    "categoria": "fiesta",
+    "en": {
+      "significado": "The satirical will Ño Carnavalón leaves behind before being burned, “bequeathing” cheeky jabs to local politicians."
+    }
   }
 ]

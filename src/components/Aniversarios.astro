@@ -1,7 +1,15 @@
 ---
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).aniversarios;
 ---
 
-<section class="aniversarios bloque fondo-tinta oscuro" data-aniversarios hidden aria-label="Aniversarios de los barrios">
+<section class="aniversarios bloque fondo-tinta oscuro" data-aniversarios hidden aria-label={txt.proximos}>
   <div class="envoltura aniversarios__grid">
     <p class="aniversarios__titulo" data-aniversarios-titulo></p>
     <ul class="aniversarios__lista" data-aniversarios-lista></ul>

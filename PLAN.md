@@ -141,36 +141,57 @@ La Municipalidad Provincial de Cajamarca presenta el afiche, el programa y la ca
 
 ## Versión en inglés
 
-**Estado:** sin empezar. Se decidió hacerla **por fases** y la hará otro agente (o Richard) en una rama aparte. Antes de empezar, hay que leer el [README](README.md) y la sección «Para empezar», de arriba.
+**Estado:** implementada en la rama `ingles` (las 6 fases completas, con `pnpm build` y `pnpm test:offline` en verde). Pendiente revisión humana de las traducciones antes de fusionar a `main`. Antes de empezar, leer el [README](README.md) y la sección «Para empezar», de arriba.
 
 ### Decisiones ya tomadas
 
-- **Rutas:** español en `/` (como ahora) e inglés en `/en/`. Usar el sistema de idiomas de Astro (`i18n` en `astro.config.mjs`, [guía](https://docs.astro.build/en/guides/internationalization/)), con `prefixDefaultLocale: false`.
-- **Botón «ES | EN»** en la cabecera (también dentro del menú del teléfono) y en el pie. Lleva a la misma página en el otro idioma; si esa página aún no existe en inglés, a `/en/`. Con `hreflang` en `<head>` y `lang` correcto en `<html>` (hoy está fijo en `es-PE` en `src/layouts/Base.astro`).
-- **Qué NO se traduce:** las coplas (se pierde la rima) y las palabras del habla (shulca, yunza, poto…). Se dejan en español, marcadas con `lang="es"`, y se les agrega una glosa en inglés. Los nombres propios («Cajamarca», barrios, «Gran Corso»…) llevan `translate="no"`.
+- **Rutas traducidas:** español en `/` y inglés en `/en/` usando `i18n` de Astro (`prefixDefaultLocale: false`):
+  - `/` ↔ `/en/`
+  - `/2027/` ↔ `/en/2027/`
+  - `/guia/` ↔ `/en/guide/`
+  - `/la-fiesta/` ↔ `/en/the-party/`
+  - `/ediciones/` ↔ `/en/editions/` (y `/en/editions/[anio]/`)
+  - `/barrios/` ↔ `/en/neighborhoods/` (y `/en/neighborhoods/[id]/`)
+  - `/coplas/` ↔ `/en/coplas/`
+  - `/habla/` ↔ `/en/slang/`
+  - `/historia/` ↔ `/en/history/`
+  - `/fuentes/` ↔ `/en/sources/`
+  - `/sin-conexion/` ↔ `/en/offline/`
+- **Botón «ES | EN»** en la cabecera (también dentro del menú del teléfono) y en el pie. Lleva a la misma página en el otro idioma; si esa página aún no existe en inglés, a `/en/`. Guarda la elección en `localStorage` y **no redirige automáticamente** según el idioma del navegador. Con `hreflang` en `<head>` (solo cuando la página par existe) y `lang` correcto en `<html>`.
+- **Estructura de datos:** campos por idioma (`{ es, en }`) en los mismos archivos de datos para no duplicar fuentes, fechas, colores ni coordenadas.
+- **Qué NO se traduce:** las coplas (se pierde la rima) y las palabras del habla (`shulca`, `yunza`, `poto`…). Se dejan en español, marcadas con `lang="es"`, y se les agrega una glosa en inglés. Los nombres propios («Cajamarca», barrios, «Gran Corso»…) llevan `translate="no"`.
+- **«Arma tu copla» y «Completa la copla» en `/en/coplas/`:** se mantienen ambos con interfaz en inglés y una nota breve aclarando que las coplas y las rimas son en español.
 - **Tono:** inglés claro para un visitante que no conoce el Perú; explicar lo que en español se da por sabido (qué es la yunza, qué es un corso). Las fuentes citadas se quedan como están (en español), con la fecha.
-- **Fechas y horas:** usar el idioma de la página en cada `Intl.DateTimeFormat` (hoy hay unos 15 con `'es-PE'` escrito a mano: `Banderolas`, `CartelEdicion`, `CartelProximo`, `HoyEnElCarnaval`, `lib/fechas.ts`, `lib/agenda-portada.ts`, `2027.astro`, `ediciones/[anio].astro`). Zona horaria sigue siendo la de Perú.
+- **Fechas y horas:** usar el idioma de la página en cada `Intl.DateTimeFormat` y `Intl.ListFormat`. Zona horaria sigue siendo la de Perú (`America/Lima`).
+- **Manifiesto (`manifest.webmanifest`):** un único manifiesto en la raíz (`/manifest.webmanifest`) para que la app instalada conserve un solo `id: '/'` y `scope: '/'`.
+- **Traducciones:** las hace el agente, pero **alguien que hable inglés bien debe revisarlas** antes de publicar, sobre todo la guía, que da datos de seguridad y salud.
 
 ### Fases
 
-1. **Base (sin traducir páginas todavía):**
-   - [ ] Configurar `i18n` en Astro y un diccionario de textos de la interfaz (menú, pie, botones, avisos como «Sin conexión», «Instalar app»). Por ejemplo, `src/i18n/es.ts` y `src/i18n/en.ts` con una función `t(idioma)`.
-   - [ ] `Base.astro`: recibir el idioma, poner `lang`, `hreflang`, `og:locale` y `canonical` por idioma.
-   - [ ] Cabecera, menú del teléfono y pie en inglés, con el botón de idioma.
-   - [ ] Pasar el idioma a los formateadores de fecha y a los scripts que escriben texto en el navegador (`HoyEnElCarnaval`, `ContadorProximamente`, `MapaRecorridos`, `Instalar`, `Base.astro` con los avisos de sin conexión).
-   - [ ] Sitemap con las dos versiones; `robots.txt` y `manifest.webmanifest` (el manifiesto sigue en español o se hace uno por idioma: decidirlo y anotarlo aquí).
-   - [ ] Imágenes para compartir (`src/lib/og.ts`, `src/data/og.ts`): título y bajada en inglés para `/en/`.
-2. **Páginas prioritarias en inglés:** `/en/` (inicio), `/en/2027/`, `/en/guia/` (con su ruta en inglés; ver abajo). Datos: `src/data/carnaval2027.ts`, `src/data/guia.ts`.
-3. **Páginas de contenido:** la fiesta, historia, barrios, ediciones (datos en `ediciones.json`), habla (solo la interfaz y glosas; las palabras quedan), coplas (interfaz; las coplas siguen en español con glosa), fuentes, 404 y «sin señal».
-4. **Sin conexión:** que el service worker (`integraciones/sin-conexion/`) guarde también `/en/`. Revisar el límite de archivos y correr `pnpm test:offline`; ampliar `tests/sin-conexion.test.mjs` con una página en inglés.
-5. **Revisión final:** recorrer todo en `/en/` en escritorio y teléfono, sin texto en español suelto, enlaces internos que no salten de idioma, y `pnpm build` sin errores.
-
-### Cosas por decidir (anotar la respuesta aquí al decidirlas)
-
-- **Nombre de las rutas en inglés:** `/en/guide/`, `/en/the-party/`, `/en/neighborhoods/`… o mantener los mismos nombres en español (`/en/guia/`). Lo más simple es mantener los mismos nombres; lo mejor para buscadores es traducirlos.
-- **Dónde guardar los textos largos:** en los mismos archivos de datos con un campo por idioma (`{ es: …, en: … }`) o en archivos separados por idioma.
-- **Si el navegador está en inglés:** no redirigir solo; dejar que la persona elija con el botón (y recordar su elección en `localStorage`).
-- **Traducciones:** las hace el agente, pero **alguien que hable inglés bien debe revisarlas** antes de publicar, sobre todo la guía, que da datos de seguridad y salud.
+1. **Fase 1 — Base e infraestructura (sin páginas `/en/` todavía):**
+   - [x] Configurar `i18n` en `astro.config.mjs` y `@astrojs/sitemap` (con `i18n` y exclusión de `/en/offline`).
+   - [x] Crear diccionario de interfaz (`src/i18n/es.ts`, `src/i18n/en.ts`, `src/i18n/rutas.ts`, `src/i18n/index.ts`) con `t(idioma)` y mapa de rutas bilingüe.
+   - [x] `Base.astro`: recibir `idioma`, poner `lang`, `hreflang`, `og:locale`, `og:locale:alternate`, `og:image:alt` y `canonical` por idioma, más textos de avisos sin señal e «Instalar app».
+   - [x] `Cabecera.astro` y `Pie.astro`: enlaces por idioma, botón «ES | EN» (cabecera, menú del teléfono y pie) y panel de borradores de WhatsApp traducible.
+   - [x] Pasar el idioma a los formateadores de fecha y scripts de cliente (`fechas.ts`, `hoy.ts`, `agenda-portada.ts`, `barrios.ts`, `aniversarios.ts`, `aniversario-barrio.ts`, `mapa3d.ts`, `Banderolas`, `CartelEdicion`, `CartelProximo`, `HoyEnElCarnaval`, `AgendaPortada`, `Instalar`, `MapaRecorridos`, `ContadorProximamente`).
+   - [x] Preparar imágenes para compartir (`src/lib/og.ts`, `src/data/og.ts`, `src/pages/og/[clave].png.ts`) con soporte para claves en inglés (`en-*`).
+2. **Fase 2 — Páginas prioritarias (`/en/`, `/en/2027/`, `/en/guide/`):**
+   - [x] Traducir datos de `carnaval2027.ts`, `guia.ts`, `recorridos.ts` y `fotos.ts` (`alt` y `deed.en`).
+   - [x] Crear `/en/`, `/en/2027/`, `/en/guide/`, `/en/carnaval-2027.ics`, `/en/mapa/recorridos.geojson` y enlace de Google Calendar en inglés.
+3. **Fase 3 — La fiesta, historia y ediciones (`/en/the-party/`, `/en/history/`, `/en/editions/`):**
+   - [x] Traducir datos en `carnaval.ts` y `ediciones.json` (respetando `content.config.ts`).
+   - [x] Crear `/en/the-party/`, `/en/history/`, `/en/editions/` y `/en/editions/[anio]/`.
+4. **Fase 4 — Barrios (`/en/neighborhoods/` y `/en/neighborhoods/[id]/`):**
+   - [x] Traducir datos en `barrios.ts`, `DatosBarrio`, `ConsejosBarrio`, `InvitacionBarrio` y mensajes prellenados de WhatsApp.
+   - [x] Crear `/en/neighborhoods/` y `/en/neighborhoods/[id]/`.
+5. **Fase 5 — Coplas, habla, fuentes, 404 y offline (`/en/coplas/`, `/en/slang/`, `/en/sources/`, `/en/offline/`):**
+   - [x] Coplas en inglés: interfaz y glosas en inglés; «Arma tu copla» y «Completa la copla» con interfaz en inglés y nota aclaratoria.
+   - [x] Habla (`glosario.json`, `frases.json`): palabras en español (`lang="es"`) con glosas en inglés.
+   - [x] Crear `/en/sources/`, `/en/offline/` y soporte bilingüe en `404.astro` (detectando `/en/`).
+6. **Fase 6 — Sin conexión y revisión final:**
+   - [x] Actualizar `integraciones/sin-conexion/trabajador.js` (fallback `/en/offline/` para rutas `/en/` y recarga de `/en/` al actualizar SW).
+   - [x] Revisar tamaño del precache, ampliar `tests/sin-conexion.test.mjs` con páginas en inglés y correr `pnpm test:offline`.
+   - [x] Revisión final en escritorio y teléfono: sin texto en español suelto, enlaces internos consistentes y `pnpm build` sin errores.
 
 ### Prompt para el agente
 

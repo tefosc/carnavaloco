@@ -27,7 +27,9 @@ test('instalación automática, uso sin señal y actualización completa despué
   const base = resolve('dist');
   const trabajador = await readFile(join(base, 'sw.js'), 'utf8');
   const guardados = JSON.parse(trabajador.match(/const GUARDAR_AL_INSTALAR = (\[[\s\S]*?\]);/)[1]);
-  assert.ok(!guardados.some((url) => /mapa3d|maplibre-gl-worker|^\/mapa\//.test(url)));
+  assert.ok(!guardados.some((url) => /mapa3d|maplibre-gl-worker|^\/(?:en\/)?mapa\//.test(url)));
+  assert.ok(guardados.includes('/en/'));
+  assert.ok(guardados.includes('/en/offline/'));
   const fotosLigeras = JSON.parse(trabajador.match(/const FOTOS_LIGERAS = (\{[\s\S]*?\});/)[1]);
   const fotoGrande = Object.keys(fotosLigeras)[0];
   assert.ok(fotoGrande);
@@ -172,6 +174,29 @@ test('instalación automática, uso sin señal y actualización completa despué
   assert.equal(await pagina.locator('[data-borradores-whatsapp] li').count(), 1);
 
   t.diagnostic('Afiche y copla guardada verificados.');
+
+  // Versión en inglés sin señal: portada, guía, 2027 (.ics + bloqueo 3D), barrio y respaldo /en/offline/
+  await pagina.goto(origen + '/en/?fecha=2027-02-05');
+  const ingresoEn = pagina.locator('[data-evento="ingreso"]');
+  await ingresoEn.getByRole('timer').getByText('day', { exact: true }).waitFor();
+  await pagina.goto(origen + '/en/?fecha=2027-02-06');
+  await ingresoEn.getByText('Today', { exact: true }).waitFor();
+
+  await pagina.goto(origen + '/en/guide/');
+  await pagina.getByRole('heading', { level: 1, name: /Guide/i }).waitFor();
+  await pagina.getByRole('heading', { level: 2, name: /Getting there/i }).waitFor();
+
+  await pagina.goto(origen + '/en/2027/');
+  await pagina.getByText('Ready for offline use.', { exact: true }).waitFor();
+  const calendarioEn = await pagina.evaluate(async () => (await fetch('/en/carnaval-2027.ics')).text());
+  assert.match(calendarioEn, /BEGIN:VCALENDAR/);
+  assert.match(calendarioEn, /PRODID:-\/\/Carnaval de Cajamarca\/\/Schedule\/\/EN/);
+  await pagina.locator('[data-ver-3d]').click();
+  await pagina.getByText('The 3D map requires an internet connection. Here is the 2D map.', { exact: true }).waitFor();
+
+  await pagina.goto(origen + '/en/no-existe-esta-ruta/');
+  await pagina.getByRole('heading', { level: 1, name: /No signal/i }).waitFor();
+  t.diagnostic('Versión en inglés verificada sin red (/en/, /en/guide/, /en/2027/, .ics y /en/offline/).');
 
   edicion = nueva;
   corteActualizacion = true;

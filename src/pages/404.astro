@@ -2,30 +2,55 @@
 import Base from '../layouts/Base.astro';
 import Chicha from '../components/Chicha.astro';
 import Pintura from '../components/Pintura.astro';
+import { t } from '../i18n';
+
+const es = t('es').error404;
+const en = t('en').error404;
 ---
 
-<Base title="Página no encontrada" description="Esta página no existe. Vuelve a la portada del Carnaval de Cajamarca." indexable={false}>
+<Base title={es.title} description={es.description} indexable={false}>
   <section class="perdido bloque fondo-turquesa" data-pintura aria-labelledby="titulo-perdido">
     <div class="capa-pintura" data-capa-pintura aria-hidden="true"></div>
     <div class="envoltura perdido__grid">
       <h1 id="titulo-perdido" class="perdido__titulo">
-        <span class="visualmente-oculto">Error 404: página no encontrada</span>
+        <span class="visualmente-oculto" data-404-sr>{es.srTitulo}</span>
         <Chicha texto="404" relleno="var(--amarillo)" relleno2="var(--naranja)" sombra="var(--fucsia)" class="perdido__numero" />
       </h1>
       <div class="perdido__texto">
-        <p class="perdido__frase">¡Te mojaron!</p>
-        <p class="entrada">
-          Esta página no existe, ni aquisito. Puede que el enlace esté mal escrito o que la página se haya mudado de barrio.
-        </p>
+        <p class="perdido__frase" data-404-frase>{es.frase}</p>
+        <p class="entrada" data-404-texto>{es.texto}</p>
         <div class="perdido__acciones">
-          <a class="boton" href="/">Volver a la portada</a>
-          <a class="boton boton--hueco" href="/2027/">Ver el programa 2027</a>
+          <a class="boton" href="/" data-404-portada>{es.volverPortada}</a>
+          <a class="boton boton--hueco" href="/2027/" data-404-programa>{es.verPrograma}</a>
         </div>
       </div>
     </div>
     <Pintura />
   </section>
 </Base>
+
+<script define:vars={{ en }}>
+  if (location.pathname === '/en' || location.pathname.startsWith('/en/')) {
+    document.documentElement.lang = 'en';
+    document.title = `${en.title} | Carnaval de Cajamarca`;
+    const sr = document.querySelector('[data-404-sr]');
+    const frase = document.querySelector('[data-404-frase]');
+    const texto = document.querySelector('[data-404-texto]');
+    const portada = document.querySelector('[data-404-portada]');
+    const programa = document.querySelector('[data-404-programa]');
+    if (sr) sr.textContent = en.srTitulo;
+    if (frase) frase.textContent = en.frase;
+    if (texto) texto.textContent = en.texto;
+    if (portada) {
+      portada.textContent = en.volverPortada;
+      portada.setAttribute('href', '/en/');
+    }
+    if (programa) {
+      programa.textContent = en.verPrograma;
+      programa.setAttribute('href', '/en/2027/');
+    }
+  }
+</script>
 
 <style>
   .perdido {

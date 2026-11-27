@@ -5,8 +5,16 @@
  * (src/lib/rima.ts y src/lib/afiche-copla.ts); el borrador queda en el teléfono.
  */
 import { getCollection } from 'astro:content';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 import { ANCHO, ALTO, PALETAS } from '../lib/afiche-copla';
 import { partirVerso } from '../lib/rima';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const a = t(idioma).armaCopla;
 
 const coplas = (await getCollection('coplas')).map((c) => c.data);
 const glosario = (await getCollection('glosario')).map((g) => g.data);
@@ -43,24 +51,23 @@ const entradas = coplas.filter((c) => c.versos.length === 4).map((c) => c.versos
 
 // Copla de ejemplo (ocho sílabas cada verso; riman guitarra y para)
 const ejemplo = ['Aquisito, allá en mi barrio,', 'ya se escucha la guitarra;', 'saca el balde, cholashita,', 'que esta tarde no se para.'];
-const nombres = ['Primer verso', 'Segundo verso', 'Tercer verso', 'Cuarto verso'];
 const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
 ---
 
 <section class="arma bloque fondo-turquesa" aria-labelledby="titulo-arma" data-arma>
   <div class="envoltura arma__grid">
     <div class="arma__form">
-      <h2 id="titulo-arma" class="titulo-bloque">Arma tu copla</h2>
+      <h2 id="titulo-arma" class="titulo-bloque">{a.titulo}</h2>
       <p class="lectura arma__intro">
-        Cuatro versos de unas ocho sílabas; el segundo rima con el cuarto. Cuando esté lista, bájala como imagen o
-        mándala por WhatsApp. Queda guardada en tu teléfono, aunque cierres la página.
+        {a.intro}
+        {a.notaEspanol && <> <strong>{a.notaEspanol}</strong></>}
       </p>
 
       <form class="arma__campos" data-arma-form>
         <fieldset class="arma__versos">
-          <legend class="visualmente-oculto">Tus cuatro versos</legend>
+          <legend class="visualmente-oculto">{a.versosLegend}</legend>
           {
-            nombres.map((nombre, i) => (
+            a.nombres.map((nombre, i) => (
               <div class="arma__verso">
                 <label for={`arma-verso-${i}`}>{nombre}</label>
                 <div class="arma__fila">
@@ -76,7 +83,7 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
                   />
                   <span class="arma__silabas" id={`arma-silabas-${i}`} data-silabas={i}>
                     <span data-silabas-numero>–</span>
-                    <span class="visualmente-oculto"> sílabas, más o menos</span>
+                    <span class="visualmente-oculto">{a.silabasSr}</span>
                   </span>
                 </div>
               </div>
@@ -88,27 +95,27 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
 
         <div class="arma__sugerencias" data-sugerencias-caja hidden>
           <p data-sugerencias-titulo></p>
-          <div class="arma__palabras" role="group" aria-labelledby="arma-sugerencias-ayuda" data-sugerencias></div>
-          <p class="arma__ayuda" id="arma-sugerencias-ayuda">Toca una para ponerla al final del cuarto verso.</p>
+          <div class="arma__palabras" role="group" aria-labelledby="arma-sugerencias-ayuda" lang="es" data-sugerencias></div>
+          <p class="arma__ayuda" id="arma-sugerencias-ayuda">{a.sugerenciasAyuda}</p>
         </div>
 
         <p class="arma__acciones-form">
-          <button type="button" class="boton boton--hueco" data-entrada>Préstame una entrada</button>
-          <button type="button" class="boton boton--hueco" data-borrar>Borrar</button>
+          <button type="button" class="boton boton--hueco" data-entrada>{a.prestameEntrada}</button>
+          <button type="button" class="boton boton--hueco" data-borrar>{a.borrar}</button>
         </p>
 
         <div class="arma__verso">
-          <label for="arma-firma">Firma (si quieres)</label>
-          <input id="arma-firma" type="text" maxlength="40" autocomplete="off" placeholder="Por ejemplo: Patrulla de tu barrio…" data-firma />
+          <label for="arma-firma">{a.firmaLabel}</label>
+          <input id="arma-firma" type="text" maxlength="40" autocomplete="off" placeholder={a.firmaPlaceholder} data-firma />
         </div>
 
         <fieldset class="arma__colores">
-          <legend>Color del afiche</legend>
+          <legend>{a.colorLegend}</legend>
           {
             colores.map((c, i) => (
               <label class="arma__color" style={`--muestra:var(--${c})`}>
                 <input type="radio" name="arma-color" value={c} checked={i === 0} data-color />
-                <span>{c}</span>
+                <span>{a.colores[c]}</span>
               </label>
             ))
           }
@@ -122,11 +129,11 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
         width={ANCHO}
         height={ALTO}
         role="img"
-        aria-label="Vista previa del afiche con tu copla"
+        aria-label={a.lienzoAria}
         data-arma-lienzo></canvas>
       <p class="arma__botones">
-        <button type="button" class="boton" data-compartir hidden>Compartir</button>
-        <button type="button" class="boton" data-descargar>Descargar imagen</button>
+        <button type="button" class="boton" data-compartir hidden>{a.compartir}</button>
+        <button type="button" class="boton" data-descargar>{a.descargar}</button>
       </p>
       <p class="arma__estado" role="status" data-arma-estado></p>
     </div>
@@ -366,10 +373,13 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
 <script>
   import { cargarLetras, dibujarCopla, type Paleta } from '../lib/afiche-copla';
   import { claveAsonante, claveConsonante, partirVerso, rimaEntre, silabasMetricas } from '../lib/rima';
+  import { idiomaEnNavegador, rutaDe, t } from '../i18n';
 
   const GUARDADO = 'arma-tu-copla';
 
   function iniciar(raiz: HTMLElement) {
+    const idioma = idiomaEnNavegador();
+    const txt = t(idioma).armaCopla;
     const uno = <T extends Element>(s: string) => raiz.querySelector<T>(s)!;
     const datos = JSON.parse(uno<HTMLScriptElement>('[data-arma-datos]').textContent ?? '{}') as {
       palabras: string[];
@@ -429,10 +439,10 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
         const tipo = rimaEntre(segundo, cuarto);
         rima.textContent =
           tipo === 'consonante'
-            ? `Riman perfecto: «${p2}» con «${p4}».`
+            ? txt.rimaPerfecta(p2, p4)
             : tipo === 'asonante'
-              ? `Riman por las vocales: «${p2}» con «${p4}». Así riman muchas coplas.`
-              : `Todavía no riman «${p2}» y «${p4}»: el final del cuarto verso tiene que sonar como el del segundo.`;
+              ? txt.rimaAsonante(p2, p4)
+              : txt.sinRima(p2, p4);
       } else {
         rima.textContent = '';
       }
@@ -448,7 +458,7 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
         : [];
       cajaSugerencias.hidden = lista.length === 0;
       if (lista.length) {
-        tituloSugerencias.textContent = `Riman con «${p2}»:`;
+        tituloSugerencias.textContent = txt.rimanCon(p2!);
         sugerencias.replaceChildren(
           ...lista.map((palabra) => {
             const b = document.createElement('button');
@@ -482,7 +492,8 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
     }
 
     /* ---------- Afiche ---------- */
-    const direccion = `${location.host}/coplas`;
+    const rutaCoplas = rutaDe('coplas', idioma);
+    const direccion = `${location.host}${rutaCoplas.replace(/\/$/, '')}`;
     let pendiente = 0;
     function pintar() {
       cancelAnimationFrame(pendiente);
@@ -492,7 +503,7 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
         dibujarCopla(lienzo, { versos: lineas, firma: firma.value, paleta: color(), ejemplo, direccion });
         lienzo.setAttribute(
           'aria-label',
-          ejemplo ? 'Vista previa del afiche, con una copla de ejemplo' : `Vista previa del afiche: ${lineas.join(' / ')}`,
+          ejemplo ? txt.lienzoEjemploAria : txt.lienzoPreviewAria(lineas.join(' / ')),
         );
       });
     }
@@ -540,7 +551,7 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
 
     const listaParaSalir = () => {
       if (completa()) return true;
-      estado.textContent = 'Faltan versos: una copla tiene cuatro.';
+      estado.textContent = txt.faltanVersos;
       versos.find((v) => !v.value.trim())?.focus();
       return false;
     };
@@ -553,7 +564,7 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
       enlace.download = 'copla-carnaval-cajamarca.png';
       enlace.click();
       setTimeout(() => URL.revokeObjectURL(url), 10_000);
-      estado.textContent = 'Listo: la imagen está en tus descargas.';
+      estado.textContent = txt.descargada;
     });
 
     // Compartir solo aparece donde el navegador puede mandar imágenes (casi siempre, en el teléfono)
@@ -565,14 +576,14 @@ const colores = Object.keys(PALETAS) as (keyof typeof PALETAS)[];
       try {
         await navigator.share({
           files: [await archivo()],
-          title: 'Mi copla del carnaval',
-          text: `Arma la tuya en ${location.origin}/coplas/`,
+          title: txt.shareTitle,
+          text: txt.shareText(`${location.origin}${rutaCoplas}`),
         });
-        estado.textContent = '¡Copla enviada!';
+        estado.textContent = txt.enviada;
       } catch (error) {
         // Cerrar el menú de compartir no es un error
         if (!(error instanceof DOMException && error.name === 'AbortError')) {
-          estado.textContent = 'No se pudo compartir; prueba con «Descargar imagen».';
+          estado.textContent = txt.errorCompartir;
           console.error(error);
         }
       }

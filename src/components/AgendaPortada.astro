@@ -1,7 +1,14 @@
 ---
 import { agendaPortada } from '../lib/agenda-portada';
+import { idiomaDesdeUrl, rutaDe, t, type Idioma } from '../i18n';
 
-const agenda = agendaPortada();
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).agendaPortada;
+const agenda = agendaPortada(new Date(), idioma);
 const tarjetas = [
   { id: 'siguiente', evento: agenda.siguiente },
   { id: 'ingreso', evento: agenda.ingreso },
@@ -10,8 +17,8 @@ const tarjetas = [
 
 <div class="agenda-portada" data-agenda-portada>
   <div class="bando" data-bando hidden={!agenda.mostrarBando}>
-    <strong>Gran Bando</strong>
-    <span>Fecha por confirmar</span>
+    <strong translate="no">{txt.granBando}</strong>
+    <span>{txt.fechaPorConfirmar}</span>
   </div>
   {tarjetas.map(({ id, evento }) => (
     <article class="evento" data-evento={id} hidden={!evento || (id === 'ingreso' && agenda.siguiente?.id === evento.id)}>
@@ -19,12 +26,12 @@ const tarjetas = [
       <p class="fecha" data-fecha>{evento?.fechaTexto}</p>
       <p class="estado" data-estado hidden={!evento?.estado}>{evento?.estado}</p>
       <div class="cuenta" role="timer" data-reloj hidden={Boolean(evento?.estado)}>
-        <span><strong data-unidad="dias">{evento?.dias}</strong> <span data-dias-label>{evento?.dias === 1 ? 'día' : 'días'}</span></span>
+        <span><strong data-unidad="dias">{evento?.dias}</strong> <span data-dias-label>{evento?.dias === 1 ? txt.dia : txt.dias}</span></span>
         <span data-exacta hidden={!evento?.usaHora}><strong data-unidad="horas">{evento?.horas}</strong> h</span>
         <span data-exacta hidden={!evento?.usaHora}><strong data-unidad="minutos">{evento?.minutos}</strong> min</span>
         <span data-exacta hidden={!evento?.usaHora}><strong data-unidad="segundos">{evento?.segundos}</strong> s</span>
       </div>
-      <a data-enlace href={evento?.enlace ?? '/2027/'}>{evento?.enlace.includes('?dia=') ? 'Ver recorrido' : 'Ver programa 2027'}</a>
+      <a data-enlace href={evento?.enlace ?? rutaDe('2027', idioma)}>{evento?.enlace.includes('?dia=') ? txt.verRecorrido : txt.verPrograma}</a>
     </article>
   ))}
 </div>
@@ -32,9 +39,12 @@ const tarjetas = [
 <script>
   import { agendaPortada } from '../lib/agenda-portada';
   import { ahoraEnNavegador } from '../lib/fechas';
+  import { idiomaEnNavegador, t } from '../i18n';
 
   const panel = document.querySelector('[data-agenda-portada]');
   if (panel) {
+    const idioma = idiomaEnNavegador();
+    const txt = t(idioma).agendaPortada;
     const bando = panel.querySelector<HTMLElement>('[data-bando]')!;
     const siguiente = panel.querySelector<HTMLElement>('[data-evento="siguiente"]')!;
     const ingreso = panel.querySelector<HTMLElement>('[data-evento="ingreso"]')!;
@@ -54,8 +64,8 @@ const tarjetas = [
       estado.hidden = !evento.estado;
       reloj.hidden = Boolean(evento.estado);
       enlace.href = evento.enlace;
-      enlace.textContent = evento.enlace.includes('?dia=') ? 'Ver recorrido' : 'Ver programa 2027';
-      tarjeta.querySelector('[data-dias-label]')!.textContent = evento.dias === 1 ? 'día' : 'días';
+      enlace.textContent = evento.enlace.includes('?dia=') ? txt.verRecorrido : txt.verPrograma;
+      tarjeta.querySelector('[data-dias-label]')!.textContent = evento.dias === 1 ? txt.dia : txt.dias;
       tarjeta.querySelectorAll<HTMLElement>('[data-exacta]').forEach((unidad) => {
         unidad.hidden = !evento.usaHora;
       });
@@ -75,7 +85,7 @@ const tarjetas = [
     }
 
     function actualizar() {
-      const agenda = agendaPortada(ahoraEnNavegador());
+      const agenda = agendaPortada(ahoraEnNavegador(), idioma);
       bando.hidden = !agenda.mostrarBando;
       mostrar(siguiente, agenda.siguiente);
       mostrar(ingreso, agenda.siguiente?.id === agenda.ingreso.id ? null : agenda.ingreso);

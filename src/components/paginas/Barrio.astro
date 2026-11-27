@@ -1,0 +1,207 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../CabezaPagina.astro';
+import AniversarioBarrio from '../AniversarioBarrio.astro';
+import ContadorProximamente from '../ContadorProximamente.astro';
+import DatosBarrio from '../DatosBarrio.astro';
+import ConsejosBarrio from '../ConsejosBarrio.astro';
+import { barrios, type Barrio } from '../../data/barrios';
+import { rutaBarrio, rutaDe, t, type Idioma } from '../../i18n';
+import { formatearAniversario } from '../../lib/barrios';
+import { enlaceWhatsapp } from '../../lib/whatsapp';
+
+interface Props {
+  barrio: Barrio;
+  anterior?: Barrio;
+  siguiente?: Barrio;
+  idioma?: Idioma;
+}
+
+const { barrio, anterior, siguiente, idioma = 'es' } = Astro.props;
+const p = t(idioma).barrios;
+const { nombre, sector, aniversario, lema, color } = barrio;
+const apodo = idioma === 'en' ? (barrio.en?.apodo ?? barrio.apodo) : barrio.apodo;
+const lemaGlosa = idioma === 'en' ? barrio.en?.lemaGlosa : undefined;
+const hechos = idioma === 'en' ? (barrio.en?.hechos ?? barrio.hechos) : barrio.hechos;
+
+const sobreAzul = color === 'azul';
+const relleno = color === 'amarillo' ? 'var(--fucsia)' : 'var(--blanco)';
+const rival = barrios.find((otro) => otro.id === barrio.rival);
+const fechaAniversario = aniversario ? formatearAniversario(aniversario, idioma) : undefined;
+const urlFicha = new URL(Astro.url.pathname, Astro.site).href;
+
+const descripcion = [
+  p.fichaDescBase(nombre),
+  sector ? p.fichaDescSector(sector) : undefined,
+  fechaAniversario ? p.fichaDescAniversario(fechaAniversario) : undefined,
+]
+  .filter(Boolean)
+  .join(', ');
+
+const mensajeCompartir = `${nombre}${apodo ? `, ${apodo.toLowerCase()}` : ''}: ${urlFicha}`;
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? `en-barrio-${barrio.id}` : `barrio-${barrio.id}`}
+  title={nombre}
+  description={`${descripcion}.`}
+>
+  <CabezaPagina
+    titulo={nombre}
+    fondo={`var(--${color})`}
+    relleno={relleno}
+    sombra="var(--tinta)"
+    tamano="clamp(2.6rem, 12vw, 9.5rem)"
+    tintaTexto={sobreAzul ? 'var(--blanco)' : 'var(--tinta)'}
+  >
+    {apodo && <p class="cabecera__apodo">{apodo}</p>}
+    {lema && <p class="cabecera__lema" lang={idioma === 'en' ? 'es' : undefined}>«{lema}»</p>}
+    {lemaGlosa && <p class="cabecera__glosa">{lemaGlosa}</p>}
+    {fechaAniversario && <p class="cabecera__aniversario">{p.fichaAniversario(fechaAniversario)}</p>}
+    <p slot="lado" class="cabecera__sector">
+      {sector ? p.fichaSector(sector) : p.fichaBarrioCarnaval}
+    </p>
+  </CabezaPagina>
+
+  {aniversario && <AniversarioBarrio nombre={nombre} aniversario={aniversario} idioma={idioma} />}
+
+  <ContadorProximamente barrio={barrio} rival={rival} idioma={idioma} />
+
+  <section class="bloque ficha" aria-labelledby="titulo-ficha">
+    <div class="envoltura ficha__cuerpo">
+      <h2 id="titulo-ficha" class="titulo-bloque">{p.loQueSabemos}</h2>
+
+      <DatosBarrio barrio={barrio} rival={rival} idioma={idioma} />
+
+      {
+        hechos.length > 0 && (
+          <ul class="ficha__hechos">
+            {hechos.map((hecho) => (
+              <li>{hecho}</li>
+            ))}
+          </ul>
+        )
+      }
+    </div>
+  </section>
+
+  <section class="bloque consejos fondo-tinta oscuro" aria-labelledby="titulo-consejos">
+    <div class="envoltura consejos__cuerpo">
+      <h2 id="titulo-consejos" class="titulo-bloque">{p.consejosTitulo}</h2>
+
+      <ConsejosBarrio barrio={barrio} idioma={idioma} />
+    </div>
+  </section>
+
+  <section class="bloque ficha__pie" aria-label={p.navBarriosAria}>
+    <div class="envoltura ficha__pie-cuerpo">
+      <p class="ficha__acciones">
+        <a class="boton" href={enlaceWhatsapp(mensajeCompartir, '')} target="_blank" rel="noopener">{p.mandarWhatsapp}</a>
+        <a class="boton boton--hueco" href={rutaDe('barrios', idioma)}>{p.todosBarrios}</a>
+      </p>
+
+      <nav class="ficha__vecinos" aria-label={p.otrosBarriosAria}>
+        {anterior ? <a href={rutaBarrio(anterior.id, idioma)} translate="no">← {anterior.nombre}</a> : <span />}
+        {siguiente ? <a href={rutaBarrio(siguiente.id, idioma)} translate="no">{siguiente.nombre} →</a> : <span />}
+      </nav>
+    </div>
+  </section>
+  <p class="envoltura enlace-fuentes"><a href={`${rutaDe('fuentes', idioma)}#barrios`}>{p.fuentesBarrios}</a></p>
+</Base>
+
+<style>
+  .cabecera__apodo {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2rem, 6vw, 3rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .cabecera__lema {
+    font-style: italic;
+    font-size: 1.25rem;
+  }
+
+  .cabecera__glosa {
+    font-size: 1rem;
+    opacity: 0.9;
+  }
+
+  .cabecera__aniversario {
+    font-weight: 700;
+  }
+
+  .cabecera__sector {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2.4rem, 8vw, 4rem);
+    line-height: 0.9;
+    text-transform: uppercase;
+  }
+
+  .ficha__cuerpo,
+  .consejos__cuerpo,
+  .ficha__pie-cuerpo {
+    display: grid;
+    gap: 2rem;
+    justify-items: start;
+  }
+
+  .ficha__cuerpo .titulo-bloque,
+  .consejos__cuerpo .titulo-bloque {
+    margin-bottom: 0;
+  }
+
+  .ficha__hechos {
+    list-style: none;
+    display: grid;
+    gap: 0.9rem;
+    max-width: 62ch;
+    font-size: 1.15rem;
+  }
+
+  .ficha__hechos li {
+    position: relative;
+    padding-left: 1.8rem;
+  }
+
+  .ficha__hechos li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.3em;
+    width: 1.1rem;
+    aspect-ratio: 1;
+    background: var(--fucsia);
+    clip-path: polygon(50% 0, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+
+  .ficha__pie {
+    padding-block: clamp(2rem, 5vw, 3rem) clamp(3rem, 7vw, 5rem);
+  }
+
+  .ficha__acciones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.8rem;
+  }
+
+  .ficha__vecinos {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    width: 100%;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.5rem;
+    text-transform: uppercase;
+  }
+
+  .ficha__vecinos a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 48px;
+  }
+</style>

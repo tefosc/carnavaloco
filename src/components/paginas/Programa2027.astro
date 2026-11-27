@@ -1,0 +1,475 @@
+---
+import Base from '../../layouts/Base.astro';
+import Chicha from '../Chicha.astro';
+import Sello from '../Sello.astro';
+import Pintura from '../Pintura.astro';
+import MapaRecorridos from '../MapaRecorridos.astro';
+import HoyEnElCarnaval from '../HoyEnElCarnaval.astro';
+import Instalar from '../Instalar.astro';
+import { ANIO, programaOficial, diasDe, previasDe, consejosDe } from '../../data/carnaval2027';
+import { LOCALE_INTL, rutaDe, rutaIcs, t, type Idioma } from '../../i18n';
+import { diaDeCarnaval, formatearFecha, momentoDelCarnaval } from '../../lib/fechas';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const txt = t(idioma);
+const p = txt.programa2027;
+const locale = LOCALE_INTL[idioma];
+
+const formatoDia = new Intl.DateTimeFormat(locale, { weekday: 'long', timeZone: 'UTC' });
+const formatoNumero = new Intl.DateTimeFormat(locale, { day: 'numeric', timeZone: 'UTC' });
+const formatoMes = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' });
+
+const programa = diasDe(idioma).map((d) => {
+  const fecha = diaDeCarnaval(ANIO, d.offset);
+  return { ...d, semana: formatoDia.format(fecha), numero: formatoNumero.format(fecha), mes: formatoMes.format(fecha) };
+});
+const previas = previasDe(idioma);
+const consejos = consejosDe(idioma);
+
+const inicio = diaDeCarnaval(ANIO, -4);
+const fin = diaDeCarnaval(ANIO, 0);
+// Valor del día del build; en el navegador lo corrige src/lib/hoy.ts
+const momento = momentoDelCarnaval(ANIO);
+const faltan = momento.fase === 'antes' ? momento.faltan : 0;
+
+// Google Calendar: un solo evento de día completo; la fecha final no se incluye.
+const aIcs = (d: Date) => d.toISOString().slice(0, 10).replaceAll('-', '');
+const googleCalendar = new URL('https://calendar.google.com/calendar/render');
+googleCalendar.searchParams.set('action', 'TEMPLATE');
+googleCalendar.searchParams.set('text', `Carnaval de Cajamarca ${ANIO}`);
+googleCalendar.searchParams.set('dates', `${aIcs(inicio)}/${aIcs(diaDeCarnaval(ANIO, 1))}`);
+googleCalendar.searchParams.set('location', p.calLocation);
+googleCalendar.searchParams.set('details', p.calDetails(new URL(rutaDe('2027', idioma), Astro.site).toString()));
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? 'en-2027' : '2027'}
+  title={p.title(ANIO)}
+  description={p.description(ANIO)}
+>
+  <section class="portada-2027 bloque fondo-tinta oscuro zigzag-abajo" data-pintura aria-labelledby="titulo-2027">
+    <div class="capa-pintura" data-capa-pintura aria-hidden="true"></div>
+    <div class="envoltura portada-2027__grid">
+      <div>
+        <p class="portada-2027__antes" data-se-viene>{p.seViene}</p>
+        <h1 id="titulo-2027" class="portada-2027__titulo">
+          <span class="visualmente-oculto" translate="no">Carnaval de Cajamarca</span>
+          <Chicha
+            texto={String(ANIO)}
+            class="portada-2027__anio"
+            relleno="var(--amarillo)"
+            relleno2="var(--naranja)"
+            sombra="var(--fucsia)"
+            contorno="var(--blanco)"
+          />
+        </h1>
+        <p class="portada-2027__fechas">
+          {p.fechasRango(formatoNumero.format(inicio), formatoNumero.format(fin), formatoMes.format(fin))}
+        </p>
+        <p class="entrada portada-2027__entrada">{p.entrada}</p>
+        <p class:list={['estado', { 'estado--oficial': programaOficial }]}>
+          {programaOficial ? p.estadoOficial : p.estadoPendiente}
+        </p>
+        <div class="agendar">
+          <a class="boton" href={googleCalendar.toString()} target="_blank" rel="noopener">{p.googleCalendar}</a>
+          <a class="boton boton--hueco" href={rutaIcs(ANIO, idioma)} download>{p.descargarCalendario}</a>
+        </div>
+      </div>
+      <Sello anillo={p.selloAnillo} color="var(--fucsia)" giro={10} class="portada-2027__sello">
+        <span class="cuenta__numero" data-cuenta-dias>{faltan}</span>
+        <span class="cuenta__texto" data-cuenta-texto data-uno={p.diaUno} data-varios={p.diaVarios}>{faltan === 1 ? p.diaUno : p.diaVarios}</span>
+      </Sello>
+    </div>
+    <Pintura />
+  </section>
+
+  <HoyEnElCarnaval enPrograma idioma={idioma} />
+
+  <section class="bloque programa" id="programa" aria-labelledby="titulo-programa">
+    <div class="envoltura">
+      <h2 id="titulo-programa" class="titulo-bloque">{p.diaPorDia}</h2>
+      <ol class="agenda">
+        {
+          programa.map((d) => (
+            <li class="agenda__dia" data-color={d.color} data-agenda-dia={d.id}>
+              <p class="agenda__fecha">
+                <span class="agenda__hoy">{txt.hoy.hoy}</span>
+                <span class="agenda__semana">{d.semana}</span>
+                <span class="agenda__numero">{d.numero}</span>
+                <span class="agenda__mes">{d.mes}</span>
+              </p>
+              <div class="agenda__que">
+                <h3>{d.titulo}</h3>
+                <p>{d.texto}</p>
+                <p class="agenda__antes">{d.antes}</p>
+              </div>
+              <dl class="agenda__datos">
+                <div>
+                  <dt>{txt.hoy.hora}</dt>
+                  <dd class:list={{ 'por-confirmar': !d.hora }}>{d.hora ?? txt.hoy.porConfirmar}</dd>
+                </div>
+                <div>
+                  <dt>{txt.hoy.donde}</dt>
+                  <dd>{d.lugar}</dd>
+                </div>
+              </dl>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="bloque fondo-blanco recorridos" id="recorridos" aria-labelledby="titulo-recorridos">
+    <div class="envoltura">
+      <h2 id="titulo-recorridos" class="titulo-bloque">{p.porDondePasa}</h2>
+      <MapaRecorridos idioma={idioma} />
+    </div>
+  </section>
+
+  <section class="bloque fondo-amarillo previas" aria-labelledby="titulo-previas">
+    <div class="envoltura">
+      <h2 id="titulo-previas" class="titulo-bloque">{p.antesDelSabado}</h2>
+      <ol class="previas__lista">
+        {
+          previas.map((previa) => (
+            <li>
+              <p class="previas__cuando">{previa.fecha ? formatearFecha(new Date(previa.fecha + 'T00:00:00Z'), idioma) : previa.cuando}</p>
+              <h3>{previa.titulo}</h3>
+              <p>{previa.texto}</p>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="bloque fondo-verde consejos zigzag-arriba" aria-labelledby="titulo-consejos">
+    <div class="envoltura">
+      <h2 id="titulo-consejos" class="titulo-bloque">{p.siVas}</h2>
+      <ul class="consejos__lista">
+        {
+          consejos.map((c) => (
+            <li>
+              <h3>{c.titulo}</h3>
+              <p>{c.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+      <Instalar idioma={idioma} />
+      <div class="consejos__mas">
+        <a class="boton" href={rutaDe('guia', idioma)}>{p.guiaVisitantes}</a>
+        <a class="boton boton--hueco" href={rutaDe('la-fiesta', idioma)}>{p.verPersonajesCostumbres}</a>
+        <a class="boton boton--hueco" href={rutaDe('ediciones', idioma)}>{p.verAnteriores}</a>
+      </div>
+    </div>
+  </section>
+  <p class="envoltura enlace-fuentes"><a href={`${rutaDe('fuentes', idioma)}#programa`}>{p.fuentesPrograma}</a></p>
+</Base>
+
+<script>
+  // Cuenta regresiva o, del sábado al miércoles, lo que toca hoy (también en la agenda)
+  import { aplicarHoy } from '../../lib/hoy';
+
+  aplicarHoy();
+</script>
+
+<style>
+  /* ---------- Portada 2027 ---------- */
+  .portada-2027 {
+    padding-top: clamp(5rem, 9vw, 6.5rem);
+    cursor: crosshair;
+  }
+
+  .portada-2027__grid {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem 3rem;
+    align-items: center;
+  }
+
+  .portada-2027__antes {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    text-transform: uppercase;
+    color: var(--fucsia);
+  }
+
+  .portada-2027 :global(.portada-2027__anio) {
+    font-size: clamp(7rem, 26vw, 19rem);
+  }
+
+  .portada-2027__fechas {
+    margin-top: 1.4rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(2rem, 4.4vw, 3.6rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--amarillo);
+  }
+
+  .portada-2027__entrada {
+    margin-top: 1.2rem;
+  }
+
+  .estado {
+    display: inline-block;
+    margin-top: 1.6rem;
+    padding: 0.5rem 0.9rem;
+    border: 3px dashed var(--amarillo);
+    font-weight: 700;
+    max-width: 52ch;
+  }
+
+  .agendar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.9rem;
+    margin-top: 1.6rem;
+  }
+
+  .estado--oficial {
+    border-style: solid;
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+
+  .cuenta__numero {
+    font-size: clamp(2.8rem, 5vw, 4rem);
+    font-weight: 900;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cuenta__texto {
+    font-size: 1.1rem;
+  }
+
+  /* ---------- Agenda ---------- */
+  .agenda {
+    list-style: none;
+  }
+
+  .agenda__dia {
+    display: grid;
+    grid-template-columns: 11rem minmax(0, 1.3fr) minmax(0, 1fr);
+    gap: 1.2rem 2.5rem;
+    padding-block: 2rem;
+    border-top: 6px solid var(--tinta);
+  }
+
+  .agenda__dia:last-child {
+    border-bottom: 6px solid var(--tinta);
+  }
+
+  /* Del sábado al miércoles (src/lib/hoy.ts): el día de hoy, resaltado; los que pasaron, de fondo */
+  .agenda__hoy {
+    display: none;
+  }
+
+  .agenda__dia--hoy {
+    padding-inline: 1.2rem;
+    background: color-mix(in srgb, var(--c) 22%, var(--blanco));
+    border-top-color: var(--c);
+    box-shadow: inset 0 6px 0 var(--tinta);
+  }
+
+  .agenda__dia--hoy .agenda__hoy {
+    display: block;
+    margin-bottom: 0.4rem;
+    padding: 0.2rem 0.6rem 0.1rem;
+    background: var(--tinta);
+    color: var(--c);
+    font-size: 1.5rem;
+  }
+
+  .agenda__dia--paso {
+    opacity: 0.45;
+  }
+
+  .agenda__fecha {
+    display: grid;
+    align-content: start;
+    justify-items: start;
+    font-family: var(--display);
+    font-weight: 900;
+    line-height: 0.85;
+    text-transform: uppercase;
+  }
+
+  .agenda__semana {
+    padding: 0.2rem 0.5rem 0.1rem;
+    background: var(--c);
+    font-size: 1.3rem;
+  }
+
+  .agenda__numero {
+    font-size: clamp(5rem, 9vw, 7.5rem);
+    color: var(--c);
+    -webkit-text-stroke: 0.035em var(--tinta);
+    paint-order: stroke fill;
+  }
+
+  .agenda__mes {
+    font-size: 1.5rem;
+  }
+
+  .agenda__que {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+
+  .agenda__que h3 {
+    font-size: clamp(2rem, 3.4vw, 2.8rem);
+    text-transform: uppercase;
+  }
+
+  .agenda__antes {
+    font-size: 0.98rem;
+    padding-left: 0.8rem;
+    border-left: 4px solid var(--c);
+  }
+
+  .agenda__datos {
+    display: grid;
+    gap: 1rem;
+    align-content: start;
+    margin: 0;
+  }
+
+  .agenda__datos dt {
+    font-weight: 700;
+    font-size: 0.9rem;
+  }
+
+  .agenda__datos dd {
+    margin: 0.15rem 0 0;
+    font-weight: 600;
+  }
+
+  .agenda__datos div:first-child dd {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.9rem;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .por-confirmar {
+    justify-self: start;
+    display: inline-block;
+    padding: 0.25rem 0.5rem 0.15rem;
+    background: repeating-linear-gradient(-45deg, var(--amarillo) 0 10px, var(--blanco) 10px 20px);
+    border: 3px solid var(--tinta);
+  }
+
+  /* ---------- Previas ---------- */
+  .previas__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem 2.5rem;
+  }
+
+  .previas__lista li {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+    padding-top: 1rem;
+    border-top: 6px solid var(--tinta);
+  }
+
+  .previas__cuando {
+    justify-self: start;
+    padding: 0.15rem 0.55rem;
+    background: var(--tinta);
+    color: var(--amarillo);
+    font-weight: 700;
+    font-size: 0.95rem;
+  }
+
+  .previas__lista h3 {
+    font-size: clamp(1.8rem, 2.8vw, 2.3rem);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Consejos ---------- */
+  .consejos__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem;
+  }
+
+  .consejos__lista li {
+    display: grid;
+    gap: 0.5rem;
+    align-content: start;
+  }
+
+  .consejos__lista h3 {
+    justify-self: start;
+    padding: 0.25rem 0.55rem 0.15rem;
+    background: var(--tinta);
+    color: var(--blanco);
+    font-size: clamp(1.6rem, 2.6vw, 2.1rem);
+    text-transform: uppercase;
+  }
+
+  .consejos__mas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 3.5rem;
+  }
+
+  @media (max-width: 900px) {
+    .portada-2027__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .agenda__dia {
+      grid-template-columns: 7rem minmax(0, 1fr);
+    }
+
+    .agenda__datos {
+      grid-column: 2;
+    }
+
+    .previas__lista,
+    .consejos__lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .agenda__dia {
+      grid-template-columns: 1fr;
+    }
+
+    .agenda__fecha {
+      display: flex;
+      align-items: baseline;
+      gap: 0.6rem;
+    }
+
+    .agenda__datos {
+      grid-column: auto;
+    }
+
+    .previas__lista,
+    .consejos__lista {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

@@ -1,6 +1,7 @@
 ---
 import type { Barrio } from '../data/barrios';
 import type { NombreIcono } from '../data/iconos';
+import { idiomaDesdeUrl, rutaBarrio, t, type Idioma } from '../i18n';
 import { formatearAniversario } from '../lib/barrios';
 import { enlaceWhatsapp } from '../lib/whatsapp';
 import Icono from './Icono.astro';
@@ -8,57 +9,66 @@ import Icono from './Icono.astro';
 interface Props {
   barrio: Barrio;
   rival?: Barrio;
+  idioma?: Idioma;
 }
 
 interface Dato {
   icono: NombreIcono;
   etiqueta: string;
   valor?: string;
+  glosa?: string;
+  langValor?: string;
   enlace?: string;
   largo?: boolean;
   mensaje: string;
 }
 
-const { barrio, rival } = Astro.props;
-const { nombre, sector, aniversario, apodo, lema } = barrio;
+const { barrio, rival, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const d = t(idioma).barrios.datos;
+const { nombre, sector, aniversario, lema } = barrio;
+const apodo = idioma === 'en' ? (barrio.en?.apodo ?? barrio.apodo) : barrio.apodo;
+const lemaGlosa = idioma === 'en' ? barrio.en?.lemaGlosa : undefined;
 
 const datos: Dato[] = [
   {
     icono: 'pin',
-    etiqueta: 'Sector',
-    valor: sector ? `N.° ${sector} de 24` : 'No figura entre los 24 sectores',
+    etiqueta: d.sector,
+    valor: sector ? d.sectorDe24(sector) : d.sinSector,
     mensaje: '',
   },
   {
     icono: 'calendario',
-    etiqueta: 'Aniversario',
-    valor: aniversario ? formatearAniversario(aniversario) : undefined,
-    mensaje: `Soy de ${nombre} y quiero contar cuándo es el aniversario del barrio: `,
+    etiqueta: d.aniversario,
+    valor: aniversario ? formatearAniversario(aniversario, idioma) : undefined,
+    mensaje: d.waAniversario(nombre),
   },
   {
     icono: 'burbuja',
-    etiqueta: 'Cómo le dicen',
+    etiqueta: d.apodo,
     valor: apodo,
-    mensaje: `Soy de ${nombre} y quiero contar cómo le dicen a mi barrio: `,
+    mensaje: d.waApodo(nombre),
   },
   {
     icono: 'nota',
-    etiqueta: 'Su lema',
+    etiqueta: d.lema,
     valor: lema ? `«${lema}»` : undefined,
+    glosa: lemaGlosa,
+    langValor: idioma === 'en' ? 'es' : undefined,
     largo: true,
-    mensaje: `Soy de ${nombre} y quiero compartir el lema o la copla de mi barrio: `,
+    mensaje: d.waLema(nombre),
   },
   {
     icono: 'rayo',
-    etiqueta: 'Su rival de siempre',
+    etiqueta: d.rival,
     valor: rival?.nombre,
-    enlace: rival ? `/barrios/${rival.id}/` : undefined,
-    mensaje: `Soy de ${nombre} y quiero contar con quién tiene rivalidad mi barrio: `,
+    enlace: rival ? rutaBarrio(rival.id, idioma) : undefined,
+    mensaje: d.waRival(nombre),
   },
   {
     icono: 'bandera',
-    etiqueta: 'Patrullas y comparsas',
-    mensaje: `Soy de ${nombre} y quiero contar qué patrullas y comparsas salen de mi barrio: `,
+    etiqueta: d.patrullas,
+    mensaje: d.waPatrullas(nombre),
   },
 ];
 ---
@@ -73,16 +83,21 @@ const datos: Dato[] = [
         <div class="dato__texto">
           <p class="dato__etiqueta">{dato.etiqueta}</p>
           {dato.valor && dato.enlace && (
-            <a class="dato__valor dato__enlace" href={dato.enlace}>
+            <a class="dato__valor dato__enlace" href={dato.enlace} translate="no">
               {dato.valor}
             </a>
           )}
-          {dato.valor && !dato.enlace && <p class:list={['dato__valor', { 'dato__valor--largo': dato.largo }]}>{dato.valor}</p>}
+          {dato.valor && !dato.enlace && (
+            <p class:list={['dato__valor', { 'dato__valor--largo': dato.largo }]} lang={dato.langValor}>
+              {dato.valor}
+            </p>
+          )}
+          {dato.glosa && <p class="dato__glosa">{dato.glosa}</p>}
           {!dato.valor && (
             <>
-              <p class="dato__valor">Por confirmar</p>
+              <p class="dato__valor">{d.porConfirmar}</p>
               <a class="dato__cuentanos" href={enlaceWhatsapp(dato.mensaje)} target="_blank" rel="noopener">
-                Cuéntanos
+                {d.cuentanos}
               </a>
             </>
           )}
@@ -171,6 +186,11 @@ const datos: Dato[] = [
     font-weight: 600;
     font-size: 1.05rem;
     line-height: 1.3;
+  }
+
+  .dato__glosa {
+    font-size: 0.92rem;
+    opacity: 0.85;
   }
 
   .dato__enlace {

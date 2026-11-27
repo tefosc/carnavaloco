@@ -86,12 +86,13 @@ export function ahoraEnNavegador(): Date {
   return m ? new Date(Date.UTC(+m[1], +m[2] - 1, +m[3], 12) + OFFSET_PERU_MS) : new Date();
 }
 
-const formato = new Intl.DateTimeFormat('es-PE', {
-  day: 'numeric',
-  month: 'long',
-  timeZone: 'UTC',
-});
+import { LOCALE_INTL, type Idioma } from '../i18n';
 
-export function formatearFecha(fecha: Date): string {
-  return formato.format(fecha);
+const formatos = {
+  es: new Intl.DateTimeFormat(LOCALE_INTL.es, { day: 'numeric', month: 'long', timeZone: 'UTC' }),
+  en: new Intl.DateTimeFormat(LOCALE_INTL.en, { day: 'numeric', month: 'long', timeZone: 'UTC' }),
+};
+
+export function formatearFecha(fecha: Date, idioma: Idioma = 'es'): string {
+  return formatos[idioma].format(fecha);
 }

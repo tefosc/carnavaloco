@@ -1,0 +1,367 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../CabezaPagina.astro';
+import { rasgosHablaDe, diloAsiDe } from '../../data/carnaval';
+import { t, type Idioma } from '../../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const p = t(idioma).habla;
+
+const sinSignos = (s: string) => s.replace(/^[¡¿]/, '');
+const glosario = (await getCollection('glosario'))
+  .map((e) => e.data)
+  .sort((a, b) => sinSignos(a.palabra).localeCompare(sinSignos(b.palabra), 'es'));
+
+const rasgosHabla = rasgosHablaDe(idioma);
+const diloAsi = diloAsiDe(idioma);
+const colores = ['fucsia', 'amarillo', 'turquesa', 'naranja', 'verde', 'fucsia'];
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? 'en-habla' : 'habla'}
+  title={p.title}
+  description={p.description}
+>
+  <CabezaPagina titulo={p.cabezaTitulo} fondo="var(--verde)" relleno="var(--amarillo)" sombra="var(--tinta)">
+    <p>{p.intro}</p>
+  </CabezaPagina>
+
+  <section class="bloque rasgos" aria-labelledby="titulo-rasgos">
+    <div class="envoltura">
+      <h2 id="titulo-rasgos" class="titulo-bloque">{p.elDejo}</h2>
+      <ul class="rasgos__lista">
+        {
+          rasgosHabla.map((r, i) => (
+            <li data-color={colores[i % colores.length]}>
+              <h3>{r.titulo}</h3>
+              <p>{r.texto}</p>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  <section class="bloque fondo-fucsia dilo" aria-labelledby="titulo-dilo">
+    <div class="envoltura">
+      <h2 id="titulo-dilo" class="titulo-bloque">{p.diloTitulo}</h2>
+      <table class="dilo__tabla">
+        <thead>
+          <tr>
+            <th scope="col">{p.colNeutro}</th>
+            <th scope="col">{p.colCajamarca}</th>
+          </tr>
+        </thead>
+        <tbody>
+          {
+            diloAsi.map((d) => (
+              <tr>
+                <td>{d.neutro}</td>
+                <td lang="es" translate="no">{d.cajamarquino}</td>
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section class="bloque glosario" data-glosario aria-labelledby="titulo-glosario">
+    <div class="envoltura">
+      <div class="glosario__cabeza">
+        <h2 id="titulo-glosario" class="titulo-bloque">{p.glosarioTitulo}</h2>
+        <label class="buscador">
+          <span>{p.buscarLabel}</span>
+          <input
+            type="search"
+            name="q"
+            placeholder="shulca, yunza, poto…"
+            data-glosario-buscar
+            autocomplete="off"
+            spellcheck="false"
+          />
+        </label>
+      </div>
+      <div class="filtros" role="group" aria-label={p.filtrarAria}>
+        {
+          p.categorias.map((c, i) => (
+            <button type="button" class="filtro" aria-pressed={i === 0 ? 'true' : 'false'} data-categoria={c.valor}>
+              {c.texto}
+            </button>
+          ))
+        }
+      </div>
+      <p class="visualmente-oculto" aria-live="polite" data-glosario-cuenta></p>
+      <dl class="entradas">
+        {
+          glosario.map((e) => {
+            const significado = idioma === 'en' ? (e.en?.significado ?? e.significado) : e.significado;
+            const ejemplo = idioma === 'en' ? (e.en?.ejemplo ?? e.ejemplo) : e.ejemplo;
+            const origen = idioma === 'en' ? (e.en?.origen ?? e.origen) : e.origen;
+            return (
+              <div class="entrada-glosario" data-cat={e.categoria} data-texto={`${e.palabra} ${significado} ${ejemplo ?? ''}`}>
+                <dt lang="es" translate="no">{e.palabra}</dt>
+                <dd>
+                  <p>{significado}</p>
+                  {ejemplo && <p class="entrada-glosario__ejemplo">{idioma === 'en' ? ejemplo : `«${ejemplo}»`}</p>}
+                  {origen && <p class="entrada-glosario__origen">{origen}</p>}
+                </dd>
+              </div>
+            );
+          })
+        }
+      </dl>
+      <p class="sin-resultados" data-sin-resultados hidden>{p.sinResultados}</p>
+    </div>
+  </section>
+</Base>
+
+<script>
+  import { idiomaEnNavegador, t } from '../../i18n';
+
+  const txt = t(idiomaEnNavegador()).habla;
+  const raiz = document.querySelector<HTMLElement>('[data-glosario]');
+  const buscador = raiz?.querySelector<HTMLInputElement>('[data-glosario-buscar]');
+  const botones = raiz?.querySelectorAll<HTMLButtonElement>('[data-categoria]') ?? [];
+  const entradas = raiz?.querySelectorAll<HTMLElement>('[data-cat]') ?? [];
+  const vacio = raiz?.querySelector<HTMLElement>('[data-sin-resultados]');
+  const cuenta = raiz?.querySelector<HTMLElement>('[data-glosario-cuenta]');
+  let categoria = 'todas';
+
+  const normalizar = (s: string) =>
+    s
+      .toLowerCase()
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '');
+
+  function filtrar() {
+    const q = normalizar(buscador?.value.trim() ?? '');
+    let visibles = 0;
+    entradas.forEach((e) => {
+      const ve = (categoria === 'todas' || e.dataset.cat === categoria) && (!q || normalizar(e.dataset.texto ?? '').includes(q));
+      e.hidden = !ve;
+      if (ve) visibles++;
+    });
+    if (vacio) vacio.hidden = visibles > 0;
+    if (cuenta) cuenta.textContent = `${visibles} ${visibles === 1 ? txt.palabraUno : txt.palabraVarios}`;
+  }
+
+  /** La búsqueda queda en la URL (?q=…&cat=…) para poder compartirla. */
+  function guardarEnUrl() {
+    const url = new URL(location.href);
+    const q = buscador?.value.trim() ?? '';
+    q ? url.searchParams.set('q', q) : url.searchParams.delete('q');
+    categoria !== 'todas' ? url.searchParams.set('cat', categoria) : url.searchParams.delete('cat');
+    history.replaceState(null, '', url);
+  }
+
+  function elegirCategoria(valor: string) {
+    categoria = valor;
+    botones.forEach((x) => x.setAttribute('aria-pressed', String(x.dataset.categoria === valor)));
+  }
+
+  buscador?.addEventListener('input', () => {
+    filtrar();
+    guardarEnUrl();
+  });
+  botones.forEach((b) =>
+    b.addEventListener('click', () => {
+      elegirCategoria(b.dataset.categoria ?? 'todas');
+      filtrar();
+      guardarEnUrl();
+    }),
+  );
+
+  const inicial = new URLSearchParams(location.search);
+  const catInicial = inicial.get('cat');
+  if (catInicial && [...botones].some((b) => b.dataset.categoria === catInicial)) elegirCategoria(catInicial);
+  if (buscador && inicial.get('q')) buscador.value = inicial.get('q') ?? '';
+  if (inicial.has('q') || inicial.has('cat')) filtrar();
+</script>
+
+<style>
+  /* ---------- Rasgos ---------- */
+  .rasgos__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 2.5rem 2rem;
+  }
+
+  .rasgos__lista li {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+  }
+
+  .rasgos__lista h3 {
+    justify-self: start;
+    padding: 0.3rem 0.6rem 0.2rem;
+    background: var(--c);
+    font-size: clamp(1.7rem, 2.6vw, 2.2rem);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Dilo así ---------- */
+  .dilo__tabla {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .dilo__tabla th {
+    text-align: left;
+    padding-bottom: 0.8rem;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+
+  .dilo__tabla td {
+    padding-block: 0.6rem;
+    border-top: 3px solid var(--tinta);
+    vertical-align: baseline;
+  }
+
+  .dilo__tabla td:first-child {
+    width: 40%;
+    font-weight: 600;
+    padding-right: 1.5rem;
+  }
+
+  .dilo__tabla td:last-child {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.8rem, 4vw, 3rem);
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--blanco);
+    -webkit-text-stroke: 0.05em var(--tinta);
+    paint-order: stroke fill;
+  }
+
+  /* ---------- Glosario ---------- */
+  .glosario__cabeza {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: end;
+    gap: 1rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .glosario__cabeza .titulo-bloque {
+    margin-bottom: 0;
+  }
+
+  .buscador {
+    display: grid;
+    gap: 0.4rem;
+    font-weight: 700;
+  }
+
+  .buscador input {
+    width: min(100%, 22rem);
+    min-height: 52px;
+    padding: 0.6rem 1rem;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    font-size: 1.15rem;
+  }
+
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .filtro {
+    min-height: 44px;
+    padding: 0.4rem 1rem;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .filtro:hover {
+    background: var(--amarillo);
+  }
+
+  .filtro[aria-pressed='true'] {
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  .entradas {
+    columns: 3 18rem;
+    column-gap: 2.5rem;
+  }
+
+  .entrada-glosario {
+    break-inside: avoid;
+    margin-bottom: 1.8rem;
+  }
+
+  .entrada-glosario[hidden] {
+    display: none;
+  }
+
+  .entrada-glosario dt {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2.1rem;
+    line-height: 1;
+    text-transform: uppercase;
+    color: var(--fucsia);
+    -webkit-text-stroke: 0.035em var(--tinta);
+    paint-order: stroke fill;
+  }
+
+  .entrada-glosario dd {
+    margin: 0.4rem 0 0;
+    display: grid;
+    gap: 0.35rem;
+  }
+
+  .entrada-glosario__ejemplo {
+    font-style: italic;
+  }
+
+  .entrada-glosario__origen {
+    justify-self: start;
+    padding: 0.05rem 0.45rem;
+    background: var(--amarillo);
+    font-size: 0.88rem;
+    font-weight: 700;
+  }
+
+  .sin-resultados {
+    font-weight: 700;
+    font-size: 1.2rem;
+  }
+
+  @media (max-width: 900px) {
+    .rasgos__lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 560px) {
+    .rasgos__lista {
+      grid-template-columns: 1fr;
+    }
+
+    .dilo__tabla td:first-child {
+      width: 45%;
+    }
+  }
+</style>

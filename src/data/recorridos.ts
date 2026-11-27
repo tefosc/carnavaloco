@@ -7,6 +7,7 @@
  * poder dibujarlo desde donde sale.
  */
 import mapa from './mapa.json';
+import type { Idioma } from '../i18n';
 
 export type Punto = [number, number];
 
@@ -148,6 +149,12 @@ export interface DiaMapa {
   dia: string;
   titulo: string;
   texto: string;
+  en: {
+    corto: string;
+    dia: string;
+    titulo: string;
+    texto: string;
+  };
   /** Variable CSS del color, para el SVG. */
   color: string;
   /** El mismo color en hexadecimal, para MapLibre. */
@@ -167,6 +174,12 @@ export const diasMapa: DiaMapa[] = [
     dia: 'Sábado 6',
     titulo: 'Ingreso del Ño Carnavalón',
     texto: 'Entra por la avenida Independencia, desde Santa Elena, y sigue hacia el centro.',
+    en: {
+      corto: 'Sat',
+      dia: 'Sat Feb 6',
+      titulo: 'Arrival of Ño Carnavalón',
+      texto: 'Enters along Avenida Independencia from Santa Elena and heads toward downtown.',
+    },
     color: 'var(--fucsia)',
     hex: '#ff2a92',
     // Sube por la Independencia desde el sur (Santa Elena) y llega a la plaza
@@ -185,6 +198,13 @@ export const diasMapa: DiaMapa[] = [
     titulo: 'Patrullas y comparsas',
     texto:
       'En 2025 los grupos fueron del estadio Héroes de San Ramón al Arco del Triunfo; el jurado los espera en la Plaza de Armas.',
+    en: {
+      corto: 'Sun',
+      dia: 'Sun Feb 7',
+      titulo: 'Troupes & comparsas',
+      texto:
+        'In 2025 groups marched from Héroes de San Ramón Stadium to the Arco del Triunfo; the judges wait at the Plaza de Armas.',
+    },
     color: 'var(--verde)',
     hex: '#00b35c',
     tramos: [aprox(`M${p(L.estadio)} Q372 330 ${p(L.plaza)} Q285 300 ${p(L.arco)}`)],
@@ -196,6 +216,12 @@ export const diasMapa: DiaMapa[] = [
     dia: 'Lunes 8',
     titulo: 'Gran Corso',
     texto: 'Los carros alegóricos recorren la Vía de Evitamiento.',
+    en: {
+      corto: 'Mon',
+      dia: 'Mon Feb 8',
+      titulo: 'Gran Corso',
+      texto: 'Decorated floats parade down Vía de Evitamiento.',
+    },
     color: 'var(--amarillo)',
     hex: '#ffe600',
     // Se dibuja de norte a sur, del extremo noroeste de la Vía de Evitamiento.
@@ -209,6 +235,12 @@ export const diasMapa: DiaMapa[] = [
     dia: 'Martes 9',
     titulo: 'Velorio',
     texto: 'Las viudas llevan el ataúd hacia Santa Apolonia.',
+    en: {
+      corto: 'Tue',
+      dia: 'Tue Feb 9',
+      titulo: 'The Wake',
+      texto: 'The “widows” carry the coffin up toward Santa Apolonia.',
+    },
     color: 'var(--turquesa)',
     hex: '#00b8c8',
     tramos: [aprox(`M${p(L.plaza)} Q286 330 ${p(L.santaApolonia)}`)],
@@ -220,6 +252,12 @@ export const diasMapa: DiaMapa[] = [
     dia: 'Miércoles 10',
     titulo: 'Entierro',
     texto: 'El último paseo va por la carretera hasta Baños del Inca, donde se lee el testamento.',
+    en: {
+      corto: 'Wed',
+      dia: 'Wed Feb 10',
+      titulo: 'The Burial',
+      texto: 'The final procession heads down the highway to Baños del Inca, where the will is read aloud.',
+    },
     color: 'var(--naranja)',
     hex: '#ff6a00',
     // Sale del centro y toma la carretera hasta Baños del Inca
@@ -231,20 +269,28 @@ export const diasMapa: DiaMapa[] = [
   },
 ];
 
+export function diasMapaDe(idioma: Idioma = 'es') {
+  return diasMapa.map((d) => (idioma === 'en' ? { ...d, ...d.en } : d));
+}
+
 /** Trazo SVG de un tramo. */
 export const trazoDe = (t: Tramo) =>
   t.puntos.map((q, i) => `${i ? 'L' : 'M'}${+q[0].toFixed(1)} ${+q[1].toFixed(1)}`).join(' ');
 
 export const etiquetasMapa = [
-  { texto: 'Plaza de Armas', punto: L.plaza, dx: 20, dy: -8, ancla: 'start' },
-  { texto: 'Arco del Triunfo', punto: L.arco, dx: -12, dy: -8, ancla: 'end' },
-  { texto: 'Santa Apolonia', punto: L.santaApolonia, dx: -22, dy: 12, ancla: 'end' },
-  { texto: 'Estadio', punto: L.estadio, dx: 12, dy: -10, ancla: 'start' },
-  { texto: 'UNC', punto: L.unc, dx: 12, dy: 6, ancla: 'start' },
-  { texto: 'Baños del Inca', punto: L.banos, dx: -24, dy: -22, ancla: 'end' },
-  { texto: 'Av. Independencia', punto: [404, 560], dx: 0, dy: 0, ancla: 'start' },
-  { texto: 'Carretera a Baños del Inca', punto: [760, 412], dx: 0, dy: 0, ancla: 'middle' },
+  { texto: 'Plaza de Armas', textoEn: 'Plaza de Armas', punto: L.plaza, dx: 20, dy: -8, ancla: 'start' },
+  { texto: 'Arco del Triunfo', textoEn: 'Arco del Triunfo', punto: L.arco, dx: -12, dy: -8, ancla: 'end' },
+  { texto: 'Santa Apolonia', textoEn: 'Santa Apolonia', punto: L.santaApolonia, dx: -22, dy: 12, ancla: 'end' },
+  { texto: 'Estadio', textoEn: 'Stadium', punto: L.estadio, dx: 12, dy: -10, ancla: 'start' },
+  { texto: 'UNC', textoEn: 'UNC', punto: L.unc, dx: 12, dy: 6, ancla: 'start' },
+  { texto: 'Baños del Inca', textoEn: 'Baños del Inca', punto: L.banos, dx: -24, dy: -22, ancla: 'end' },
+  { texto: 'Av. Independencia', textoEn: 'Av. Independencia', punto: [404, 560], dx: 0, dy: 0, ancla: 'start' },
+  { texto: 'Carretera a Baños del Inca', textoEn: 'Road to Baños del Inca', punto: [760, 412], dx: 0, dy: 0, ancla: 'middle' },
 ] as const;
+
+export function etiquetasMapaDe(idioma: Idioma = 'es') {
+  return etiquetasMapa.map((e) => ({ ...e, texto: idioma === 'en' ? e.textoEn : e.texto }));
+}
 
 /* ---------- De SVG a longitud y latitud ---------- */
 
@@ -256,20 +302,22 @@ export const aLonLat = ([x, y]: number[]): Punto => [
 ];
 
 /** GeoJSON de las rutas (un tramo por línea, en orden) y los sellos, para el mapa 3D. */
-export function geojsonRecorridos() {
-  const rutas = diasMapa.flatMap((d) =>
+export function geojsonRecorridos(idioma: Idioma = 'es') {
+  const dias = diasMapaDe(idioma);
+  const etiquetas = etiquetasMapaDe(idioma);
+  const rutas = dias.flatMap((d) =>
     d.tramos.map((t, orden) => ({
       type: 'Feature' as const,
       properties: { dia: d.id, tipo: t.tipo, color: d.hex, orden },
       geometry: { type: 'LineString' as const, coordinates: t.puntos.map(aLonLat) },
     })),
   );
-  const sellos = diasMapa.map((d) => ({
+  const sellos = dias.map((d) => ({
     type: 'Feature' as const,
     properties: { dia: d.id, corto: d.corto, color: d.hex, titulo: `${d.dia}: ${d.titulo}` },
     geometry: { type: 'Point' as const, coordinates: aLonLat(d.marca) },
   }));
-  const lugares = etiquetasMapa
+  const lugares = etiquetas
     .filter((e) => e.dx !== 0 || e.dy !== 0)
     .map((e) => ({
       type: 'Feature' as const,

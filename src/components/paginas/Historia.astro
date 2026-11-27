@@ -1,0 +1,137 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../CabezaPagina.astro';
+import Afiche from '../Afiche.astro';
+import Sello from '../Sello.astro';
+import { historiaDe } from '../../data/carnaval';
+import { fotos } from '../../data/fotos';
+import { rutaDe, t, type Idioma } from '../../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const p = t(idioma).historia;
+const historia = historiaDe(idioma);
+const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--turquesa)', 'var(--naranja)', 'var(--verde)'];
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? 'en-historia' : 'historia'}
+  title={p.title}
+  description={p.description}
+>
+  <CabezaPagina titulo={p.title} fondo="var(--tinta)" tintaTexto="var(--blanco)" relleno="var(--fucsia)" sombra="var(--amarillo)">
+    <p>{p.intro}</p>
+    <Sello slot="lado" anillo={p.selloAnillo} color="var(--fucsia)" giro={-10}>
+      <span class="sello-patrimonio__anio">2017</span>
+      <span class="sello-patrimonio__texto">{p.selloTexto}</span>
+    </Sello>
+  </CabezaPagina>
+
+  <section class="bloque linea" aria-labelledby="titulo-linea">
+    <div class="envoltura">
+      <h2 id="titulo-linea" class="visualmente-oculto">{p.lineaSr}</h2>
+      <ol class="hitos">
+        {
+          historia.map((h, i) => (
+            <li class="hito" style={`--tono:${colores[i % colores.length]}`}>
+              <p class:list={['hito__cuando', { 'hito__cuando--largo': h.cuando.length > 12 }]}>{h.cuando}</p>
+              <div class="hito__cuerpo">
+                <h3>{h.titulo}</h3>
+                <p>{h.texto}</p>
+              </div>
+            </li>
+          ))
+        }
+      </ol>
+    </div>
+  </section>
+
+  <section class="bloque fondo-naranja patio zigzag-arriba" aria-labelledby="titulo-patio">
+    <div class="envoltura patio__grid">
+      <Afiche idioma={idioma} foto={fotos.patioMunicipal} giro={-2} cinta sizes="(min-width: 900px) 50vw, 92vw" />
+      <div>
+        <h2 id="titulo-patio" class="titulo-bloque">{p.patioTitulo}</h2>
+        <p class="lectura">{p.patioTexto}</p>
+      </div>
+    </div>
+  </section>
+
+  <p class="envoltura enlace-fuentes" id="titulo-fuentes"><a href={`${rutaDe('fuentes', idioma)}#historia`}>{p.fuentesHistoria}</a></p>
+</Base>
+
+<style>
+  .sello-patrimonio__anio {
+    font-size: clamp(2.4rem, 4vw, 3.2rem);
+    font-weight: 900;
+  }
+
+  .sello-patrimonio__texto {
+    font-size: 0.95rem;
+  }
+
+  /* ---------- Línea de tiempo ---------- */
+  .hitos {
+    list-style: none;
+    display: grid;
+    gap: 0;
+  }
+
+  .hito {
+    display: grid;
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 1rem 3rem;
+    padding-block: 2.2rem;
+    border-top: 5px solid var(--tinta);
+  }
+
+  .hito:last-child {
+    border-bottom: 5px solid var(--tinta);
+  }
+
+  .hito__cuando {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(3rem, 8vw, 6.5rem);
+    line-height: 0.85;
+    text-transform: uppercase;
+    color: var(--tono);
+    -webkit-text-stroke: 0.035em var(--tinta);
+    paint-order: stroke fill;
+    text-wrap: balance;
+  }
+
+  .hito__cuando--largo {
+    font-size: clamp(2rem, 4.4vw, 3.6rem);
+  }
+
+  .hito__cuerpo {
+    display: grid;
+    gap: 0.6rem;
+    align-content: start;
+    max-width: 52ch;
+  }
+
+  .hito__cuerpo h3 {
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    text-transform: uppercase;
+  }
+
+  /* ---------- Patio ---------- */
+  .patio__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem 4rem;
+    align-items: center;
+  }
+
+  @media (max-width: 860px) {
+    .hito,
+    .patio__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

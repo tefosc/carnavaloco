@@ -1,0 +1,226 @@
+---
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../CabezaPagina.astro';
+import Estandarte from '../Estandarte.astro';
+import Aniversarios from '../Aniversarios.astro';
+import InvitacionBarrio from '../InvitacionBarrio.astro';
+import { barrios, centrosPobladosDe } from '../../data/barrios';
+import { rutaDe, t, type Idioma } from '../../i18n';
+import { enlaceWhatsapp } from '../../lib/whatsapp';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const p = t(idioma).barrios;
+const centrosPoblados = centrosPobladosDe(idioma);
+
+const textoBuscable = (barrio: (typeof barrios)[number]) =>
+  [barrio.nombre, barrio.apodo, barrio.en?.apodo, barrio.sector].filter(Boolean).join(' ');
+const enlaceBarrioFaltante = enlaceWhatsapp(p.waBarrioFaltante);
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? 'en-barrios' : 'barrios'}
+  title={p.title}
+  description={p.description}
+>
+  <CabezaPagina titulo={p.title} fondo="var(--turquesa)" relleno="var(--amarillo)" sombra="var(--tinta)">
+    <p>{p.intro}</p>
+  </CabezaPagina>
+
+  <Aniversarios idioma={idioma} />
+
+  <section class="bloque pared" aria-labelledby="titulo-pared">
+    <div class="envoltura">
+      <h2 id="titulo-pared" class="titulo-bloque">{p.buscaTitulo}</h2>
+
+      <div class="buscador">
+        <label class="buscador__etiqueta" for="buscar-barrio">{p.buscarLabel}</label>
+        <input
+          id="buscar-barrio"
+          class="buscador__campo"
+          type="search"
+          placeholder={p.buscarPlaceholder}
+          autocomplete="off"
+          data-buscador
+        />
+      </div>
+
+      <ul class="pared__lista">
+        {
+          barrios.map((barrio) => (
+            <li class="pared__item" data-buscar={textoBuscable(barrio)}>
+              <Estandarte barrio={barrio} idioma={idioma} />
+            </li>
+          ))
+        }
+      </ul>
+
+      <div class="pared__vacio" data-sin-resultados hidden>
+        <p class="entrada">{p.sinResultados}</p>
+        <a class="boton" href={enlaceBarrioFaltante} data-enlace-base={enlaceBarrioFaltante} target="_blank" rel="noopener">
+          {p.avisarWhatsapp}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque fondo-tinta oscuro pueblos" aria-labelledby="titulo-pueblos">
+    <div class="envoltura pueblos__grid">
+      <div>
+        <h2 id="titulo-pueblos" class="titulo-bloque">{p.pueblosTitulo}</h2>
+        <dl class="pueblos__lista">
+          {
+            centrosPoblados.map((centro) => (
+              <div>
+                <dt translate="no">{centro.nombre}</dt>
+                {centro.texto && <dd>{centro.texto}</dd>}
+              </div>
+            ))
+          }
+        </dl>
+      </div>
+      <InvitacionBarrio
+        idioma={idioma}
+        pregunta={p.pueblosPregunta}
+        mensaje={p.pueblosWa}
+      />
+    </div>
+  </section>
+
+  <p class="envoltura enlace-fuentes" id="titulo-fuentes-barrios"><a href={`${rutaDe('fuentes', idioma)}#barrios`}>{p.fuentesBarrios}</a></p>
+</Base>
+
+<script>
+  const campo = document.querySelector<HTMLInputElement>('[data-buscador]');
+  const items = document.querySelectorAll<HTMLElement>('[data-buscar]');
+  const sinResultados = document.querySelector<HTMLElement>('[data-sin-resultados]');
+  const enlaceFaltante = sinResultados?.querySelector<HTMLAnchorElement>('[data-enlace-base]');
+
+  const normalizar = (texto: string) =>
+    texto
+      .normalize('NFD')
+      .replace(/\p{Diacritic}/gu, '')
+      .toLowerCase()
+      .trim();
+
+  function filtrar() {
+    if (!campo || !sinResultados || !enlaceFaltante) return;
+
+    const consulta = normalizar(campo.value);
+    let visibles = 0;
+
+    items.forEach((item) => {
+      const coincide = normalizar(item.dataset.buscar ?? '').includes(consulta);
+      item.hidden = !coincide;
+      if (coincide) visibles += 1;
+    });
+
+    sinResultados.hidden = visibles > 0;
+    enlaceFaltante.href = `${enlaceFaltante.dataset.enlaceBase}${encodeURIComponent(campo.value.trim())}`;
+  }
+
+  campo?.addEventListener('input', filtrar);
+</script>
+
+<style>
+  .buscador {
+    display: grid;
+    gap: 0.4rem;
+    max-width: 28rem;
+    margin-bottom: clamp(2rem, 5vw, 3rem);
+  }
+
+  .buscador__etiqueta {
+    font-weight: 700;
+  }
+
+  .buscador__campo {
+    min-height: 52px;
+    padding: 0.6rem 1rem;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    color: var(--tinta);
+    font: inherit;
+    font-size: 1.1rem;
+  }
+
+  .pared__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2.2rem 0.9rem;
+  }
+
+  .pared__item:nth-child(odd) {
+    rotate: -1deg;
+  }
+
+  .pared__item:nth-child(even) {
+    rotate: 1deg;
+  }
+
+  .pared__vacio[hidden] {
+    display: none;
+  }
+
+  .pared__vacio {
+    display: grid;
+    gap: 1rem;
+    justify-items: start;
+    margin-top: 2rem;
+  }
+
+  .pueblos__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 3rem 4rem;
+    align-items: start;
+  }
+
+  .pueblos__lista {
+    display: grid;
+    gap: 1.4rem;
+    margin: 0;
+  }
+
+  .pueblos__lista dt {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 2rem;
+    text-transform: uppercase;
+    color: var(--fucsia);
+  }
+
+  .pueblos__lista dd {
+    margin: 0.2rem 0 0;
+  }
+
+  @media (min-width: 700px) {
+    .pared__lista {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 2.6rem 1.4rem;
+    }
+  }
+
+  @media (min-width: 1000px) {
+    .pared__lista {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 860px) {
+    .pueblos__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .pared__item {
+      rotate: none;
+    }
+  }
+</style>

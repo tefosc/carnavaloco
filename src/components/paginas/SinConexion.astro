@@ -1,0 +1,103 @@
+---
+/**
+ * La muestra el service worker (integraciones/sin-conexion) cuando no hay señal y
+ * la página pedida no está guardada en el teléfono. No sale en buscadores ni en el sitemap.
+ */
+import Base from '../../layouts/Base.astro';
+import Chicha from '../Chicha.astro';
+import { rutaDe, t, type ClaveRuta, type Idioma } from '../../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const p = t(idioma).sinConexion;
+
+const claves: Array<keyof typeof p.guardadas> = [
+  '2027',
+  'guia',
+  'inicio',
+  'la-fiesta',
+  'coplas',
+  'habla',
+  'barrios',
+  'historia',
+  'ediciones',
+];
+const guardadas = claves.map((clave) => ({
+  url: rutaDe(clave as ClaveRuta, idioma),
+  texto: p.guardadas[clave],
+}));
+---
+
+<Base
+  idioma={idioma}
+  title={p.title}
+  description={p.description}
+  indexable={false}
+>
+  <section class="sin-senal bloque fondo-tinta oscuro" aria-labelledby="titulo-sin-senal">
+    <div class="envoltura sin-senal__grid">
+      <h1 id="titulo-sin-senal">
+        <Chicha texto={p.titular} relleno="var(--amarillo)" relleno2="var(--naranja)" sombra="var(--fucsia)" class="sin-senal__titulo" />
+      </h1>
+      <div class="sin-senal__texto">
+        <p class="entrada">{p.intro}</p>
+        <ul class="sin-senal__lista">
+          {
+            guardadas.map((item) => (
+              <li>
+                <a href={item.url}>{item.texto}</a>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </section>
+</Base>
+
+<style>
+  .sin-senal {
+    min-height: 70vh;
+    display: grid;
+    align-items: center;
+  }
+
+  .sin-senal__grid {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr);
+    gap: 2rem 4rem;
+    align-items: center;
+  }
+
+  .sin-senal :global(.sin-senal__titulo) {
+    font-size: clamp(5rem, 14vw, 11rem);
+    line-height: 0.9;
+    /* Lugar para la tilde de la Ñ */
+    --aire-arriba: 0.2em;
+  }
+
+  .sin-senal__lista {
+    list-style: none;
+    display: grid;
+    gap: 0.6rem;
+    margin-top: 1.6rem;
+    padding: 0;
+  }
+
+  .sin-senal__lista a {
+    color: var(--amarillo);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.5rem, 2.6vw, 2rem);
+    text-transform: uppercase;
+  }
+
+  @media (max-width: 860px) {
+    .sin-senal__grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

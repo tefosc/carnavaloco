@@ -25,6 +25,7 @@ const coplas = defineCollection({
     origen: z.enum(['tradicional', 'inedita']),
     fuente: fuente.optional(),
     nota: z.string().optional(),
+    en: z.object({ glosa: z.string(), nota: z.string().optional() }).optional(),
   }),
 });
 
@@ -37,6 +38,7 @@ const glosario = defineCollection({
     ejemplo: z.string().optional(),
     origen: z.string().optional(),
     categoria: z.enum(['habla', 'exclamación', 'fiesta']),
+    en: z.object({ significado: z.string(), ejemplo: z.string().optional(), origen: z.string().optional() }).optional(),
   }),
 });
 
@@ -63,6 +65,15 @@ const ediciones = defineCollection({
     hechos: z.array(z.string()).min(1),
     fuentes: z.array(fuente).min(1),
     color: z.enum(['fucsia', 'amarillo', 'verde', 'azul', 'naranja', 'turquesa']),
+    en: z
+      .object({
+        nombre: z.string().optional(),
+        resumen: z.string(),
+        reina: z.object({ barrio: z.string().optional(), nota: z.string().optional() }).optional(),
+        cifras: z.array(z.object({ valor: z.string(), texto: z.string() })).default([]),
+        hechos: z.array(z.string()).min(1),
+      })
+      .optional(),
   }),
 });
 
