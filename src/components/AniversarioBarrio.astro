@@ -1,15 +1,19 @@
 ---
 import type { Aniversario } from '../data/barrios';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 import { describirFaltan, diasParaAniversario, formatearAniversario } from '../lib/barrios';
 import { hoyEnPeru } from '../lib/fechas';
 
 interface Props {
   nombre: string;
   aniversario: Aniversario;
+  idioma?: Idioma;
 }
 
-const { nombre, aniversario } = Astro.props;
-const { numero, texto } = describirFaltan(diasParaAniversario(hoyEnPeru(), aniversario), nombre);
+const { nombre, aniversario, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const p = t(idioma).barrios;
+const { numero, texto } = describirFaltan(diasParaAniversario(hoyEnPeru(), aniversario), nombre, idioma);
 ---
 
 <section
@@ -18,13 +22,13 @@ const { numero, texto } = describirFaltan(diasParaAniversario(hoyEnPeru(), anive
   data-dia={aniversario.dia}
   data-mes={aniversario.mes}
   data-nombre={nombre}
-  aria-label={`Aniversario de ${nombre}`}
+  aria-label={p.aniversarioAria(nombre)}
 >
   <div class="envoltura aniversario__cuerpo">
     <p class="aniversario__numero" data-aniversario-numero>{numero}</p>
     <div class="aniversario__detalle">
       <p class="aniversario__texto" data-aniversario-texto>{texto}</p>
-      <p class="aniversario__fecha">Su aniversario es el {formatearAniversario(aniversario)}</p>
+      <p class="aniversario__fecha">{p.aniversarioFecha(formatearAniversario(aniversario, idioma))}</p>
     </div>
   </div>
 </section>

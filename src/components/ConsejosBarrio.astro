@@ -1,55 +1,39 @@
 ---
 import type { Barrio } from '../data/barrios';
-import type { Color } from '../data/carnaval';
-import type { NombreIcono } from '../data/iconos';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 import { enlaceWhatsapp } from '../lib/whatsapp';
 import Icono from './Icono.astro';
 
 interface Props {
   barrio: Barrio;
+  idioma?: Idioma;
 }
 
-interface Categoria {
-  icono: NombreIcono;
-  titulo: string;
-  tema: string;
-  color: Color;
-}
-
-const { barrio } = Astro.props;
+const { barrio, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const c = t(idioma).barrios.consejos;
 const { nombre } = barrio;
-
-const categorias: Categoria[] = [
-  { icono: 'bus', titulo: 'Cómo llegar', tema: 'cómo llegar', color: 'turquesa' },
-  { icono: 'grupo', titulo: 'Dónde juntarse', tema: 'dónde juntarse', color: 'fucsia' },
-  { icono: 'tenedor', titulo: 'Qué comer', tema: 'qué comer', color: 'naranja' },
-  { icono: 'paraguas', titulo: 'Qué llevar', tema: 'qué llevar', color: 'azul' },
-  { icono: 'escudo', titulo: 'Seguridad', tema: 'seguridad', color: 'verde' },
-  { icono: 'cama', titulo: 'Dónde dormir', tema: 'dónde dormir', color: 'amarillo' },
-];
-
-const mensajeDe = ({ tema }: Categoria) => `Tengo un consejo sobre ${tema} en ${nombre}: `;
 ---
 
-<p class="intro">Los consejos los confirman vecinos de {nombre}. Si tú sabes algo, cuéntanos.</p>
+<p class="intro">{c.intro(nombre)}</p>
 
-<ul class="estados" aria-label="Cómo marcamos cada dato">
-  <li class="estado estado--verificado">Verificado</li>
-  <li class="estado estado--barrio">Confirmado por el barrio</li>
-  <li class="estado estado--pendiente">Por confirmar</li>
+<ul class="estados" aria-label={c.estadosAria}>
+  <li class="estado estado--verificado">{c.verificado}</li>
+  <li class="estado estado--barrio">{c.confirmadoBarrio}</li>
+  <li class="estado estado--pendiente">{c.pendiente}</li>
 </ul>
 
 <ul class="mural">
   {
-    categorias.map((categoria) => (
+    c.categorias.map((categoria) => (
       <li class="papel" data-color={categoria.color}>
         <span class="papel__icono">
           <Icono nombre={categoria.icono} />
         </span>
         <h3 class="papel__titulo">{categoria.titulo}</h3>
-        <p class="papel__texto">Aún no tenemos este dato de {nombre}.</p>
-        <a class="papel__boton" href={enlaceWhatsapp(mensajeDe(categoria))} target="_blank" rel="noopener">
-          Cuéntanos
+        <p class="papel__texto">{c.sinDato(nombre)}</p>
+        <a class="papel__boton" href={enlaceWhatsapp(c.waConsejo(categoria.tema, nombre))} target="_blank" rel="noopener">
+          {c.cuentanos}
         </a>
       </li>
     ))

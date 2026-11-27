@@ -11,6 +11,7 @@
  * - [data-agenda-dia]: los días de la agenda, para marcar hoy y los que ya pasaron.
  */
 import { ANIO, dias, type Dia } from '../data/carnaval2027';
+import { idiomaEnNavegador, t } from '../i18n';
 import { ahoraEnNavegador, anioProximoCarnaval, momentoDelCarnaval } from './fechas';
 
 /** El día de carnaval de hoy, si hoy es uno. */
@@ -20,6 +21,8 @@ export function diaDeHoy(ahora: Date = ahoraEnNavegador()): Dia | undefined {
 }
 
 export function aplicarHoy() {
+  const idioma = idiomaEnNavegador();
+  const txt = t(idioma).hoy;
   const ahora = ahoraEnNavegador();
   const momento = momentoDelCarnaval(ANIO, ahora);
   const hoy = diaDeHoy(ahora);
@@ -29,10 +32,10 @@ export function aplicarHoy() {
   const texto = document.querySelector<HTMLElement>('[data-cuenta-texto]');
   if (numero && texto) {
     if (hoy) {
-      numero.textContent = 'Hoy';
-      texto.textContent = hoy.corto;
+      numero.textContent = txt.hoy;
+      texto.textContent = idioma === 'en' ? hoy.en.corto : hoy.corto;
       const anillo = numero.closest('.sello')?.querySelector('textPath');
-      if (anillo) anillo.textContent = 'Hoy en el carnaval ✶ Hoy en el carnaval ✶ ';
+      if (anillo) anillo.textContent = txt.selloAnillo;
     } else {
       const anio = numero.dataset.anio === 'proximo' ? anioProximoCarnaval(ahora) : ANIO;
       const cuenta = momentoDelCarnaval(anio, ahora);
@@ -40,8 +43,8 @@ export function aplicarHoy() {
         numero.textContent = String(cuenta.faltan);
         texto.textContent = (cuenta.faltan === 1 ? texto.dataset.uno : texto.dataset.varios) ?? '';
       } else {
-        numero.textContent = '¡Ya!';
-        texto.textContent = 'pasó';
+        numero.textContent = txt.ya;
+        texto.textContent = txt.paso;
       }
     }
   }
@@ -57,7 +60,7 @@ export function aplicarHoy() {
   }
 
   const seViene = document.querySelector<HTMLElement>('[data-se-viene]');
-  if (seViene && momento.fase !== 'antes') seViene.textContent = hoy ? 'Ya llegó el' : 'Así fue el';
+  if (seViene && momento.fase !== 'antes') seViene.textContent = hoy ? txt.yaLlego : txt.asiFue;
 
   // Agenda, durante el carnaval: hoy resaltado y los días que ya pasaron, atenuados
   document.querySelectorAll<HTMLElement>('[data-agenda-dia]').forEach((el) => {

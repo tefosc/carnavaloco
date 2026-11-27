@@ -5,7 +5,15 @@
  * salen de otras coplas con otra rima.
  */
 import { getCollection } from 'astro:content';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 import { claveAsonante as claveRima, partirVerso as partir } from '../lib/rima';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const j = t(idioma).juegoCopla;
 
 const rondas = (await getCollection('coplas'))
   .map((c) => c.data)
@@ -28,21 +36,19 @@ const rondas = (await getCollection('coplas'))
 <section class="juego bloque fondo-fucsia" aria-labelledby="titulo-juego" data-juego>
   <div class="envoltura juego__grid">
     <div class="juego__intro">
-      <h2 id="titulo-juego" class="titulo-bloque">Completa la copla</h2>
-      <p class="lectura">
-        Le falta la última palabra. Elige la que rima con el segundo verso, como en un contrapunto donde no hay tiempo
-        para pensar.
-      </p>
+      <h2 id="titulo-juego" class="titulo-bloque">{j.titulo}</h2>
+      <p class="lectura">{j.intro}</p>
+      {j.notaEspanol && <p class="juego__nota">{j.notaEspanol}</p>}
       <p class="juego__marcador" aria-live="polite">
-        <span data-juego-aciertos>0</span> de <span data-juego-total>0</span>
+        <span data-juego-aciertos>0</span> {j.de} <span data-juego-total>0</span>
       </p>
     </div>
 
     <div class="juego__mesa oscuro">
-      <blockquote class="juego__copla" data-juego-copla></blockquote>
-      <div class="juego__opciones" role="group" aria-label="Elige la palabra que falta" data-juego-opciones></div>
+      <blockquote class="juego__copla" lang="es" data-juego-copla></blockquote>
+      <div class="juego__opciones" role="group" aria-label={j.opcionesAria} lang="es" data-juego-opciones></div>
       <p class="juego__aviso" aria-live="polite" data-juego-aviso></p>
-      <button type="button" class="boton juego__siguiente" data-juego-siguiente hidden>Siguiente copla</button>
+      <button type="button" class="boton juego__siguiente" data-juego-siguiente hidden>{j.siguiente}</button>
     </div>
   </div>
 
@@ -64,6 +70,12 @@ const rondas = (await getCollection('coplas'))
     font-size: clamp(2.6rem, 5vw, 4rem);
     line-height: 1;
     font-variant-numeric: tabular-nums;
+  }
+
+  .juego__nota {
+    margin-top: 0.75rem;
+    font-size: 0.95rem;
+    font-weight: 700;
   }
 
   .juego__mesa {
@@ -155,6 +167,8 @@ const rondas = (await getCollection('coplas'))
 </style>
 
 <script>
+  import { idiomaEnNavegador, t } from '../i18n';
+
   interface Ronda {
     versos: string[];
     antes: string;
@@ -163,6 +177,7 @@ const rondas = (await getCollection('coplas'))
     clave: string;
   }
 
+  const txt = t(idiomaEnNavegador()).juegoCopla;
   const raiz = document.querySelector<HTMLElement>('[data-juego]');
   const datos = raiz?.querySelector<HTMLScriptElement>('[data-juego-rondas]');
   const rondas: Ronda[] = datos ? JSON.parse(datos.textContent ?? '[]') : [];
@@ -174,7 +189,6 @@ const rondas = (await getCollection('coplas'))
   const aciertosEl = raiz?.querySelector<HTMLElement>('[data-juego-aciertos]');
   const totalEl = raiz?.querySelector<HTMLElement>('[data-juego-total]');
 
-  const FELICITACIONES = ['¡Eso, cholasho!', '¡Ñañau, qué rima!', '¡Ya pues, maestro!', '¡Esa patrulla canta!'];
   const RONDAS_POR_JUEGO = 6;
 
   const mezclar = <T,>(lista: T[]) => lista.map((v) => [Math.random(), v] as const).sort((a, b) => a[0] - b[0]).map(([, v]) => v);
@@ -196,8 +210,8 @@ const rondas = (await getCollection('coplas'))
     ultimo.append(ronda.antes);
     const hueco = document.createElement('span');
     hueco.className = 'hueco';
-    hueco.textContent = ' ';
-    hueco.setAttribute('aria-label', 'palabra que falta');
+    hueco.textContent = '\u00a0';
+    hueco.setAttribute('aria-label', txt.huecoAria);
     ultimo.append(hueco, ronda.despues);
     copla.replaceChildren(...ronda.versos.map(parrafo), ultimo);
 
@@ -229,15 +243,15 @@ const rondas = (await getCollection('coplas'))
     if (!bien) boton.dataset.estado = 'mal';
     hueco.textContent = ronda.palabra;
     aviso.textContent = bien
-      ? FELICITACIONES[Math.floor(Math.random() * FELICITACIONES.length)]
-      : `Casi. Era «${ronda.palabra}», que rima con el segundo verso.`;
+      ? txt.felicitaciones[Math.floor(Math.random() * txt.felicitaciones.length)]
+      : txt.casi(ronda.palabra);
     aciertosEl.textContent = String(aciertos);
     totalEl.textContent = String(actual + 1);
     const fin = actual + 1 >= mazo.length;
-    siguiente.textContent = fin ? 'Jugar otra vez' : 'Siguiente copla';
+    siguiente.textContent = fin ? txt.jugarOtraVez : txt.siguiente;
     siguiente.hidden = false;
     if (fin) {
-      aviso.textContent += ` Terminaste: ${aciertos} de ${mazo.length}.`;
+      aviso.textContent += txt.terminaste(aciertos, mazo.length);
     }
     siguiente.focus();
   }

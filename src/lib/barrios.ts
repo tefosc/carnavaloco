@@ -1,19 +1,10 @@
 import { barrios, type Aniversario, type Barrio } from '../data/barrios';
+import { LOCALE_INTL, t, type Idioma } from '../i18n';
 
-const MESES = [
-  'enero',
-  'febrero',
-  'marzo',
-  'abril',
-  'mayo',
-  'junio',
-  'julio',
-  'agosto',
-  'septiembre',
-  'octubre',
-  'noviembre',
-  'diciembre',
-];
+const formatosAniversario = {
+  es: new Intl.DateTimeFormat(LOCALE_INTL.es, { day: 'numeric', month: 'long', timeZone: 'UTC' }),
+  en: new Intl.DateTimeFormat(LOCALE_INTL.en, { day: 'numeric', month: 'long', timeZone: 'UTC' }),
+};
 
 const DIA_EN_MS = 86_400_000;
 
@@ -23,13 +14,15 @@ export interface ProximoAniversario {
   faltan: number;
 }
 
-export function formatearAniversario({ dia, mes }: Aniversario): string {
-  return `${dia} de ${MESES[mes - 1]}`;
+export function formatearAniversario({ dia, mes }: Aniversario, idioma: Idioma = 'es'): string {
+  // Año bisiesto para que 29 de febrero sea válido
+  return formatosAniversario[idioma].format(new Date(Date.UTC(2024, mes - 1, dia)));
 }
 
-export function partirFaltan(faltan: number): { numero: string; unidad: string } {
-  if (faltan === 0) return { numero: 'Hoy', unidad: '' };
-  return { numero: String(faltan), unidad: faltan === 1 ? 'día' : 'días' };
+export function partirFaltan(faltan: number, idioma: Idioma = 'es'): { numero: string; unidad: string } {
+  const txt = t(idioma).aniversarios;
+  if (faltan === 0) return { numero: txt.hoy, unidad: '' };
+  return { numero: String(faltan), unidad: faltan === 1 ? txt.dia : txt.dias };
 }
 
 export function diasParaAniversario(hoy: Date, { dia, mes }: Aniversario): number {
@@ -39,10 +32,10 @@ export function diasParaAniversario(hoy: Date, { dia, mes }: Aniversario): numbe
   return Math.round((siguiente - hoy.getTime()) / DIA_EN_MS);
 }
 
-export function describirFaltan(faltan: number, nombre: string): { numero: string; texto: string } {
-  if (faltan === 0) return { numero: 'Hoy', texto: `cumple años ${nombre}` };
-  const dias = faltan === 1 ? 'día' : 'días';
-  return { numero: String(faltan), texto: `${dias} para el aniversario de ${nombre}` };
+export function describirFaltan(faltan: number, nombre: string, idioma: Idioma = 'es'): { numero: string; texto: string } {
+  const txt = t(idioma).aniversarios;
+  if (faltan === 0) return { numero: txt.hoy, texto: txt.hoyBarrio(nombre) };
+  return { numero: String(faltan), texto: txt.faltanBarrio(faltan, nombre) };
 }
 
 export function proximosAniversarios(hoy: Date, cantidad: number): ProximoAniversario[] {

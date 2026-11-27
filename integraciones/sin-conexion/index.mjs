@@ -35,7 +35,7 @@ async function archivos(carpeta, base = carpeta) {
 }
 
 // Recursos excluidos del precache: imágenes para redes (/og/) y el mapa 3D (solo con internet).
-const SOLO_CON_RED = /^(?:og\/|mapa\/|_astro\/(?:mapa3d|maplibre-gl-worker)\b)/;
+const SOLO_CON_RED = /^(?:og\/|(?:en\/)?mapa\/|_astro\/(?:mapa3d|maplibre-gl-worker)\b)/;
 
 export default function sinConexion() {
   return {
@@ -46,6 +46,7 @@ export default function sinConexion() {
         const archivosLocales = (await archivos(raiz)).sort().filter((a) => a !== 'sw.js' && !SOLO_CON_RED.test(a));
         const publicados = new Map(archivosLocales.map((a) => [rutaPublica(a), a]));
         if (!publicados.has('/sin-conexion/')) throw new Error('Falta la página /sin-conexion/');
+        if (!publicados.has('/en/offline/')) throw new Error('Falta la página /en/offline/');
 
         const documentos = await Promise.all(
           archivosLocales.filter((a) => a.endsWith('.html')).map((a) => readFile(path.join(raiz, a), 'utf8')),

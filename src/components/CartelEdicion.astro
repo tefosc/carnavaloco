@@ -5,20 +5,24 @@
  */
 import type { CollectionEntry } from 'astro:content';
 import Chicha from './Chicha.astro';
+import { formatearRangoFechas, idiomaDesdeUrl, rutaEdicion, t, type Idioma } from '../i18n';
 import { diaDeCarnaval } from '../lib/fechas';
 
 interface Props {
   edicion: CollectionEntry<'ediciones'>['data'];
   giro?: number;
   oscuro?: boolean;
+  idioma?: Idioma;
 }
 
-const { edicion, giro = 0, oscuro = false } = Astro.props;
-const fmt = new Intl.DateTimeFormat('es-PE', { day: 'numeric', month: 'long', timeZone: 'UTC' });
+const { edicion, giro = 0, oscuro = false, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma);
 const inicio = diaDeCarnaval(edicion.anio, -4);
 const fin = diaDeCarnaval(edicion.anio, 0);
-const fechas = `${fmt.format(inicio)} al ${fmt.format(fin)}`;
+const fechas = formatearRangoFechas(inicio, fin, idioma);
 const suspendido = edicion.estado === 'suspendido';
+const nombre = idioma === 'en' ? (edicion.en?.nombre ?? edicion.nombre) : edicion.nombre;
 
 const sobreAzul = !oscuro && edicion.color === 'azul';
 const letraClara = oscuro || sobreAzul;
@@ -29,12 +33,12 @@ const paleta = oscuro
 ---
 
 <a
-  href={`/ediciones/${edicion.anio}/`}
+  href={rutaEdicion(edicion.anio, idioma)}
   class:list={['cartel', { 'cartel--suspendido': suspendido, oscuro: letraClara, claro: !letraClara }]}
   data-color={edicion.color}
   style={`--giro:${giro}deg;--fondo:${paleta.fondo};--texto:${paleta.texto}`}
 >
-  <span class="cartel__arriba">Carnaval de Cajamarca</span>
+  <span class="cartel__arriba" translate="no">{txt.sitio.nombre}</span>
   <Chicha
     texto={String(edicion.anio)}
     class="cartel__anio"
@@ -43,14 +47,14 @@ const paleta = oscuro
     contorno="var(--tinta)"
     sombra={paleta.sombra}
   />
-  {edicion.nombre && <span class="cartel__nombre">{edicion.nombre}</span>}
-  <span class="cartel__fechas">{suspendido ? 'No hubo fiesta' : fechas}</span>
+  {nombre && <span class="cartel__nombre">{nombre}</span>}
+  <span class="cartel__fechas">{suspendido ? txt.carteles.noHuboFiesta : fechas}</span>
   {suspendido && (
     <span class="cartel__franja" aria-hidden="true">
-      Suspendido
+      {txt.carteles.suspendido}
     </span>
   )}
-  {suspendido && <span class="visualmente-oculto">, edición suspendida</span>}
+  {suspendido && <span class="visualmente-oculto">{txt.carteles.edicionSuspendidaSr}</span>}
 </a>
 
 <style>

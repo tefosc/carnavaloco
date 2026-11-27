@@ -1,0 +1,75 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../CabezaPagina.astro';
+import CartelEdicion from '../CartelEdicion.astro';
+import CartelProximo from '../CartelProximo.astro';
+import { rutaDe, t, type Idioma } from '../../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const p = t(idioma).ediciones;
+const ediciones = (await getCollection('ediciones')).map((e) => e.data).sort((a, b) => b.anio - a.anio);
+const giros = [-2.5, 1.5, -1, 3, -3, 2, -1.5, 2.5, -2, 1];
+const realizadas = ediciones.filter((e) => e.estado === 'realizado').length;
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? 'en-ediciones' : 'ediciones'}
+  title={p.title}
+  description={p.description}
+>
+  <CabezaPagina titulo={p.cabezaTitulo} fondo="var(--naranja)" relleno="var(--blanco)" sombra="var(--tinta)">
+    <p>{p.intro(realizadas)}</p>
+  </CabezaPagina>
+
+  <section class="bloque muro" aria-label={p.muroAria}>
+    <ul class="envoltura muro__lista">
+      <li>
+        <CartelProximo giro={-2} idioma={idioma} />
+      </li>
+      {
+        ediciones.map((e, i) => (
+          <li>
+            <CartelEdicion edicion={e} giro={giros[(i + 1) % giros.length]} oscuro={i % 3 === 0} idioma={idioma} />
+          </li>
+        ))
+      }
+    </ul>
+    <p class="envoltura muro__nota">{p.nota}</p>
+  </section>
+  <p class="envoltura enlace-fuentes"><a href={`${rutaDe('fuentes', idioma)}#ediciones`}>{p.fuentesEdiciones}</a></p>
+</Base>
+
+<style>
+  .muro__lista {
+    list-style: none;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 2.4rem 1.6rem;
+  }
+
+  .muro__lista li:nth-child(4n + 2),
+  .muro__lista li:nth-child(4n + 4) {
+    translate: 0 2rem;
+  }
+
+  .muro__nota {
+    margin-top: 5rem;
+    max-width: 62ch;
+  }
+
+  @media (max-width: 900px) {
+    .muro__lista {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .muro__lista li:nth-child(n) {
+      translate: none;
+    }
+  }
+</style>

@@ -1,17 +1,29 @@
 ---
+import { idiomaDesdeUrl, rutaAlterna, rutaDe, t, type Idioma } from '../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma);
+
 const enlaces = [
-  { href: '/2027/', texto: '2027', especial: true },
-  { href: '/guia/', texto: 'Guía' },
-  { href: '/la-fiesta/', texto: 'La fiesta' },
-  { href: '/ediciones/', texto: 'Ediciones' },
-  { href: '/barrios/', texto: 'Barrios' },
-  { href: '/coplas/', texto: 'Coplas' },
-  { href: '/habla/', texto: 'Habla' },
-  { href: '/historia/', texto: 'Historia' },
+  { href: rutaDe('2027', idioma), texto: txt.nav.items['2027'], especial: true },
+  { href: rutaDe('guia', idioma), texto: txt.nav.items.guia },
+  { href: rutaDe('la-fiesta', idioma), texto: txt.nav.items['la-fiesta'] },
+  { href: rutaDe('ediciones', idioma), texto: txt.nav.items.ediciones },
+  { href: rutaDe('barrios', idioma), texto: txt.nav.items.barrios },
+  { href: rutaDe('coplas', idioma), texto: txt.nav.items.coplas },
+  { href: rutaDe('habla', idioma), texto: txt.nav.items.habla },
+  { href: rutaDe('historia', idioma), texto: txt.nav.items.historia },
 ];
 
 const ruta = Astro.url.pathname.replace(/\/?$/, '/');
-const actual = (href: string) => ruta === href || (href !== '/' && ruta.startsWith(href));
+const inicio = rutaDe('inicio', idioma);
+const actual = (href: string) => ruta === href || (href !== inicio && ruta.startsWith(href));
+const rutaEs = idioma === 'es' ? ruta : rutaAlterna(ruta, 'es');
+const rutaEn = idioma === 'en' ? ruta : rutaAlterna(ruta, 'en');
 
 // Banderines de raso colgando de una cuerda.
 const colores = ['var(--fucsia)', 'var(--amarillo)', 'var(--verde)', 'var(--azul)', 'var(--naranja)', 'var(--turquesa)'];
@@ -24,19 +36,19 @@ const banderines = Array.from({ length: n }, (_, i) => {
 });
 ---
 
-<a class="saltar" href="#contenido">Ir al contenido</a>
+<a class="saltar" href="#contenido">{txt.nav.saltar}</a>
 <header class="cabecera oscuro">
   <div class="envoltura cabecera__fila">
-    <a class="marca" href="/" aria-label="Carnaval de Cajamarca, portada">
-      <span class="marca__grande">Carnaval</span>
-      <span class="marca__chica">de Cajamarca</span>
+    <a class="marca" href={inicio} aria-label={txt.sitio.marcaAria} translate="no">
+      <span class="marca__grande">{txt.sitio.marcaGrande}</span>
+      <span class="marca__chica">{txt.sitio.marcaChica}</span>
     </a>
     <!-- Solo en el teléfono y con JavaScript: lo muestra el script de abajo -->
     <button type="button" class="menu-boton" aria-expanded="false" aria-controls="menu-principal" data-menu-boton hidden>
       <span class="menu-boton__rayas" aria-hidden="true"></span>
-      <span>Menú</span>
+      <span>{txt.nav.menu}</span>
     </button>
-    <nav id="menu-principal" aria-label="Secciones" data-menu>
+    <nav id="menu-principal" aria-label={txt.nav.seccionesAria} data-menu>
       <ul>
         {
           enlaces.map((e) => (
@@ -51,6 +63,25 @@ const banderines = Array.from({ length: n }, (_, i) => {
             </li>
           ))
         }
+        <li class="nav__idioma">
+          <span class="idioma" role="group" aria-label={txt.nav.idiomaAria}>
+            {
+              idioma === 'es' ? (
+                <span class="idioma__actual" aria-current="true">ES</span>
+              ) : (
+                <a href={rutaEs} hreflang="es-PE" lang="es" data-cambiar-idioma="es">ES</a>
+              )
+            }
+            <span class="idioma__sep" aria-hidden="true">|</span>
+            {
+              idioma === 'en' ? (
+                <span class="idioma__actual" aria-current="true">EN</span>
+              ) : (
+                <a href={rutaEn} hreflang="en" lang="en" data-cambiar-idioma="en">EN</a>
+              )
+            }
+          </span>
+        </li>
       </ul>
     </nav>
   </div>
@@ -158,6 +189,44 @@ const banderines = Array.from({ length: n }, (_, i) => {
     background: var(--amarillo);
   }
 
+  .nav__idioma {
+    display: flex;
+    align-items: center;
+    margin-left: 0.35rem;
+  }
+
+  .idioma {
+    display: inline-flex;
+    align-items: center;
+    border: 2px solid rgb(255 255 255 / 0.4);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.15rem;
+    letter-spacing: 0.04em;
+    line-height: 1;
+  }
+
+  .idioma a,
+  .idioma__actual {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 2.4rem;
+    min-height: 2.2rem;
+    padding: 0.3rem 0.5rem 0.2rem;
+    font-size: 1.15rem;
+  }
+
+  .idioma__actual {
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+
+  .idioma__sep {
+    color: rgb(255 255 255 / 0.45);
+    padding-inline: 0.1rem;
+  }
+
   .banderines {
     position: relative;
     z-index: 19;
@@ -238,6 +307,21 @@ const banderines = Array.from({ length: n }, (_, i) => {
       justify-self: start;
       width: fit-content;
       margin-block: 0.4rem;
+    }
+
+    .cabecera__fila.con-menu .nav__idioma {
+      margin-left: 0;
+      padding-top: 0.7rem;
+      border-top: 2px solid rgb(255 255 255 / 0.14);
+    }
+
+    .cabecera__fila.con-menu .idioma a,
+    .cabecera__fila.con-menu .idioma__actual {
+      min-width: 48px;
+      min-height: 44px;
+      padding: 0.45rem 0.9rem 0.35rem;
+      border-top: 0;
+      font-size: 1.4rem;
     }
 
     .menu-boton:not([hidden]) {

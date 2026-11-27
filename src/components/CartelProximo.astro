@@ -4,24 +4,25 @@
  */
 import Chicha from './Chicha.astro';
 import { ANIO } from '../data/carnaval2027';
+import { formatearRangoFechas, idiomaDesdeUrl, rutaDe, t, type Idioma } from '../i18n';
 import { diaDeCarnaval } from '../lib/fechas';
 
 interface Props {
   giro?: number;
+  idioma?: Idioma;
 }
 
-const { giro = -2 } = Astro.props;
-const dia = new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' });
-const mes = new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' });
-const fin = diaDeCarnaval(ANIO, 0);
-const fechas = `${dia.format(diaDeCarnaval(ANIO, -4))} al ${dia.format(fin)} de ${mes.format(fin)}`;
+const { giro = -2, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).carteles;
+const fechas = formatearRangoFechas(diaDeCarnaval(ANIO, -4), diaDeCarnaval(ANIO, 0), idioma);
 ---
 
-<a href={`/${ANIO}/`} class="proximo claro" style={`--giro:${giro}deg`}>
-  <span class="proximo__arriba">Se viene</span>
+<a href={rutaDe('2027', idioma)} class="proximo claro" style={`--giro:${giro}deg`}>
+  <span class="proximo__arriba">{txt.seViene}</span>
   <Chicha texto={String(ANIO)} class="proximo__anio" relleno="var(--amarillo)" relleno2="var(--naranja)" sombra="var(--tinta)" />
   <span class="proximo__fechas">{fechas}</span>
-  <span class="proximo__ver">Ver el programa</span>
+  <span class="proximo__ver">{txt.verPrograma}</span>
 </a>
 
 <style>

@@ -15,8 +15,27 @@ const dominio =
 // https://astro.build/config
 export default defineConfig({
   site: dominio,
+  i18n: {
+    defaultLocale: 'es',
+    locales: ['es', 'en'],
+    routing: {
+      prefixDefaultLocale: false,
+    },
+  },
   integrations: [
-    sitemap({ filter: (pagina) => !pagina.includes('/404') && !pagina.includes('/sin-conexion') }),
+    sitemap({
+      filter: (pagina) =>
+        !pagina.includes('/404') &&
+        !pagina.includes('/sin-conexion') &&
+        !pagina.includes('/en/offline'),
+      i18n: {
+        defaultLocale: 'es',
+        locales: {
+          es: 'es-PE',
+          en: 'en',
+        },
+      },
+    }),
     // Escribe /sw.js para usar la web sin señal
     sinConexion(),
   ],

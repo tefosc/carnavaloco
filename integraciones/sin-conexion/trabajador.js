@@ -27,7 +27,8 @@ self.addEventListener('activate', (evento) => {
     const clientes = anterior ? await self.clients.matchAll({ type: 'window', includeUncontrolled: true }) : [];
     await self.clients.claim();
     for (const cliente of clientes) {
-      if (new URL(cliente.url).pathname === '/') {
+      const rutaCliente = new URL(cliente.url).pathname;
+      if (rutaCliente === '/' || rutaCliente === '/en/') {
         void cliente.navigate(cliente.url).catch(() => {});
       }
     }
@@ -65,5 +66,6 @@ async function responder(request, url) {
     if (!navegacion && !fotoLigera) throw error;
   }
   if (fotoLigera) return (await caches.match(fotoLigera, BUSQUEDA)) ?? Response.error();
-  return (await caches.match('/sin-conexion/', BUSQUEDA)) ?? Response.error();
+  const respaldo = ruta === '/en' || ruta.startsWith('/en/') ? '/en/offline/' : '/sin-conexion/';
+  return (await caches.match(respaldo, BUSQUEDA)) ?? Response.error();
 }

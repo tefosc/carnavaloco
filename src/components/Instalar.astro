@@ -4,16 +4,21 @@
  * El botón solo aparece si el navegador puede instalarla (navigator.install o
  * beforeinstallprompt); si no, queda el aviso solo.
  */
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).instalar;
 ---
 
 <div class="llevalo claro">
-  <h3>Sin señal, igual funciona</h3>
-  <p>
-    El programa, el calendario, los barrios, las coplas y los recorridos se guardan automáticamente con la primera
-    visita con internet. Puedes usarlos sin señal cuando termine la descarga.
-  </p>
+  <h3>{txt.titulo}</h3>
+  <p>{txt.texto}</p>
   <p class="llevalo__estado" role="status" data-guardado></p>
-  <button type="button" class="boton" data-instalar hidden>Instalar en el teléfono</button>
+  <button type="button" class="boton" data-instalar hidden>{txt.boton}</button>
   <p class="llevalo__estado" role="status" data-instalar-estado></p>
 </div>
 
@@ -47,14 +52,16 @@
 
 <script>
   import { alCambiar, disponible, instalar, yaInstalada } from '../lib/instalar';
+  import { idiomaEnNavegador, t } from '../i18n';
 
+  const txt = t(idiomaEnNavegador()).instalar;
   const boton = document.querySelector<HTMLButtonElement>('[data-instalar]');
   const estado = document.querySelector<HTMLElement>('[data-instalar-estado]');
 
   if (boton && estado) {
     alCambiar(() => {
       boton.hidden = !disponible();
-      if (yaInstalada()) estado.textContent = 'Listo: ya está en tu teléfono.';
+      if (yaInstalada()) estado.textContent = txt.instalada;
     });
 
     boton.addEventListener('click', async () => {
@@ -64,10 +71,10 @@
       const resultado = await instalar();
       estado.textContent =
         resultado === 'instalada'
-          ? 'Listo: ya está en tu teléfono.'
+          ? txt.instalada
           : resultado === 'cancelada'
-            ? 'No se instaló.'
-            : 'No se pudo instalar desde aquí.';
+            ? txt.cancelada
+            : txt.error;
       boton.removeAttribute('aria-disabled');
     });
   }

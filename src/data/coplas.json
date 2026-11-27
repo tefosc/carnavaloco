@@ -5,7 +5,11 @@
     "origen": "tradicional",
     "versos": ["Lima, ciudad de los reyes,", "Trujillo primaveral,", "y mi bella Cajamarca,", "capital del carnaval."],
     "fuente": { "medio": "RPP", "titulo": "Cajamarca está de fiesta con su carnaval", "url": "https://rpp.pe/peru/actualidad/cajamarca-esta-de-fiesta-con-su-carnaval-noticia-673520" },
-    "nota": "De las que se escuchan en toda la ciudad apenas empieza febrero."
+    "nota": "De las que se escuchan en toda la ciudad apenas empieza febrero.",
+    "en": {
+      "glosa": "Lima, city of kings; Trujillo, city of spring; and my lovely Cajamarca, capital of carnival.",
+      "nota": "One of the coplas heard all over the city as soon as February begins."
+    }
   },
   {
     "id": "para-todos",
@@ -13,7 +17,11 @@
     "origen": "tradicional",
     "versos": ["Para todos lo hizo Dios,", "para el grande, para el chico,", "para el pobre, para el rico."],
     "fuente": { "medio": "RPP", "titulo": "Las alegres y pícaras coplas de Cajamarca", "url": "https://rpp.pe/peru/actualidad/las-alegres-y-picaras-coplas-de-cajamarca-noticia-669715" },
-    "nota": "También se canta al revés: «carnaval es para el chico y el grande, para el rico y el pobre»."
+    "nota": "También se canta al revés: «carnaval es para el chico y el grande, para el rico y el pobre».",
+    "en": {
+      "glosa": "God made carnival for everyone—for the tall and the small, for the poor and the rich.",
+      "nota": "Also sung in reverse order: “carnival is for the small and the tall, for the rich and the poor.”"
+    }
   },
   {
     "id": "destino",
@@ -22,7 +30,11 @@
     "versos": ["Destino que me has traído", "de mi tierra para acá,", "así como me has traído", "devuélveme para allá."],
     "repite": "par",
     "fuente": { "medio": "La República", "titulo": "Carnaval de Cajamarca 2024", "url": "https://larepublica.pe/turismo/2024/02/23/carnaval-de-cajamarca-2024-para-el-rico-y-para-el-pobre-para-todos-lo-hizo-dios-carnaval-inolvidable-carnaval-de-cajamarca-1216006" },
-    "nota": "Se canta repitiendo cada par de versos."
+    "nota": "Se canta repitiendo cada par de versos.",
+    "en": {
+      "glosa": "Fate that brought me here from my homeland—just as you brought me, take me back again.",
+      "nota": "Sung by repeating each pair of lines together."
+    }
   },
   {
     "id": "no-te-vayas",
@@ -30,94 +42,144 @@
     "origen": "tradicional",
     "versos": ["No te vayas, carnaval,", "quédate otro día más;", "si por capricho te vas,", "yo te sigo por tu tras."],
     "fuente": { "medio": "La República", "titulo": "Carnaval de Cajamarca 2024", "url": "https://larepublica.pe/turismo/2024/02/23/carnaval-de-cajamarca-2024-para-el-rico-y-para-el-pobre-para-todos-lo-hizo-dios-carnaval-inolvidable-carnaval-de-cajamarca-1216006" },
-    "nota": "Suena cuando la fiesta se acaba, cada verso con su repetición."
+    "nota": "Suena cuando la fiesta se acaba, cada verso con su repetición.",
+    "en": {
+      "glosa": "Don’t leave, carnival, stay one more day; if you leave out of stubbornness, I’ll chase right after you.",
+      "nota": "Sung as the festival wraps up, with each line repeated."
+    }
   },
   {
     "id": "patrulla-sale",
     "tema": "invitación",
     "origen": "inedita",
-    "versos": ["Afina bien tu guitarra,", "que la patrulla ya sale;", "el que no canta esta copla,", "que se moje y que se calle."]
+    "versos": ["Afina bien tu guitarra,", "que la patrulla ya sale;", "el que no canta esta copla,", "que se moje y que se calle."],
+    "en": {
+      "glosa": "Tune up your guitar, the troupe is heading out; whoever won’t sing this copla can get soaked and keep quiet."
+    }
   },
   {
     "id": "vengo-de-san-sebastian",
     "tema": "invitación",
     "origen": "inedita",
-    "versos": ["Vengo de San Sebastián", "con mi patrulla cantando,", "a pedirle a la morena", "que no me siga mojando."]
+    "versos": ["Vengo de San Sebastián", "con mi patrulla cantando,", "a pedirle a la morena", "que no me siga mojando."],
+    "en": {
+      "glosa": "I come from San Sebastián singing with my troupe, asking that dark-haired woman to stop drenching me."
+    }
   },
   {
     "id": "llego-el-no",
     "tema": "picardía",
     "origen": "inedita",
-    "versos": ["Llegó el Ño Carnavalón", "con su panza y su sombrero,", "a gastarse en cuatro días", "lo que juntó el año entero."]
+    "versos": ["Llegó el Ño Carnavalón", "con su panza y su sombrero,", "a gastarse en cuatro días", "lo que juntó el año entero."],
+    "en": {
+      "glosa": "Ño Carnavalón has arrived with his belly and his hat, ready to spend in four days what he saved all year."
+    }
   },
   {
     "id": "echame-pintura",
     "tema": "picardía",
     "origen": "inedita",
-    "versos": ["Échame pintura, negra,", "échame agua, que no importa,", "que el carnaval se nos va", "y la vida es cosa corta."]
+    "versos": ["Échame pintura, negra,", "échame agua, que no importa,", "que el carnaval se nos va", "y la vida es cosa corta."],
+    "en": {
+      "glosa": "Splash me with paint, sweetheart, splash me with water—it doesn’t matter, carnival slips away and life is short."
+    }
   },
   {
     "id": "chicha-del-poto",
     "tema": "picardía",
     "origen": "inedita",
     "versos": ["Dame chicha de tu poto,", "no me pongas esa cara,", "que yo hablo de calabaza", "y tu mente se dispara."],
-    "nota": "En Cajamarca el «poto» es el mate de calabaza en que se sirve la chicha. El doble sentido es marca de la casa."
+    "nota": "En Cajamarca el «poto» es el mate de calabaza en que se sirve la chicha. El doble sentido es marca de la casa.",
+    "en": {
+      "glosa": "Give me chicha from your poto, don’t give me that look—I’m talking about a gourd, and your mind is racing.",
+      "nota": "In Cajamarca, a poto is the dried gourd bowl used to serve chicha (and slang for backside in Peru). Double entendres are a carnival staple."
+    }
   },
   {
     "id": "patrulla-la-merced",
     "tema": "contrapunto",
     "origen": "inedita",
-    "versos": ["Patrulla del otro barrio,", "no te creas tan cantora,", "que mi barrio con su copla", "te deja muda en una hora."]
+    "versos": ["Patrulla del otro barrio,", "no te creas tan cantora,", "que mi barrio con su copla", "te deja muda en una hora."],
+    "en": {
+      "glosa": "Troupe from the other neighborhood, don’t act like such big singers—my neighborhood’s coplas will leave you speechless in an hour."
+    }
   },
   {
     "id": "calla-cantorcito",
     "tema": "contrapunto",
     "origen": "inedita",
     "versos": ["Calla, calla, cantorcito,", "no presumas tanto, tanto,", "que hasta el misho de mi casa", "maúlla mejor tu canto."],
-    "nota": "«Misho» es gato en el habla de Cajamarca."
+    "nota": "«Misho» es gato en el habla de Cajamarca.",
+    "en": {
+      "glosa": "Hush, hush, little singer, stop bragging so much—even the cat (misho) at my house meows your tune better.",
+      "nota": "Misho means “cat” in Cajamarca Spanish."
+    }
   },
   {
     "id": "cholita-cumbemayo",
     "tema": "amor",
     "origen": "inedita",
-    "versos": ["Cholita de Cumbemayo,", "tus ojos son dos luceros;", "si me echas una mirada", "te doy todos mis carneros."]
+    "versos": ["Cholita de Cumbemayo,", "tus ojos son dos luceros;", "si me echas una mirada", "te doy todos mis carneros."],
+    "en": {
+      "glosa": "Girl from Cumbemayo, your eyes are two bright stars; if you glance my way, I’ll give you all my sheep."
+    }
   },
   {
     "id": "chinashita",
     "tema": "amor",
     "origen": "inedita",
     "versos": ["Chinashita de ojos negros,", "no me eches más agua fría,", "que este pobre cholashito", "ya no tiene ropa limpia."],
-    "nota": "«Chinasha» y «cholasho»: muchachita y muchachito, con el diminutivo -ash- que viene del culle."
+    "nota": "«Chinasha» y «cholasho»: muchachita y muchachito, con el diminutivo -ash- que viene del culle.",
+    "en": {
+      "glosa": "Dark-eyed girl (chinashita), don’t throw any more cold water on me—this poor guy (cholashito) has no dry clothes left.",
+      "nota": "Chinasha and cholasho mean “young girl” and “young boy,” using the -ash- diminutive inherited from the extinct Culle language."
+    }
   },
   {
     "id": "aquisito",
     "tema": "cajamarca",
     "origen": "inedita",
-    "versos": ["Aquisito nomás llueve,", "aquisito sale el sol,", "aquisito te mojaron", "y aquisito… ¡qué color!"]
+    "versos": ["Aquisito nomás llueve,", "aquisito sale el sol,", "aquisito te mojaron", "y aquisito… ¡qué color!"],
+    "en": {
+      "glosa": "Right here (aquisito) it rains, right here the sun comes out, right here you got drenched—and right here, what color!"
+    }
   },
   {
     "id": "tierra-linda",
     "tema": "cajamarca",
     "origen": "inedita",
-    "versos": ["Cajamarca, tierra linda,", "de quesillo y de manjar;", "quien te prueba en carnaval", "ya no te puede olvidar."]
+    "versos": ["Cajamarca, tierra linda,", "de quesillo y de manjar;", "quien te prueba en carnaval", "ya no te puede olvidar."],
+    "en": {
+      "glosa": "Cajamarca, lovely land of fresh curd cheese and manjar blanco—anyone who tastes you at carnival can never forget you."
+    }
   },
   {
     "id": "shulquita",
     "tema": "cajamarca",
     "origen": "inedita",
     "versos": ["La shulquita de mi casa", "me ha robado la pintura:", "la más chiquita del barrio", "con la mayor travesura."],
-    "nota": "La «shulca» es la hija menor, la última de la familia."
+    "nota": "La «shulca» es la hija menor, la última de la familia.",
+    "en": {
+      "glosa": "The youngest girl (shulquita) in my house stole my paint—the smallest kid in the neighborhood with the biggest mischief.",
+      "nota": "Shulca means the youngest child in a family."
+    }
   },
   {
     "id": "se-va-el-no",
     "tema": "despedida",
     "origen": "inedita",
-    "versos": ["Se va el Ño Carnavalón,", "lo lloran todas sus viudas,", "y nos deja en testamento", "puras deudas y mil dudas."]
+    "versos": ["Se va el Ño Carnavalón,", "lo lloran todas sus viudas,", "y nos deja en testamento", "puras deudas y mil dudas."],
+    "en": {
+      "glosa": "Ño Carnavalón is leaving, all his “widows” are weeping—and in his will he leaves us nothing but debts and a thousand doubts."
+    }
   },
   {
     "id": "adios-carnaval",
     "tema": "despedida",
     "origen": "inedita",
-    "versos": ["Adiós, adiós, carnaval,", "ya te vas y aquí me quedo,", "con la pintura en la cara", "y en el bolsillo, ni un medio."]
+    "versos": ["Adiós, adiós, carnaval,", "ya te vas y aquí me quedo,", "con la pintura en la cara", "y en el bolsillo, ni un medio."],
+    "en": {
+      "glosa": "Goodbye, goodbye, carnival—you’re leaving and here I stay, with paint still on my face and not a coin left in my pocket."
+    }
   }
 ]

@@ -5,19 +5,23 @@
  * script las corrige si el sitio se construyó hace tiempo.
  */
 import Mascara from './Mascara.astro';
-import { programa } from '../data/carnaval';
+import { programaDe } from '../data/carnaval';
+import { LOCALE_INTL, idiomaDesdeUrl, type Idioma } from '../i18n';
 import { anioProximoCarnaval, diaDeCarnaval } from '../lib/fechas';
 
 interface Props {
   portada?: boolean;
+  idioma?: Idioma;
 }
 
-const { portada = false } = Astro.props;
+const { portada = false, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const locale = LOCALE_INTL[idioma];
 const anio = anioProximoCarnaval();
-const formatoDia = new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' });
-const formatoMes = new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' });
+const formatoDia = new Intl.DateTimeFormat(locale, { day: 'numeric', timeZone: 'UTC' });
+const formatoMes = new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' });
 
-const dias = programa.map((d) => {
+const dias = programaDe(idioma).map((d) => {
   const fecha = diaDeCarnaval(anio, d.offset);
   return { ...d, numero: formatoDia.format(fecha), mes: formatoMes.format(fecha) };
 });
@@ -352,6 +356,7 @@ const dias = programa.map((d) => {
 <script>
   import { anioProximoCarnaval, diaDeCarnaval } from '../lib/fechas';
   import { azarConSemilla, crearMancha } from '../lib/manchas';
+  import { LOCALE_INTL, idiomaEnNavegador } from '../i18n';
 
   document.querySelectorAll('[data-pintura-banderola]').forEach((pintura) => {
     pintura.append(
@@ -360,9 +365,10 @@ const dias = programa.map((d) => {
     );
   });
 
+  const locale = LOCALE_INTL[idiomaEnNavegador()];
   const formatos = {
-    dia: new Intl.DateTimeFormat('es-PE', { day: 'numeric', timeZone: 'UTC' }),
-    mes: new Intl.DateTimeFormat('es-PE', { month: 'long', timeZone: 'UTC' }),
+    dia: new Intl.DateTimeFormat(locale, { day: 'numeric', timeZone: 'UTC' }),
+    mes: new Intl.DateTimeFormat(locale, { month: 'long', timeZone: 'UTC' }),
   };
 
   document.querySelectorAll<HTMLElement>('[data-banderolas]').forEach((raiz) => {

@@ -1,3 +1,4 @@
+import { idiomaEnNavegador } from '../i18n';
 import { ahoraEnNavegador, hoyEnPeru } from './fechas';
 import { describirFaltan, diasParaAniversario } from './barrios';
 
@@ -9,7 +10,7 @@ export function aplicarAniversarioDelBarrio() {
 
   const aniversario = { dia: Number(contenedor.dataset.dia), mes: Number(contenedor.dataset.mes) };
   const faltan = diasParaAniversario(hoyEnPeru(ahoraEnNavegador()), aniversario);
-  const descripcion = describirFaltan(faltan, contenedor.dataset.nombre ?? '');
+  const descripcion = describirFaltan(faltan, contenedor.dataset.nombre ?? '', idiomaEnNavegador());
 
   numero.textContent = descripcion.numero;
   texto.textContent = descripcion.texto;

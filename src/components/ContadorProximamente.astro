@@ -1,42 +1,46 @@
 ---
 import type { Barrio } from '../data/barrios';
+import { idiomaDesdeUrl, t, type Idioma } from '../i18n';
 import Candado from './Candado.astro';
 
 interface Props {
   barrio: Barrio;
   rival?: Barrio;
+  idioma?: Idioma;
 }
 
-const { barrio, rival } = Astro.props;
-const compartirCredencial = ['WhatsApp', 'Facebook', 'Instagram', 'Descargar imagen'];
-const invitarBarrio = ['Mandar al grupo del barrio', 'Copiar enlace'];
+const { barrio, rival, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma).contadorProximamente;
+const compartirCredencial = ['WhatsApp', 'Facebook', 'Instagram', txt.descargarImagen];
+const invitarBarrio = [txt.mandarGrupo, txt.copiarEnlace];
 ---
 
 <section class="proximo bloque" data-color={barrio.color} aria-labelledby="titulo-proximo">
   <div class="envoltura">
-    <h2 id="titulo-proximo" class="titulo-bloque">Carnaval 2027</h2>
+    <h2 id="titulo-proximo" class="titulo-bloque">{txt.titulo}</h2>
 
     <div class="proximo__marco">
       <div class="proximo__aviso">
         <Candado class="proximo__candado" />
         <p>
-          <strong>Próximamente</strong>
-          <span>Aquí vas a ver cuántos de {barrio.nombre} van al Carnaval 2027 y qué número te toca.</span>
+          <strong>{txt.proximamente}</strong>
+          <span>{txt.aviso(barrio.nombre)}</span>
         </p>
       </div>
 
       <div class="proximo__vista" aria-hidden="true">
         <div class="contador">
           <p class="contador__numero">000</p>
-          <p class="contador__texto">carnavaleros de {barrio.nombre} ya van</p>
+          <p class="contador__texto">{txt.carnavalerosVan(barrio.nombre)}</p>
           <div class="contador__barra"><i></i></div>
-          <p class="contador__global">En toda la web: <strong>000</strong> carnavaleros</p>
-          <span class="contador__boton">Voy al carnaval 2027</span>
+          <p class="contador__global">{txt.enTodaLaWeb} <strong>000</strong> {txt.carnavaleros}</p>
+          <span class="contador__boton">{txt.voyAlCarnaval}</span>
         </div>
 
         <div class="carnet">
           <div class="carnet__cabeza">
-            <span class="carnet__marca">Carnaval de Cajamarca</span>
+            <span class="carnet__marca" translate="no">Carnaval de Cajamarca</span>
             <span class="carnet__anio">2027</span>
           </div>
           <div class="carnet__cuerpo">
@@ -47,31 +51,31 @@ const invitarBarrio = ['Mandar al grupo del barrio', 'Copiar enlace'];
               </svg>
             </div>
             <div class="carnet__datos">
-              <b>Carnavalero</b>
-              <strong class="carnet__nombre">Tu nombre aquí</strong>
-              <span class="carnet__barrio">{barrio.nombre}</span>
-              <span class="carnet__modo">Salgo con mi barrio</span>
+              <b>{txt.carnavalero}</b>
+              <strong class="carnet__nombre">{txt.tuNombre}</strong>
+              <span class="carnet__barrio" translate="no">{barrio.nombre}</span>
+              <span class="carnet__modo">{txt.salgoConBarrio}</span>
             </div>
           </div>
           <div class="carnet__numeros">
             <div>
-              <small>En {barrio.nombre}</small>
-              <strong>N.° 000</strong>
+              <small>{txt.enBarrio(barrio.nombre)}</small>
+              <strong>{txt.numero} 000</strong>
             </div>
             <div>
-              <small>En toda la web</small>
-              <strong>N.° 000</strong>
+              <small>{txt.enTodaWebCorto}</small>
+              <strong>{txt.numero} 000</strong>
             </div>
           </div>
           <div class="carnet__pie">
-            <span>Sáb 6 al mié 10 de febrero</span>
-            <span class="carnet__fundador">Fundador · lugar reservado</span>
+            <span>{txt.fechas}</span>
+            <span class="carnet__fundador">{txt.fundador}</span>
           </div>
         </div>
 
         <div class="compartir">
           <div class="compartir__grupo">
-            <h3 class="compartir__titulo">Compartir mi credencial</h3>
+            <h3 class="compartir__titulo">{txt.compartirCredencial}</h3>
             <div class="compartir__fila">
               {
                 compartirCredencial.map((nombre) => (
@@ -84,7 +88,7 @@ const invitarBarrio = ['Mandar al grupo del barrio', 'Copiar enlace'];
             </div>
           </div>
           <div class="compartir__grupo">
-            <h3 class="compartir__titulo">Invitar a mi barrio</h3>
+            <h3 class="compartir__titulo">{txt.invitarBarrio}</h3>
             <div class="compartir__fila">
               {
                 invitarBarrio.map((nombre) => (
@@ -101,7 +105,7 @@ const invitarBarrio = ['Mandar al grupo del barrio', 'Copiar enlace'];
         {
           rival && (
             <div class="duelo">
-              <h3 class="duelo__titulo">Duelo de barrios</h3>
+              <h3 class="duelo__titulo">{txt.duelo}</h3>
               <div class="duelo__lados">
                 <p class="duelo__lado">
                   {barrio.nombre}

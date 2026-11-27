@@ -61,4 +61,61 @@ export const ogPaginas: Record<string, DatosOg> = {
     fondo: 'tinta',
     relleno: 'amarillo',
   },
+  // Versión en inglés (/en/)
+  'en-inicio': {
+    titulo: 'Carnival',
+    bajada: 'Five days of water, paint, and coplas. Nobody stays dry.',
+    fondo: 'fucsia',
+    sello: 'Feb 6–10 2027',
+  },
+  'en-2027': {
+    titulo: '2027',
+    bajada: 'Saturday Feb 6 to Wednesday Feb 10: the day-by-day schedule.',
+    fondo: 'tinta',
+    sello: 'Coming up!',
+  },
+  'en-la-fiesta': {
+    titulo: 'The Party',
+    bajada: 'Ño Carnavalón, clones, widows, music, and local food.',
+    fondo: 'azul',
+  },
+  'en-ediciones': {
+    titulo: 'Editions',
+    bajada: 'Carnivals since 2017: queens, numbers, and what happened each year.',
+    fondo: 'naranja',
+    relleno: 'blanco',
+  },
+  'en-coplas': {
+    titulo: 'Coplas',
+    bajada: 'Four sharp lines and plenty of wit. Traditional, new, and contrapunto.',
+    fondo: 'amarillo',
+  },
+  'en-habla': {
+    titulo: 'Slang',
+    bajada: 'Shulca, misho, ¡alalau!: the Cajamarca Spanish that sings.',
+    fondo: 'verde',
+  },
+  'en-historia': {
+    titulo: 'History',
+    bajada: 'From 16th-century Spanish verse to a neighborhood carnival.',
+    fondo: 'tinta',
+    relleno: 'fucsia',
+  },
+  'en-guia': {
+    titulo: 'Guide',
+    bajada: 'Getting there, where to stay, altitude, what to pack, and emergencies.',
+    fondo: 'azul',
+    relleno: 'amarillo',
+  },
+  'en-barrios': {
+    titulo: 'Neighborhoods',
+    bajada: 'Cumbemayo, San Sebastián, San Pedro, La Merced, and the rest.',
+    fondo: 'turquesa',
+  },
+  'en-fuentes': {
+    titulo: 'Sources',
+    bajada: 'Documents, chronicles, and photo credits for Carnaval de Cajamarca.',
+    fondo: 'tinta',
+    relleno: 'amarillo',
+  },
 };

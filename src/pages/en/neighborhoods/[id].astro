@@ -1,0 +1,21 @@
+---
+import type { GetStaticPaths } from 'astro';
+import BarrioPagina from '../../../components/paginas/Barrio.astro';
+import { barrios, type Barrio } from '../../../data/barrios';
+
+export const getStaticPaths = (() =>
+  barrios.map((barrio, i) => ({
+    params: { id: barrio.id },
+    props: { barrio, anterior: barrios[i - 1], siguiente: barrios[i + 1] },
+  }))) satisfies GetStaticPaths;
+
+interface Props {
+  barrio: Barrio;
+  anterior?: Barrio;
+  siguiente?: Barrio;
+}
+
+const { barrio, anterior, siguiente } = Astro.props;
+---
+
+<BarrioPagina barrio={barrio} anterior={anterior} siguiente={siguiente} idioma="en" />

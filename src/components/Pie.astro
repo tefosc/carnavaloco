@@ -1,43 +1,70 @@
 ---
 import Chicha from './Chicha.astro';
 import { creditoFotos } from '../data/fotos';
+import { idiomaDesdeUrl, rutaAlterna, rutaDe, t, type Idioma } from '../i18n';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
+const txt = t(idioma);
+const ruta = Astro.url.pathname.replace(/\/?$/, '/');
+const rutaEs = idioma === 'es' ? ruta : rutaAlterna(ruta, 'es');
+const rutaEn = idioma === 'en' ? ruta : rutaAlterna(ruta, 'en');
+const licenciaUrl = idioma === 'en' ? creditoFotos.licenciaUrl.replace('/deed.es', '/deed.en') : creditoFotos.licenciaUrl;
 ---
 
 <footer class="pie zigzag-arriba">
   <div class="envoltura pie__grid">
     <div>
       <Chicha
-        texto="¡Viva el carnaval!"
+        texto={txt.pie.grito}
         como="p"
         class="pie__grito"
         relleno="var(--amarillo)"
         relleno2="var(--naranja)"
         sombra="var(--azul)"
       />
-      <p class="pie__nota">
-        Historia, coplas y habla de la fiesta más grande de Cajamarca. Las fechas cambian cada año: el programa oficial lo
-        publica la Municipalidad Provincial de Cajamarca.
+      <p class="pie__nota">{txt.pie.nota}</p>
+      <p class="pie__idioma" role="group" aria-label={txt.nav.idiomaAria}>
+        {
+          idioma === 'es' ? (
+            <span class="pie__idioma-actual" aria-current="true">ES</span>
+          ) : (
+            <a href={rutaEs} hreflang="es-PE" lang="es" data-cambiar-idioma="es">ES</a>
+          )
+        }
+        <span aria-hidden="true">|</span>
+        {
+          idioma === 'en' ? (
+            <span class="pie__idioma-actual" aria-current="true">EN</span>
+          ) : (
+            <a href={rutaEn} hreflang="en" lang="en" data-cambiar-idioma="en">EN</a>
+          )
+        }
       </p>
     </div>
-    <nav aria-label="Pie de página" class="pie__nav">
-      <a href="/2027/">Carnaval 2027</a>
-      <a href="/guia/">Guía</a>
-      <a href="/la-fiesta/">La fiesta</a>
-      <a href="/ediciones/">Ediciones</a>
-      <a href="/barrios/">Barrios</a>
-      <a href="/coplas/">Coplas</a>
-      <a href="/habla/">Habla</a>
-      <a href="/historia/">Historia</a>
+    <nav aria-label={txt.pie.navAria} class="pie__nav">
+      <a href={rutaDe('2027', idioma)}>{txt.pie.carnaval2027}</a>
+      <a href={rutaDe('guia', idioma)}>{txt.nav.items.guia}</a>
+      <a href={rutaDe('la-fiesta', idioma)}>{txt.nav.items['la-fiesta']}</a>
+      <a href={rutaDe('ediciones', idioma)}>{txt.nav.items.ediciones}</a>
+      <a href={rutaDe('barrios', idioma)}>{txt.nav.items.barrios}</a>
+      <a href={rutaDe('coplas', idioma)}>{txt.nav.items.coplas}</a>
+      <a href={rutaDe('habla', idioma)}>{txt.nav.items.habla}</a>
+      <a href={rutaDe('historia', idioma)}>{txt.nav.items.historia}</a>
     </nav>
   </div>
-  <section class="envoltura" data-borradores-whatsapp hidden aria-label="Borradores de WhatsApp">
-    <h2>Borradores de WhatsApp</h2>
+  <section class="envoltura" data-borradores-whatsapp hidden aria-label={txt.pie.borradoresTitulo}>
+    <h2>{txt.pie.borradoresTitulo}</h2>
     <ul></ul>
   </section>
   <p class="envoltura pie__creditos">
-    Fotos: {creditoFotos.autor},{' '}
+    {txt.pie.fotos} {creditoFotos.autor},{' '}
     <a href={creditoFotos.categoriaUrl}>Wikimedia Commons</a>,{' '}
-    <a href={creditoFotos.licenciaUrl}>{creditoFotos.licencia}</a>. <a href="/fuentes/">Fuentes y créditos</a>.
+    <a href={licenciaUrl}>{creditoFotos.licencia}</a>.{' '}
+    <a href={rutaDe('fuentes', idioma)}>{txt.pie.fuentesYCreditos}</a>.
   </p>
 </footer>
 
@@ -69,6 +96,43 @@ import { creditoFotos } from '../data/fotos';
     max-width: 44ch;
     margin-top: 1.5rem;
     font-weight: 500;
+  }
+
+  .pie__idioma {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 1.2rem;
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.35rem;
+    letter-spacing: 0.04em;
+  }
+
+  .pie__idioma a,
+  .pie__idioma-actual {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 44px;
+    min-height: 44px;
+    padding: 0.2rem 0.65rem 0.1rem;
+    border: 3px solid var(--tinta);
+    text-decoration: none;
+  }
+
+  .pie__idioma-actual {
+    background: var(--tinta);
+    color: var(--amarillo);
+  }
+
+  .pie__idioma a {
+    background: var(--blanco);
+    color: var(--tinta);
+  }
+
+  .pie__idioma a:hover {
+    background: var(--amarillo);
   }
 
   .pie__nav {
@@ -106,6 +170,9 @@ import { creditoFotos } from '../data/fotos';
 </style>
 
 <script>
+  import { idiomaEnNavegador, t } from '../i18n';
+
+  const txt = t(idiomaEnNavegador()).pie;
   const panel = document.querySelector<HTMLElement>('[data-borradores-whatsapp]');
   const lista = panel?.querySelector('ul');
   const clave = 'carnaval-borradores-whatsapp';
@@ -156,8 +223,8 @@ import { creditoFotos } from '../data/fotos';
       }
       const quitar = document.createElement('button');
       quitar.type = 'button';
-      quitar.textContent = 'Quitar';
-      quitar.setAttribute('aria-label', 'Quitar borrador: ' + mensaje);
+      quitar.textContent = txt.quitar;
+      quitar.setAttribute('aria-label', txt.quitarBorradorAria + mensaje);
       quitar.addEventListener('click', () => {
         borradores.delete(href);
         persistir();
@@ -177,9 +244,7 @@ import { creditoFotos } from '../data/fotos';
     mostrar();
     const aviso = document.querySelector('[data-sin-red]');
     if (aviso) {
-      aviso.textContent = guardado
-        ? 'Borrador guardado en el pie de página. Ábrelo cuando vuelva la conexión.'
-        : 'Borrador disponible en el pie de esta página hasta que la cierres.';
+      aviso.textContent = guardado ? txt.borradorGuardado : txt.borradorSinEspacio;
     }
   });
 

@@ -11,6 +11,8 @@ import {
 import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 
+import { t, type Idioma } from '../i18n';
+
 setWorkerUrl(workerUrl);
 
 const C = {
@@ -86,7 +88,7 @@ function capasDeRuta(prefijo: string, fuente: string): LayerSpecification[] {
   ];
 }
 
-function estilo(lineas: Coleccion): StyleSpecification {
+function estilo(lineas: Coleccion, creditoOsm: string): StyleSpecification {
   return {
     version: 8,
     sources: {
@@ -94,7 +96,7 @@ function estilo(lineas: Coleccion): StyleSpecification {
         type: 'vector',
         url: 'https://tiles.openfreemap.org/planet',
         attribution:
-          '<a href="https://openfreemap.org">OpenFreeMap</a> <a href="https://www.openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/copyright">© colaboradores de OpenStreetMap</a>',
+          `<a href="https://openfreemap.org">OpenFreeMap</a> <a href="https://www.openmaptiles.org/">© OpenMapTiles</a> <a href="https://www.openstreetmap.org/copyright">${creditoOsm}</a>`,
       },
       relieve: RELIEVE,
       // Fuente aparte para el sombreado, como recomienda MapLibre
@@ -295,14 +297,16 @@ export async function abrirMapa3D(
   contenedor: HTMLElement,
   rutas: Coleccion,
   tranquilo: boolean,
+  idioma: Idioma = 'es',
 ): Promise<Mapa3D> {
+  const txt = t(idioma).mapa;
   const rasgos = rutas.features;
   const lineas = rasgos.filter((f) => f.geometry.type === 'LineString');
   const todo = limitesDe(rasgos, null);
   const datos: Coleccion = { type: 'FeatureCollection', features: lineas };
   const mapa = new Map({
     container: contenedor,
-    style: estilo(datos),
+    style: estilo(datos, txt.creditoOsm),
     bounds: todo,
     fitBoundsOptions: VISTA_GENERAL,
     maxPitch: 80,
@@ -314,18 +318,7 @@ export async function abrirMapa3D(
     // En el teléfono se mueve con dos dedos: con uno se sigue bajando por la página
     cooperativeGestures: true,
     attributionControl: { compact: true },
-    // Los textos de MapLibre vienen en inglés
-    locale: {
-      'AttributionControl.ToggleAttribution': 'Mostrar u ocultar créditos',
-      'Map.Title': 'Mapa 3D de recorridos',
-      'Marker.Title': 'Marca en el mapa',
-      'NavigationControl.ResetBearing': 'Arrastra para girar el mapa; toca para mirar al norte',
-      'NavigationControl.ZoomIn': 'Acercar',
-      'NavigationControl.ZoomOut': 'Alejar',
-      'CooperativeGesturesHandler.WindowsHelpText': 'Usa Ctrl + rueda del mouse para acercar o alejar el mapa',
-      'CooperativeGesturesHandler.MacHelpText': 'Usa ⌘ + rueda del mouse para acercar o alejar el mapa',
-      'CooperativeGesturesHandler.MobileHelpText': 'Usa dos dedos para mover el mapa',
-    },
+    locale: txt.maplibre,
   });
   // Sin visualizePitch: con esa opción, la brújula también aplana el mapa (vista desde arriba)
   // y no hay botón para volver a inclinarlo. Así solo lo endereza hacia el norte.
@@ -360,7 +353,9 @@ export async function abrirMapa3D(
   // Punto de salida y cabeza de la ruta elegida
   const elSalida = document.createElement('div');
   elSalida.className = 'salida3d';
-  elSalida.innerHTML = '<span>Sale</span>';
+  const etiquetaSalida = document.createElement('span');
+  etiquetaSalida.textContent = txt.sale;
+  elSalida.append(etiquetaSalida);
   elSalida.hidden = true;
   const salida = new Marker({ element: elSalida }).setLngLat(lineas[0].geometry.coordinates[0] as Coordenada).addTo(mapa);
   // La salida va primero en los choques: el anillo con su cartel «Sale» encima (medidas fijas,
@@ -376,7 +371,7 @@ export async function abrirMapa3D(
   await new Promise<void>((resolver, rechazar) => {
     const espera = window.setTimeout(() => {
       mapa.remove();
-      rechazar(new Error('El mapa 3D no cargó a tiempo'));
+      rechazar(new Error(txt.errorTimeout3d));
     }, 25_000);
     mapa.once('load', () => {
       window.clearTimeout(espera);

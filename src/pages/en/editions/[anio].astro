@@ -1,0 +1,23 @@
+---
+import type { GetStaticPaths } from 'astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
+import Edicion from '../../../components/paginas/Edicion.astro';
+
+export const getStaticPaths = (async () => {
+  const ediciones = (await getCollection('ediciones')).map((e) => e.data).sort((a, b) => a.anio - b.anio);
+  return ediciones.map((edicion, i) => ({
+    params: { anio: String(edicion.anio) },
+    props: { edicion, anterior: ediciones[i - 1], siguiente: ediciones[i + 1] },
+  }));
+}) satisfies GetStaticPaths;
+
+interface Props {
+  edicion: CollectionEntry<'ediciones'>['data'];
+  anterior?: CollectionEntry<'ediciones'>['data'];
+  siguiente?: CollectionEntry<'ediciones'>['data'];
+}
+
+const { edicion, anterior, siguiente } = Astro.props;
+---
+
+<Edicion edicion={edicion} anterior={anterior} siguiente={siguiente} idioma="en" />

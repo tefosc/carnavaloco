@@ -3,10 +3,10 @@
     "id": "2026",
     "anio": 2026,
     "estado": "realizado",
-    "resumen": "Arrancó con un pregón nocturno en Cumbemayo y un bando de más de tres horas por las calles. Movió S/ 75 millones y atrajo a 80 mil turistas.",
+    "resumen": "Arrancó con un pregón nocturno en Cumbemayo y un bando de más de tres horas por las calles. Movió S/ 75 millones y atrajo a 80 mil turistas.",
     "reina": { "nombre": "Daniela Reaño Díaz", "barrio": "La Merced", "nota": "Ganó entre 22 candidatas." },
     "cifras": [
-      { "valor": "S/ 75 mill.", "texto": "de movimiento económico" },
+      { "valor": "S/ 75 mill.", "texto": "de movimiento económico" },
       { "valor": "80 mil", "texto": "turistas" },
       { "valor": "116 mil", "texto": "asistentes entre vecinos y visitantes" },
       { "valor": "+50 mil", "texto": "personas en el Gran Bando" }
@@ -18,8 +18,25 @@
       "En el complejo Qhapaq Ñan se eligió a las tres «viudas» que lloraron en el funeral del Rey Momo.",
       "Valentina La Vera Castañeda, de San Marcos, fue Reina Integración, y Olenka Fernández Murga, de Pariamarca, Reina de los Centros Poblados."
     ],
+    "en": {
+      "resumen": "Kicked off with a night proclamation in Cumbemayo and a three-hour street parade. It generated S/ 75 million in economic activity and drew 80,000 tourists.",
+      "reina": { "nota": "Won out of 22 contestants." },
+      "cifras": [
+        { "valor": "S/ 75M", "texto": "in economic impact" },
+        { "valor": "80,000", "texto": "tourists" },
+        { "valor": "116,000", "texto": "total attendees (locals & visitors)" },
+        { "valor": "50,000+", "texto": "people in the Gran Bando" }
+      ],
+      "hechos": [
+        "The festival opened with a nighttime proclamation (pregón) in the Cumbemayo neighborhood.",
+        "In January, the carnival traditions contest filled streets decorated by residents themselves with color.",
+        "The official poster, schedule, and carnival song were unveiled.",
+        "At the Qhapaq Ñan complex, three satirical “widows” were chosen to mourn at King Momo’s funeral.",
+        "Valentina La Vera Castañeda of San Marcos was crowned Integration Queen, and Olenka Fernández Murga of Pariamarca was crowned Rural Districts Queen."
+      ]
+    },
     "fuentes": [
-      { "medio": "Andina", "titulo": "Mincetur: Carnaval de Cajamarca 2026 generó S/ 75 millones y atrajo a 80 mil turistas", "url": "https://andina.pe/agencia/noticia-mincetur-carnaval-cajamarca-2026-genero-s-75-millones-y-atrajo-a-80-mil-turistas-1065881.aspx" },
+      { "medio": "Andina", "titulo": "Mincetur: Carnaval de Cajamarca 2026 generó S/ 75 millones y atrajo a 80 mil turistas", "url": "https://andina.pe/agencia/noticia-mincetur-carnaval-cajamarca-2026-genero-s-75-millones-y-atrajo-a-80-mil-turistas-1065881.aspx" },
       { "medio": "Andina", "titulo": "Carnaval se inicia con pregón nocturno en barrio de Cumbemayo", "url": "https://andina.pe/agencia/noticia-cajamarca-carnaval-se-inicia-pregon-nocturno-barrio-cumbemayo-1058975.aspx" },
       { "medio": "Andina", "titulo": "Cajamarca inició tradicional carnaval con multitudinario y colorido bando", "url": "https://andina.pe/agencia/noticia-cajamarca-inicio-tradicional-carnaval-multitudinario-y-colorido-bando-las-calles-1060621.aspx" },
       { "medio": "Andina", "titulo": "Eligen a las tres «viudas» que acompañarán el funeral del Rey Momo", "url": "https://andina.pe/agencia/noticia-carnaval-cajamarca-eligen-a-las-tres-viudas-acompanaran-funeral-del-rey-momo-1063518.aspx" },
@@ -36,7 +53,7 @@
     "cifras": [
       { "valor": "+150", "texto": "grupos en la calle" },
       { "valor": "37", "texto": "barrios" },
-      { "valor": "S/ 500–5000", "texto": "puede costar un disfraz" }
+      { "valor": "S/ 500–5000", "texto": "puede costar un disfraz" }
     ],
     "hechos": [
       "El Gran Corso salió el lunes 3 de marzo.",
@@ -44,6 +61,20 @@
       "Hace medio siglo cada barrio tenía de tres a seis comparsas; hoy puede sacar hasta 25.",
       "Rosmery Castrejón Sangay, de Pariamarca, fue elegida reina del carnaval de los centros poblados entre seis candidatas."
     ],
+    "en": {
+      "resumen": "A March carnival. Over 150 groups from 37 neighborhoods took to the streets, closing on March 4 and 5 with the wake and burial of Ño Carnavalón.",
+      "cifras": [
+        { "valor": "150+", "texto": "groups in the streets" },
+        { "valor": "37", "texto": "neighborhoods" },
+        { "valor": "S/ 500–5,000", "texto": "typical cost of a costume" }
+      ],
+      "hechos": [
+        "The Gran Corso took place on Monday, March 3.",
+        "Groups marched across the city from Héroes de San Ramón Stadium to the Arco del Triunfo.",
+        "Half a century ago each neighborhood fielded three to six troupes; today a single neighborhood can field up to 25.",
+        "Rosmery Castrejón Sangay of Pariamarca was crowned Rural Districts Queen out of six contestants."
+      ]
+    },
     "fuentes": [
       { "medio": "El Comercio", "titulo": "Carnaval de Cajamarca: un viaje de colores, comparsas y tradiciones", "url": "https://elcomercio.pe/somos/carnaval-de-cajamarca-un-viaje-de-colores-tradiciones-y-comparsas-historia-viaje-noticia/" },
       { "medio": "Andina", "titulo": "Cajamarca elige a reina del carnaval de los centros poblados", "url": "https://andina.pe/agencia/noticia-cajamarca-elige-a-reina-del-carnaval-los-centros-poblados-1018906.aspx" }
@@ -60,16 +91,33 @@
     "cifras": [
       { "valor": "43", "texto": "comparsas en el concurso" },
       { "valor": "98", "texto": "puntos del campeón de campeones" },
-      { "valor": "S/ 15 000", "texto": "de premio para Chamis" },
-      { "valor": "6 x S/ 1", "texto": "globos de agua en la calle" }
+      { "valor": "S/ 15 000", "texto": "de premio para Chamis" },
+      { "valor": "6 x S/ 1", "texto": "globos de agua en la calle" }
     ],
     "hechos": [
       "En el concurso desfilaron 43 comparsas durante casi ocho horas, con sátira política incluida.",
       "La representación del clarín del centro poblado de Chamis ganó el corso con 98 puntos.",
-      "Los palcos del corso costaban entre S/ 20 y S/ 100 por persona.",
+      "Los palcos del corso costaban entre S/ 20 y S/ 100 por persona.",
       "El entierro y la cremación del Ño Carnavalón fueron en Baños del Inca, entre el llanto de sus viudas.",
       "Camila Shantall Marín Aro, de San Marcos, fue Reina Integración."
     ],
+    "en": {
+      "nombre": "Unforgettable Carnival, Bicentennial Edition",
+      "resumen": "The Bicentennial year. Ño Carnavalón paraded to the Qhapaq Ñan complex for a six-hour concert, and a giant clarín float from Chamis won overall champion of the Gran Corso.",
+      "cifras": [
+        { "valor": "43", "texto": "competing troupes" },
+        { "valor": "98", "texto": "points for the overall champion" },
+        { "valor": "S/ 15,000", "texto": "prize won by Chamis" },
+        { "valor": "6 for S/ 1", "texto": "street price for water balloons" }
+      ],
+      "hechos": [
+        "43 troupes paraded for nearly eight hours in the contest, packed with political satire.",
+        "The clarín (traditional cane trumpet) float from the rural town of Chamis won the Gran Corso with 98 points.",
+        "Grandstand seats for the parade cost between S/ 20 and S/ 100 per person.",
+        "The burial and burning of Ño Carnavalón took place in Baños del Inca amid wailing “widows.”",
+        "Camila Shantall Marín Aro of San Marcos was crowned Integration Queen."
+      ]
+    },
     "fuentes": [
       { "medio": "La República", "titulo": "Carnaval de Cajamarca 2024: para el rico y para el pobre, para todos lo hizo Dios", "url": "https://larepublica.pe/turismo/2024/02/23/carnaval-de-cajamarca-2024-para-el-rico-y-para-el-pobre-para-todos-lo-hizo-dios-carnaval-inolvidable-carnaval-de-cajamarca-1216006" },
       { "medio": "La República", "titulo": "Cajamarca eligió a su reina del carnaval 2024", "url": "https://larepublica.pe/sociedad/2024/01/28/cajamarca-eligio-a-su-reina-carnaval-2024-conoce-a-nichol-bardales-cieza-la-ganadora-mincetur-carnaval-cajamarquino-lrnd-2621528" },
@@ -88,13 +136,28 @@
     "cifras": [
       { "valor": "2 años", "texto": "sin carnaval antes de esta edición" },
       { "valor": "+90 %", "texto": "de la capacidad hotelera reservada" },
-      { "valor": "S/ 120 000", "texto": "de utilidades para la organización" }
+      { "valor": "S/ 120 000", "texto": "de utilidades para la organización" }
     ],
     "hechos": [
       "El sábado 18 de febrero el Ño Carnavalón hizo su gran ingreso a la ciudad.",
       "La reina se eligió en el coliseo Gran Qhapaq Ñan.",
       "Coplas, música, patrullas, pintura, talco, serpentina y mucha agua: la fiesta de siempre, con ganas acumuladas."
     ],
+    "en": {
+      "nombre": "Carnival of Reunion",
+      "resumen": "Carnival returned after two pandemic years—hence “Reunion.” Classic tunes like La Matarina and El Cilulo had locals, tourists, and even police officers dancing.",
+      "reina": { "nota": "Won out of 19 contestants." },
+      "cifras": [
+        { "valor": "2 years", "texto": "without carnival prior to this edition" },
+        { "valor": "90%+", "texto": "hotel capacity booked ahead" },
+        { "valor": "S/ 120,000", "texto": "net proceeds for organizers" }
+      ],
+      "hechos": [
+        "On Saturday, February 18, Ño Carnavalón made his grand entrance into the city.",
+        "The Carnival Queen was crowned at the Gran Qhapaq Ñan Coliseum.",
+        "Coplas, music, troupes, paint, talcum powder, streamers, and plenty of water: the classic party, with two years of pent-up energy."
+      ]
+    },
     "fuentes": [
       { "medio": "Perú21", "titulo": "Carnaval del Reencuentro: la celebración y algarabía para todos", "url": "https://peru21.pe/peru/carnaval-cajamarca-2023-carnaval-del-reencuentro-la-celebracion-y-algarabia-para-todos-en-cajamarca-cronica-noticia/" },
       { "medio": "Trome", "titulo": "Carnaval del Reencuentro 2023 hizo zapatear a turistas y policías", "url": "https://trome.com/actualidad/peru-carnavales-en-cajamarca-carnaval-del-reencuentro-2023-hizo-zapatear-a-turistas-policias-alegria-la-matarina-el-cilulo-no-carnavalon-hasta-cuando-dura-fiesta-mas-alegre-bandas-festival-imp-noticia/" },
@@ -115,6 +178,15 @@
       "En febrero se pintó un mural gigante dedicado al carnaval.",
       "Durante la pandemia, el «Ño Vacunatón» invitó a vacunarse contra la covid-19 a ritmo de carnaval."
     ],
+    "en": {
+      "resumen": "Second year without carnival. The Municipality kept the pandemic suspension in place and held only four events with no live audience.",
+      "cifras": [{ "valor": "4", "texto": "audience-free events" }],
+      "hechos": [
+        "Online talks replaced street troupes.",
+        "In February, a giant mural dedicated to carnival was painted.",
+        "During the pandemic, the “Ño Vacunatón” encouraged COVID-19 vaccination to carnival rhythms."
+      ]
+    },
     "fuentes": [
       { "medio": "La República", "titulo": "Actividades del carnaval de Cajamarca se desarrollarán sin público", "url": "https://larepublica.pe/sociedad/2022/02/04/actividades-del-carnaval-de-cajamarca-se-desarrollaran-sin-publico-lrnd" },
       { "medio": "La República", "titulo": "Pintan gigantesco mural alusivo al Carnaval de Cajamarca", "url": "https://larepublica.pe/sociedad/2022/02/20/pintan-gigantesco-mural-alusivo-al-carnaval-de-cajamarca-lrnd/" },
@@ -132,6 +204,14 @@
       "En septiembre de 2020, el presidente del comité central anunció que no habría carnaval en 2021.",
       "En enero, con los casos en alza en la región, la cancelación fue definitiva: «la salud es primero»."
     ],
+    "en": {
+      "resumen": "No carnival was held. The organizing committee signaled it in September 2020 and confirmed the cancellation in January as COVID-19 cases surged.",
+      "cifras": [],
+      "hechos": [
+        "In September 2020, the head of the central committee announced there would be no carnival in 2021.",
+        "In January, as regional cases rose, the cancellation became final under the motto “health comes first.”"
+      ]
+    },
     "fuentes": [
       { "medio": "La República", "titulo": "Carnaval de Cajamarca no se realizará en el 2021", "url": "https://larepublica.pe/sociedad/2020/09/03/carnaval-de-cajamarca-no-se-realizara-en-el-2021-lrnd" },
       { "medio": "Andina", "titulo": "¡La salud es primero! Cajamarca cancela su tradicional carnaval por el coronavirus", "url": "https://andina.pe/agencia/noticia-la-salud-es-primero-cajamarca-cancela-su-tradicional-carnaval-por-coronavirus-830841.aspx" }
@@ -149,6 +229,15 @@
       "El Carnaval de Integración Regional presentó su afiche y su spot promocional.",
       "La fiesta central fue del 22 al 26 de febrero."
     ],
+    "en": {
+      "resumen": "The last carnival before the pandemic. Weeks earlier, troupes traveled to Lima to promote the festival—even performing at the Government Palace.",
+      "cifras": [],
+      "hechos": [
+        "In late January, a delegation of troupes paraded through Lima and visited the Government Palace.",
+        "The Regional Integration Carnival unveiled its official poster and promotional video.",
+        "The main celebration ran from February 22 to 26."
+      ]
+    },
     "fuentes": [
       { "medio": "La República", "titulo": "Promocionan Carnaval de Cajamarca en Palacio de Gobierno", "url": "https://larepublica.pe/sociedad/2020/01/30/promocionan-carnaval-de-cajamarca-en-palacio-de-gobierno-lrnd/" },
       { "medio": "La República", "titulo": "Carnaval de Integración Regional presentó su afiche y spot promocional", "url": "https://larepublica.pe/sociedad/2020/01/20/carnaval-de-integracion-regional-presento-su-afiche-y-spot-promocional-lrdn" }
@@ -165,6 +254,14 @@
       "Cajamarca vivió una fiesta en la calle por el ingreso del Ño Carnavalón.",
       "Las reinas del certamen Señorita Carnaval de Cajamarca desfilaron en los carros alegóricos del corso."
     ],
+    "en": {
+      "resumen": "A late-calendar carnival, from March 2 to 6. Music and color filled the city from the moment Ño Carnavalón arrived.",
+      "cifras": [],
+      "hechos": [
+        "Cajamarca turned into a city-wide street party for the arrival of Ño Carnavalón.",
+        "Winners of the Señorita Carnaval de Cajamarca pageant rode on the Gran Corso floats."
+      ]
+    },
     "fuentes": [
       { "medio": "Andina", "titulo": "Cajamarca vivió fiesta por el ingreso de Ño Carnavalón", "url": "https://andina.pe/ingles/noticia-cajamarca-vivio-fiesta-por-ingreso-no-carnavalon-744131.aspx" },
       { "medio": "Andina", "titulo": "Carnaval de Cajamarca: la ciudad vive ambiente festivo de música y color", "url": "https://andina.pe/ingles/noticia-carnaval-cajamarca-ciudad-vive-ambiente-festivo-musica-y-color-744182.aspx" }
@@ -178,8 +275,8 @@
     "resumen": "Del 10 al 14 de febrero. Organizarlo costó un millón de soles, y el corso cerró en el complejo Qhapaq Ñan con delegaciones de barrios, distritos y provincias.",
     "reina": { "nombre": "Claudia Corcuera Hernández", "barrio": "La Merced", "nota": "Ganó entre 19 candidatas, una por barrio." },
     "cifras": [
-      { "valor": "S/ 1 mill.", "texto": "de inversión en la organización" },
-      { "valor": "15 000", "texto": "turistas esperados" },
+      { "valor": "S/ 1 mill.", "texto": "de inversión en la organización" },
+      { "valor": "15 000", "texto": "turistas esperados" },
       { "valor": "19", "texto": "candidatas a reina" }
     ],
     "hechos": [
@@ -187,10 +284,24 @@
       "Las candidatas eran estudiantes o egresadas universitarias de entre 18 y 23 años.",
       "La elección fue en el coliseo Gran Qhapaq Ñan."
     ],
+    "en": {
+      "resumen": "February 10 to 14. Organizing it cost S/ 1 million, and the Gran Corso wrapped up at the Qhapaq Ñan complex with delegations from neighborhoods, districts, and provinces.",
+      "reina": { "nota": "Won out of 19 contestants, one per neighborhood." },
+      "cifras": [
+        { "valor": "S/ 1M", "texto": "invested in organization" },
+        { "valor": "15,000", "texto": "expected tourists" },
+        { "valor": "19", "texto": "queen contestants" }
+      ],
+      "hechos": [
+        "The Carnival Queen led the Gran Corso on the opening float.",
+        "Contestants were university students or graduates aged 18 to 23.",
+        "The pageant took place at the Gran Qhapaq Ñan Coliseum."
+      ]
+    },
     "fuentes": [
       { "medio": "Andina", "titulo": "Carnaval de Cajamarca derrocha colorido y alegría durante el corso", "url": "https://andina.pe/agencia/noticia-carnaval-cajamarca-derrocha-colorido-y-alegria-durante-corso-699108.aspx" },
       { "medio": "Andina", "titulo": "Cajamarca presenta a candidatas a reina de su tradicional carnaval", "url": "https://andina.pe/agencia/noticia-cajamarca-presenta-a-candidatas-a-reina-su-tradicional-carnaval-697799.aspx" },
-      { "medio": "Andina", "titulo": "Organizar el Carnaval de Cajamarca demandó inversión de S/ 1 millón", "url": "https://andina.pe/agencia/noticia-organizar-carnaval-cajamarca-demando-inversion-s-1-millon-706028.aspx" },
+      { "medio": "Andina", "titulo": "Organizar el Carnaval de Cajamarca demandó inversión de S/ 1 millón", "url": "https://andina.pe/agencia/noticia-organizar-carnaval-cajamarca-demando-inversion-s-1-millon-706028.aspx" },
       { "medio": "Andina", "titulo": "Cajamarca espera el arribo de 15,000 turistas por su tradicional carnaval", "url": "https://andina.pe/ingles/noticia-cajamarca-espera-arribo-15000-turistas-su-tradicional-carnaval-697066.aspx" }
     ],
     "color": "verde"
@@ -202,13 +313,25 @@
     "resumen": "El año en que la copla se volvió patrimonio. En junio, el Ministerio de Cultura declaró Patrimonio Cultural de la Nación a la copla y contrapunto del carnaval de Cajamarca.",
     "reina": { "nombre": "Estelita Cabrera Regalado", "barrio": "provincia de Hualgayoc", "nota": "Reina Integración 2017." },
     "cifras": [
-      { "valor": "12 000", "texto": "turistas" },
+      { "valor": "12 000", "texto": "turistas" },
       { "valor": "R.V.M. 117", "texto": "la resolución que declaró patrimonio a la copla" }
     ],
     "hechos": [
       "El Gran Corso Carnavalesco salió el 27 de febrero ante miles de turistas.",
       "Las fotos de este sitio son de los juegos de fines de enero de 2017: globos de agua, disfraces y la Plaza de Armas mojada."
     ],
+    "en": {
+      "resumen": "The year the copla became national heritage. In June, Peru’s Ministry of Culture declared the Cajamarca carnival copla and contrapunto National Cultural Heritage.",
+      "reina": { "barrio": "Hualgayoc province", "nota": "2017 Integration Queen." },
+      "cifras": [
+        { "valor": "12,000", "texto": "tourists" },
+        { "valor": "R.V.M. 117", "texto": "resolution declaring coplas national heritage" }
+      ],
+      "hechos": [
+        "The Gran Corso took place on February 27 before thousands of visitors.",
+        "The photos on this site come from the late-January 2017 warm-up games: water balloons, costumes, and a soaked Plaza de Armas."
+      ]
+    },
     "fuentes": [
       { "medio": "Gobierno Regional de Cajamarca", "titulo": "Nota de prensa del Gran Corso Carnavalesco 2017", "url": "https://portal.regioncajamarca.gob.pe/sites/default/files/noticias/documentos/Febrero%20Nota%20084.pdf" },
       { "medio": "Ministerio de Cultura", "titulo": "R.V.M. N.° 117-2017-VMPCIC-MC", "url": "https://img.lpderecho.pe/wp-content/uploads/2017/06/Declaran-Patrimonio-Cultural-de-la-Nación-a-la-Copla-y-contrapunto-del-carnaval-de-Cajamarca.pdf" },

@@ -1,22 +1,27 @@
 ---
 import type { Barrio } from '../data/barrios';
+import { idiomaDesdeUrl, rutaBarrio, t, type Idioma } from '../i18n';
 import { formatearAniversario } from '../lib/barrios';
 
 interface Props {
   barrio: Barrio;
+  idioma?: Idioma;
 }
 
-const { barrio } = Astro.props;
-const { id, nombre, sector, apodo, aniversario, color } = barrio;
+const { barrio, idioma: idiomaProp } = Astro.props;
+const idioma: Idioma = idiomaProp ?? idiomaDesdeUrl(Astro.url);
+const p = t(idioma).barrios;
+const { id, nombre, sector, aniversario, color } = barrio;
+const apodo = idioma === 'en' ? (barrio.en?.apodo ?? barrio.apodo) : barrio.apodo;
 const palabraMasLarga = Math.max(...nombre.split(' ').map((palabra) => palabra.length));
 ---
 
-<a class="estandarte flecos" href={`/barrios/${id}/`} data-color={color}>
+<a class="estandarte flecos" href={rutaBarrio(id, idioma)} data-color={color}>
   <span class="estandarte__sector" aria-hidden="true">{sector ?? '✶'}</span>
-  <span class="estandarte__nombre" style={`--largo:${palabraMasLarga}`}>{nombre}</span>
+  <span class="estandarte__nombre" style={`--largo:${palabraMasLarga}`} translate="no">{nombre}</span>
   {apodo && <span class="estandarte__apodo">{apodo}</span>}
-  {aniversario && <span class="estandarte__aniversario">Cumple el {formatearAniversario(aniversario)}</span>}
-  {!apodo && <span class="estandarte__invitacion">¿Cómo le dicen? Cuéntanos</span>}
+  {aniversario && <span class="estandarte__aniversario">{p.estandarteCumple(formatearAniversario(aniversario, idioma))}</span>}
+  {!apodo && <span class="estandarte__invitacion">{p.estandarteInvitacion}</span>}
 </a>
 
 <style>

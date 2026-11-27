@@ -1,4 +1,5 @@
 import type { Color } from './carnaval';
+import type { Idioma } from '../i18n';
 
 export interface Aniversario {
   dia: number;
@@ -15,6 +16,11 @@ export interface Barrio {
   rival?: string;
   hechos: string[];
   color: Color;
+  en?: {
+    apodo?: string;
+    lemaGlosa?: string;
+    hechos?: string[];
+  };
 }
 
 export const barrios: Barrio[] = [
@@ -28,6 +34,12 @@ export const barrios: Barrio[] = [
     hechos: [
       'Rival de siempre de San Pedro: en otros tiempos sus patrullas se agarraban a trompadas el martes de carnaval.',
     ],
+    en: {
+      lemaGlosa: 'For chicha and for bread, San Sebastián neighborhood.',
+      hechos: [
+        'Classic rival of San Pedro: in earlier decades their troupes used to settle grudges with fistfights on Carnival Tuesday.',
+      ],
+    },
     color: 'verde',
   },
   {
@@ -39,6 +51,12 @@ export const barrios: Barrio[] = [
     hechos: [
       'Uno de los barrios tradicionales que desfilan con sus comparsas.',
     ],
+    en: {
+      lemaGlosa: 'San José of the Brave, cradle of artists.',
+      hechos: [
+        'One of the traditional neighborhoods that parade with their comparsas.',
+      ],
+    },
     color: 'naranja',
   },
   {
@@ -52,6 +70,13 @@ export const barrios: Barrio[] = [
       'El Club Comparsa San Pedro nació en 1972.',
       'La otra mitad de la vieja rivalidad con San Sebastián.',
     ],
+    en: {
+      lemaGlosa: 'For young women and flowers, beloved San Pedro.',
+      hechos: [
+        'Club Comparsa San Pedro was founded in 1972.',
+        'The other half of the historic rivalry with San Sebastián.',
+      ],
+    },
     color: 'turquesa',
   },
   {
@@ -67,6 +92,16 @@ export const barrios: Barrio[] = [
       'De aquí salió la reina del Carnaval del Reencuentro, en 2023.',
       'Sus carnavaleros llegaron a esperar con tarolas y coplas a familiares que volvían desde Japón.',
     ],
+    en: {
+      lemaGlosa: 'Cumbemayo, flower of the Cumbe.',
+      hechos: [
+        'Widely considered the winningest neighborhood in carnival history.',
+        'In 2024 it opened the troupe contest as one of the strongest contenders.',
+        'In 2026 carnival kicked off here with a nighttime proclamation (pregón).',
+        'Home to the 2023 Carnival of Reunion Queen.',
+        'Its revelers once welcomed relatives returning from Japan with snare drums and coplas.',
+      ],
+    },
     color: 'fucsia',
   },
   {
@@ -86,6 +121,12 @@ export const barrios: Barrio[] = [
     hechos: [
       'Durante el carnaval se baila aquí el «Manantial del Amor».',
     ],
+    en: {
+      apodo: 'The Spring of Love',
+      hechos: [
+        'During carnival, locals dance the “Manantial del Amor” here.',
+      ],
+    },
     color: 'azul',
   },
   {
@@ -105,6 +146,12 @@ export const barrios: Barrio[] = [
     hechos: [
       'El lema no miente: de aquí son la reina de 2018 y la de 2026.',
     ],
+    en: {
+      lemaGlosa: 'La Merced is a cradle of queens.',
+      hechos: [
+        'The motto holds true: both the 2018 and 2026 Carnival Queens came from here.',
+      ],
+    },
     color: 'amarillo',
   },
   {
@@ -139,6 +186,11 @@ export const barrios: Barrio[] = [
     hechos: [
       'La portada de Cajamarca: aquí se le da la bienvenida al Ño Carnavalón cuando entra a la ciudad.',
     ],
+    en: {
+      hechos: [
+        'The gateway to Cajamarca: this is where Ño Carnavalón is welcomed as he enters the city.',
+      ],
+    },
     color: 'fucsia',
   },
   {
@@ -157,6 +209,11 @@ export const barrios: Barrio[] = [
     hechos: [
       'Aquí se hace el Festival del Landaruto, en las noches del carnaval.',
     ],
+    en: {
+      hechos: [
+        'Hosts the Festival del Landaruto on carnival nights.',
+      ],
+    },
     color: 'naranja',
   },
   {
@@ -167,6 +224,11 @@ export const barrios: Barrio[] = [
     hechos: [
       'De aquí salió la reina del Carnaval Inolvidable 2024, la Edición Bicentenario.',
     ],
+    en: {
+      hechos: [
+        'Home to the 2024 Bicentennial Edition Carnival Queen.',
+      ],
+    },
     color: 'azul',
   },
   {
@@ -253,22 +315,36 @@ export const barrios: Barrio[] = [
     hechos: [
       'Hacia aquí van las viudas con el ataúd del Ño Carnavalón el martes de velorio, al pie del cerro y su mirador.',
     ],
+    en: {
+      hechos: [
+        'On Tuesday night (the Wake), the “widows” carry Ño Carnavalón’s coffin up here, at the foot of the hill and its viewpoint.',
+      ],
+    },
     color: 'verde',
   },
 ];
 
-export const centrosPoblados: Array<{ nombre: string; texto?: string }> = [
+export const centrosPoblados: Array<{ nombre: string; texto?: string; textoEn?: string }> = [
   {
     nombre: 'Chamis',
     texto: 'Su representación del clarín ganó el corso de 2024 como campeón de campeones, con 98 puntos.',
+    textoEn: 'Its giant clarín float won the 2024 Gran Corso as overall champion with 98 points.',
   },
   {
     nombre: 'Pariamarca',
     texto: 'De aquí fueron las reinas de los centros poblados de 2025 y de 2026.',
+    textoEn: 'Home to both the 2025 and 2026 Rural Districts Carnival Queens.',
   },
   { nombre: 'Huambocancha' },
   { nombre: 'Porcón' },
 ];
+
+export function centrosPobladosDe(idioma: Idioma = 'es') {
+  return centrosPoblados.map((c) => ({
+    nombre: c.nombre,
+    texto: idioma === 'en' ? (c.textoEn ?? c.texto) : c.texto,
+  }));
+}
 
 export const fuentesBarrios = [
   {

@@ -1,0 +1,531 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+import CabezaPagina from '../CabezaPagina.astro';
+import JuegoCopla from '../JuegoCopla.astro';
+import ArmaCopla from '../ArmaCopla.astro';
+import { rutaDe, t, type Idioma } from '../../i18n';
+import { conBis } from '../../lib/coplas';
+
+interface Props {
+  idioma?: Idioma;
+}
+
+const { idioma = 'es' } = Astro.props;
+const p = t(idioma).coplas;
+
+const ORDEN = ['invitación', 'picardía', 'contrapunto', 'amor', 'cajamarca', 'despedida'] as const;
+const coplas = (await getCollection('coplas'))
+  .map((c) => c.data)
+  .sort((a, b) => (a.origen === b.origen ? ORDEN.indexOf(a.tema) - ORDEN.indexOf(b.tema) : a.origen === 'tradicional' ? -1 : 1));
+const tradicionales = coplas.filter((c) => c.origen === 'tradicional');
+const temas = ORDEN.filter((tema) => coplas.some((c) => c.tema === tema));
+const primera = tradicionales.find((c) => c.id === 'no-te-vayas') ?? tradicionales[0];
+
+const ejemplo = coplas.find((c) => c.id === 'lima-trujillo')!;
+const desafio = coplas.find((c) => c.id === 'patrulla-la-merced')!;
+const respuesta = coplas.find((c) => c.id === 'calla-cantorcito')!;
+
+// Sílabas métricas de la copla de ejemplo (contadas a mano, con sinalefas y agudas).
+const silabas = [8, 8, 8, 8];
+const rimaPar = (verso: string) => {
+  const m = verso.match(/^(.*?)([\p{L}]+)([^\p{L}]*)$/u);
+  return m ? { antes: m[1], palabra: m[2], despues: m[3] } : { antes: verso, palabra: '', despues: '' };
+};
+---
+
+<Base
+  idioma={idioma}
+  og={idioma === 'en' ? 'en-coplas' : 'coplas'}
+  title={p.title}
+  description={p.description}
+>
+  <CabezaPagina titulo={p.title} fondo="var(--amarillo)" relleno="var(--fucsia)" relleno2="var(--fucsia)" sombra="var(--azul)">
+    <p>{p.intro}</p>
+    <div slot="lado" class="azar oscuro" data-azar>
+      <blockquote class="azar__copla" lang="es" aria-live="polite" data-azar-copla>
+        {
+          conBis(primera.versos, primera.repite).map((v) => (
+            <p>
+              {v.texto}
+              {v.bis && <span class="bis">bis</span>}
+            </p>
+          ))
+        }
+      </blockquote>
+      {idioma === 'en' && primera.en?.glosa && (
+        <p class="azar__glosa" data-azar-glosa>{primera.en.glosa}</p>
+      )}
+      <button class="boton" type="button" data-azar-boton>{p.otraCopla}</button>
+    </div>
+  </CabezaPagina>
+
+  <section class="bloque arme" aria-labelledby="titulo-arme">
+    <div class="envoltura arme__grid">
+      <div>
+        <h2 id="titulo-arme" class="titulo-bloque">{p.comoSeArma}</h2>
+        <ol class="versos" lang="es">
+          {
+            ejemplo.versos.map((v, i) => {
+              const r = rimaPar(v);
+              return (
+                <li>
+                  <span class="versos__texto">
+                    {i % 2 === 1 ? (
+                      <>
+                        {r.antes}
+                        <mark>{r.palabra}</mark>
+                        {r.despues}
+                      </>
+                    ) : (
+                      v
+                    )}
+                  </span>
+                  <span class="versos__silabas" aria-label={p.silabasAria(silabas[i])}>
+                    {silabas[i]}
+                  </span>
+                </li>
+              );
+            })
+          }
+        </ol>
+        {idioma === 'en' && ejemplo.en?.glosa && <p class="versos__glosa">{ejemplo.en.glosa}</p>}
+      </div>
+      <div class="lectura arme__texto">
+        <p>
+          {p.armeP1Antes}<em>{p.armeP1Enfasis}</em>{p.armeP1Despues}
+        </p>
+        <p>{p.armeP2}</p>
+        <p>{p.armeP3}</p>
+        <p>
+          {p.armeP4Antes}<span class="bis">bis</span>{p.armeP4Despues}
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <section class="bloque fondo-tinta oscuro duelo" aria-labelledby="titulo-duelo">
+    <div class="envoltura">
+      <h2 id="titulo-duelo" class="titulo-bloque">{p.contrapuntoTitulo}</h2>
+      <p class="lectura duelo__intro">{p.contrapuntoIntro}</p>
+      <div class="duelo__ring">
+        <blockquote class="duelo__copla duelo__copla--a claro">
+          <p class="duelo__quien">{p.barrioAca}</p>
+          <div lang="es">
+            {
+              conBis(desafio.versos, desafio.repite).map((v) => (
+                <p>
+                  {v.texto}
+                  {v.bis && <span class="bis">bis</span>}
+                </p>
+              ))
+            }
+          </div>
+          {idioma === 'en' && desafio.en?.glosa && <p class="duelo__glosa">{desafio.en.glosa}</p>}
+        </blockquote>
+        <p class="duelo__vs" aria-hidden="true">vs</p>
+        <blockquote class="duelo__copla duelo__copla--b claro">
+          <p class="duelo__quien">{p.barrioAlla}</p>
+          <div lang="es">
+            {
+              conBis(respuesta.versos, respuesta.repite).map((v) => (
+                <p>
+                  {v.texto}
+                  {v.bis && <span class="bis">bis</span>}
+                </p>
+              ))
+            }
+          </div>
+          {idioma === 'en' && respuesta.en?.glosa && <p class="duelo__glosa">{respuesta.en.glosa}</p>}
+        </blockquote>
+      </div>
+    </div>
+  </section>
+
+  <JuegoCopla idioma={idioma} />
+
+  <ArmaCopla idioma={idioma} />
+
+  <section class="bloque cancionero" aria-labelledby="titulo-cancionero">
+    <div class="envoltura">
+      <h2 id="titulo-cancionero" class="titulo-bloque">{p.cancioneroTitulo}</h2>
+      <div class="lectura cancionero__intro">
+        <p>
+          {p.cancioneroIntro1}<strong>{p.cancioneroTrad}</strong>{p.cancioneroIntro2}
+          <strong>{p.cancioneroNuevas}</strong>{p.cancioneroIntro3}
+        </p>
+      </div>
+
+      <div class="filtros" role="group" aria-label={p.filtrarAria}>
+        <button type="button" class="filtro" aria-pressed="true" data-filtro="todas">{p.todas}</button>
+        <button type="button" class="filtro" aria-pressed="false" data-filtro="tradicional">{p.tradicionales}</button>
+        {
+          temas.map((tema) => (
+            <button type="button" class="filtro" aria-pressed="false" data-filtro={tema}>
+              {p.temas[tema]}
+            </button>
+          ))
+        }
+      </div>
+
+      <ol class="coplas" data-coplas>
+        {
+          coplas.map((c) => {
+            const nota = idioma === 'en' ? (c.en?.nota ?? c.nota) : c.nota;
+            return (
+              <li class="copla" data-tema={c.tema} data-origen={c.origen}>
+                <p class="copla__marca">
+                  <span class:list={['copla__origen', `copla__origen--${c.origen}`]}>
+                    {c.origen === 'tradicional' ? p.origenTradicional : p.origenNueva}
+                  </span>
+                  <span>{p.temas[c.tema].toLowerCase()}</span>
+                </p>
+                <blockquote lang="es">
+                  {conBis(c.versos, c.repite).map((v) => (
+                    <p>
+                      {v.texto}
+                      {v.bis && <span class="bis">bis</span>}
+                    </p>
+                  ))}
+                </blockquote>
+                {idioma === 'en' && c.en?.glosa && <p class="copla__glosa">{c.en.glosa}</p>}
+                {nota && <p class="copla__nota">{nota}</p>}
+              </li>
+            );
+          })
+        }
+      </ol>
+      <p class="sin-coplas" data-sin-coplas hidden>{p.sinCoplas}</p>
+    </div>
+  </section>
+
+  <script
+    type="application/json"
+    data-coplas-json
+    set:html={JSON.stringify(
+      coplas.map((c) => ({ versos: conBis(c.versos, c.repite), glosa: idioma === 'en' ? (c.en?.glosa ?? '') : '' })),
+    )}
+  />
+  <p class="envoltura enlace-fuentes"><a href={`${rutaDe('fuentes', idioma)}#coplas`}>{p.fuentesCancionero}</a></p>
+</Base>
+
+<script>
+  import type { VersoCantado } from '../../lib/coplas';
+
+  const datos = document.querySelector<HTMLScriptElement>('[data-coplas-json]');
+  const coplas: Array<{ versos: VersoCantado[]; glosa: string }> = datos ? JSON.parse(datos.textContent ?? '[]') : [];
+  const caja = document.querySelector<HTMLElement>('[data-azar-copla]');
+  const glosaEl = document.querySelector<HTMLElement>('[data-azar-glosa]');
+  let actual = 0;
+
+  document.querySelector('[data-azar-boton]')?.addEventListener('click', () => {
+    if (!caja || coplas.length < 2) return;
+    let siguiente = actual;
+    while (siguiente === actual) siguiente = Math.floor(Math.random() * coplas.length);
+    actual = siguiente;
+    caja.replaceChildren(
+      ...coplas[actual].versos.map((verso) => {
+        const p = document.createElement('p');
+        p.textContent = verso.texto;
+        if (verso.bis) {
+          const bis = document.createElement('span');
+          bis.className = 'bis';
+          bis.textContent = 'bis';
+          p.append(bis);
+        }
+        return p;
+      }),
+    );
+    if (glosaEl) glosaEl.textContent = coplas[actual].glosa;
+  });
+
+  const filtros = document.querySelectorAll<HTMLButtonElement>('[data-filtro]');
+  const items = document.querySelectorAll<HTMLElement>('[data-coplas] [data-tema]');
+  const vacio = document.querySelector<HTMLElement>('[data-sin-coplas]');
+
+  function aplicar(valor: string) {
+    filtros.forEach((f) => f.setAttribute('aria-pressed', String(f.dataset.filtro === valor)));
+    let visibles = 0;
+    items.forEach((item) => {
+      const ve = valor === 'todas' || item.dataset.tema === valor || item.dataset.origen === valor;
+      item.hidden = !ve;
+      if (ve) visibles++;
+    });
+    if (vacio) vacio.hidden = visibles > 0;
+  }
+
+  filtros.forEach((filtro) => {
+    filtro.addEventListener('click', () => {
+      const valor = filtro.dataset.filtro ?? 'todas';
+      aplicar(valor);
+      // El filtro queda en la URL (?tema=despedida) para poder compartirlo
+      const url = new URL(location.href);
+      valor === 'todas' ? url.searchParams.delete('tema') : url.searchParams.set('tema', valor);
+      history.replaceState(null, '', url);
+    });
+  });
+
+  const temaInicial = new URLSearchParams(location.search).get('tema');
+  if (temaInicial && [...filtros].some((f) => f.dataset.filtro === temaInicial)) aplicar(temaInicial);
+</script>
+
+<style>
+  /* ---------- Copla al azar ---------- */
+  .azar {
+    display: grid;
+    gap: 1.2rem;
+    justify-items: start;
+    max-width: 24rem;
+    padding: 1.4rem 1.5rem 1.6rem;
+    background: var(--tinta);
+    color: var(--blanco);
+    rotate: 2deg;
+  }
+
+  .azar__copla {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.9rem;
+    line-height: 1;
+    text-transform: uppercase;
+    min-height: 4.2em;
+  }
+
+  .azar__glosa {
+    font-size: 0.92rem;
+    font-style: italic;
+    opacity: 0.9;
+  }
+
+  /* :global porque «Otra copla» crea los versos desde el script, sin el alcance del componente */
+  .azar__copla :global(p:nth-child(even)) {
+    color: var(--amarillo);
+  }
+
+  /* ---------- Cómo se arma ---------- */
+  .arme__grid {
+    display: grid;
+    grid-template-columns: 1.1fr 0.9fr;
+    gap: 3rem 4rem;
+    align-items: end;
+  }
+
+  .versos {
+    list-style: none;
+    display: grid;
+    gap: 0.4rem;
+  }
+
+  .versos li {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: center;
+    gap: 1rem;
+    padding-bottom: 0.4rem;
+    border-bottom: 3px dashed var(--tinta);
+  }
+
+  .versos__texto {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(1.7rem, 3.4vw, 3rem);
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .versos__glosa {
+    margin-top: 1rem;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  mark {
+    background: var(--amarillo);
+    color: inherit;
+    padding-inline: 0.08em;
+  }
+
+  .versos__silabas {
+    display: grid;
+    place-items: center;
+    width: 2.8rem;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: var(--verde);
+    color: var(--tinta);
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: 1.6rem;
+  }
+
+  /* ---------- Contrapunto ---------- */
+  .duelo__intro {
+    margin-bottom: 3rem;
+  }
+
+  .duelo__ring {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: center;
+  }
+
+  .duelo__copla {
+    padding: 1.6rem 1.8rem 1.8rem;
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(1.7rem, 3vw, 2.4rem);
+    line-height: 1.02;
+    text-transform: uppercase;
+    color: var(--tinta);
+  }
+
+  .duelo__copla--a {
+    background: var(--turquesa);
+    rotate: -2deg;
+  }
+
+  .duelo__copla--b {
+    background: var(--amarillo);
+    rotate: 2deg;
+    margin-top: 4rem;
+  }
+
+  .duelo__quien {
+    font-family: var(--texto);
+    font-size: 0.95rem;
+    font-weight: 700;
+    text-transform: none;
+    margin-bottom: 0.6rem;
+  }
+
+  .duelo__glosa {
+    margin-top: 0.9rem;
+    font-family: var(--texto);
+    font-size: 0.95rem;
+    font-weight: 600;
+    font-style: italic;
+    line-height: 1.35;
+    text-transform: none;
+  }
+
+  .duelo__vs {
+    font-family: var(--display);
+    font-weight: 900;
+    font-size: clamp(3.5rem, 8vw, 6rem);
+    line-height: 1;
+    color: var(--fucsia);
+  }
+
+  /* ---------- Cancionero ---------- */
+  .cancionero__intro {
+    margin-bottom: 2rem;
+  }
+
+  .filtros {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2.5rem;
+  }
+
+  .filtro {
+    min-height: 44px;
+    padding: 0.4rem 1rem;
+    border: 3px solid var(--tinta);
+    background: var(--blanco);
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: 1.25rem;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .filtro:hover {
+    background: var(--amarillo);
+  }
+
+  .filtro[aria-pressed='true'] {
+    background: var(--tinta);
+    color: var(--blanco);
+  }
+
+  .coplas {
+    list-style: none;
+    columns: 3 18rem;
+    column-gap: 2.5rem;
+  }
+
+  .copla {
+    break-inside: avoid;
+    display: grid;
+    gap: 0.7rem;
+    margin-bottom: 2.6rem;
+    padding-top: 0.9rem;
+    border-top: 6px solid var(--tinta);
+  }
+
+  .copla[hidden] {
+    display: none;
+  }
+
+  .copla__marca {
+    display: flex;
+    gap: 0.6rem;
+    align-items: center;
+    font-size: 0.92rem;
+    font-weight: 700;
+  }
+
+  .copla__origen {
+    padding: 0.1rem 0.5rem;
+  }
+
+  .copla__origen--tradicional {
+    background: var(--fucsia);
+    color: var(--tinta);
+  }
+
+  .copla__origen--inedita {
+    background: var(--amarillo);
+    color: var(--tinta);
+  }
+
+  .copla blockquote {
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .copla__glosa {
+    font-size: 0.98rem;
+    font-style: italic;
+  }
+
+  .copla__nota,
+  .copla__fuente {
+    font-size: 0.95rem;
+  }
+
+  .sin-coplas {
+    font-weight: 700;
+  }
+
+  @media (max-width: 860px) {
+    .arme__grid {
+      grid-template-columns: 1fr;
+    }
+
+    .duelo__ring {
+      grid-template-columns: 1fr;
+    }
+
+    .duelo__copla--b {
+      margin-top: 0;
+    }
+
+    .duelo__vs {
+      justify-self: center;
+    }
+  }
+</style>
