@@ -77,8 +77,9 @@ const banderines = Array.from({ length: n }, (_, i) => {
   }
 
   .cabecera {
-    position: relative;
-    z-index: 20;
+    position: sticky;
+    top: 0;
+    z-index: 45;
     background: var(--tinta);
     view-transition-name: cabecera;
   }
@@ -171,13 +172,16 @@ const banderines = Array.from({ length: n }, (_, i) => {
     display: none;
   }
 
+  @media (min-width: 761px) {
+    .saltar:focus-visible {
+      position: fixed;
+    }
+  }
+
   @media (max-width: 760px) {
     /* Fija arriba: el botón «Menú» queda a mano sin volver al inicio.
        Si el menú abierto no cabe en pantallas bajas, se desplaza por dentro. */
     .cabecera {
-      position: sticky;
-      top: 0;
-      z-index: 45;
       max-height: 100dvh;
       overflow-y: auto;
       overscroll-behavior: contain;

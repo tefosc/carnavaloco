@@ -34,13 +34,12 @@
 html {
   -webkit-text-size-adjust: 100%;
   -webkit-tap-highlight-color: rgb(255 42 146 / 0.3);
-  scroll-padding-top: 1rem;
+  scroll-padding-top: 5.5rem;
 }
 
-/* La cabecera fija del teléfono (Cabecera.astro) no debe tapar el destino de un enlace #ancla */
-@media (max-width: 760px) {
+@media (min-width: 761px) and (max-width: 1023px) {
   html {
-    scroll-padding-top: 5.5rem;
+    scroll-padding-top: 8.5rem;
   }
 }
 

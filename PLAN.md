@@ -1,6 +1,6 @@
 # Plan del sitio: qué hay y qué falta
 
-Estado al 24 de noviembre de 2026. El carnaval 2027 es del **sábado 6 al miércoles 10 de febrero**.
+Estado al 27 de noviembre de 2026. El carnaval 2027 es del **sábado 6 al miércoles 10 de febrero**.
 
 Este archivo es para ponerse al día rápido. Los detalles técnicos (cómo correr el proyecto, dónde está cada dato, cómo regenerar el mapa) están en el [README](README.md).
 
@@ -33,6 +33,7 @@ Para actualizarlas a la última versión: `npx skills update -p` (cambia `skills
 ### El sitio
 
 - Web en Astro 7, estática, publicada en Vercel desde la rama `main`.
+- La cabecera queda visible al desplazarse en escritorio y móvil. Los enlaces a secciones dejan espacio para que sus títulos queden a la vista.
 - Estilo «afiche chicha + raso de clon»: colores planos del satín de los disfraces, titulares con contorno y sombra dura, bordes en zigzag, banderolas, sellos y afiches pegados.
 - Páginas: inicio, **2027**, guía para visitantes, la fiesta, ediciones 2017–2026 (una página por año), barrios, coplas, habla, historia y fuentes, 404 y «sin señal».
 - Fotos de Wikimedia Commons con su crédito, y una sección de fuentes con todo lo citado. En el texto no se pone «según tal medio».
