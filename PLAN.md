@@ -139,6 +139,58 @@ La Municipalidad Provincial de Cajamarca presenta el afiche, el programa y la ca
 
 ---
 
+## Versión en inglés
+
+**Estado:** sin empezar. Se decidió hacerla **por fases** y la hará otro agente (o Richard) en una rama aparte. Antes de empezar, hay que leer el [README](README.md) y la sección «Para empezar», de arriba.
+
+### Decisiones ya tomadas
+
+- **Rutas:** español en `/` (como ahora) e inglés en `/en/`. Usar el sistema de idiomas de Astro (`i18n` en `astro.config.mjs`, [guía](https://docs.astro.build/en/guides/internationalization/)), con `prefixDefaultLocale: false`.
+- **Botón «ES | EN»** en la cabecera (también dentro del menú del teléfono) y en el pie. Lleva a la misma página en el otro idioma; si esa página aún no existe en inglés, a `/en/`. Con `hreflang` en `<head>` y `lang` correcto en `<html>` (hoy está fijo en `es-PE` en `src/layouts/Base.astro`).
+- **Qué NO se traduce:** las coplas (se pierde la rima) y las palabras del habla (shulca, yunza, poto…). Se dejan en español, marcadas con `lang="es"`, y se les agrega una glosa en inglés. Los nombres propios («Cajamarca», barrios, «Gran Corso»…) llevan `translate="no"`.
+- **Tono:** inglés claro para un visitante que no conoce el Perú; explicar lo que en español se da por sabido (qué es la yunza, qué es un corso). Las fuentes citadas se quedan como están (en español), con la fecha.
+- **Fechas y horas:** usar el idioma de la página en cada `Intl.DateTimeFormat` (hoy hay unos 15 con `'es-PE'` escrito a mano: `Banderolas`, `CartelEdicion`, `CartelProximo`, `HoyEnElCarnaval`, `lib/fechas.ts`, `lib/agenda-portada.ts`, `2027.astro`, `ediciones/[anio].astro`). Zona horaria sigue siendo la de Perú.
+
+### Fases
+
+1. **Base (sin traducir páginas todavía):**
+   - [ ] Configurar `i18n` en Astro y un diccionario de textos de la interfaz (menú, pie, botones, avisos como «Sin conexión», «Instalar app»). Por ejemplo, `src/i18n/es.ts` y `src/i18n/en.ts` con una función `t(idioma)`.
+   - [ ] `Base.astro`: recibir el idioma, poner `lang`, `hreflang`, `og:locale` y `canonical` por idioma.
+   - [ ] Cabecera, menú del teléfono y pie en inglés, con el botón de idioma.
+   - [ ] Pasar el idioma a los formateadores de fecha y a los scripts que escriben texto en el navegador (`HoyEnElCarnaval`, `ContadorProximamente`, `MapaRecorridos`, `Instalar`, `Base.astro` con los avisos de sin conexión).
+   - [ ] Sitemap con las dos versiones; `robots.txt` y `manifest.webmanifest` (el manifiesto sigue en español o se hace uno por idioma: decidirlo y anotarlo aquí).
+   - [ ] Imágenes para compartir (`src/lib/og.ts`, `src/data/og.ts`): título y bajada en inglés para `/en/`.
+2. **Páginas prioritarias en inglés:** `/en/` (inicio), `/en/2027/`, `/en/guia/` (con su ruta en inglés; ver abajo). Datos: `src/data/carnaval2027.ts`, `src/data/guia.ts`.
+3. **Páginas de contenido:** la fiesta, historia, barrios, ediciones (datos en `ediciones.json`), habla (solo la interfaz y glosas; las palabras quedan), coplas (interfaz; las coplas siguen en español con glosa), fuentes, 404 y «sin señal».
+4. **Sin conexión:** que el service worker (`integraciones/sin-conexion/`) guarde también `/en/`. Revisar el límite de archivos y correr `pnpm test:offline`; ampliar `tests/sin-conexion.test.mjs` con una página en inglés.
+5. **Revisión final:** recorrer todo en `/en/` en escritorio y teléfono, sin texto en español suelto, enlaces internos que no salten de idioma, y `pnpm build` sin errores.
+
+### Cosas por decidir (anotar la respuesta aquí al decidirlas)
+
+- **Nombre de las rutas en inglés:** `/en/guide/`, `/en/the-party/`, `/en/neighborhoods/`… o mantener los mismos nombres en español (`/en/guia/`). Lo más simple es mantener los mismos nombres; lo mejor para buscadores es traducirlos.
+- **Dónde guardar los textos largos:** en los mismos archivos de datos con un campo por idioma (`{ es: …, en: … }`) o en archivos separados por idioma.
+- **Si el navegador está en inglés:** no redirigir solo; dejar que la persona elija con el botón (y recordar su elección en `localStorage`).
+- **Traducciones:** las hace el agente, pero **alguien que hable inglés bien debe revisarlas** antes de publicar, sobre todo la guía, que da datos de seguridad y salud.
+
+### Prompt para el agente
+
+> Estás trabajando en el sitio del Carnaval de Cajamarca (Astro, repositorio `tefosc/carnavaloco`, rama `main`). Lee `README.md` y `PLAN.md` (sobre todo «Para empezar» y «Versión en inglés») antes de tocar nada, y corre `pnpm install` y `npx skills install`.
+>
+> **Tarea:** hacer una versión en inglés de la web, en `/en/`, con un botón «ES | EN» para cambiar de idioma. Sigue las «Decisiones ya tomadas» y las «Fases» de PLAN.md, en orden. Haz una fase por vez: al terminar cada una, deja `pnpm build` sin errores, marca las casillas de PLAN.md y detente para que revisemos antes de seguir.
+>
+> **Reglas:**
+> - Trabaja en una rama nueva (`ingles`), no en `main`. No hagas commit ni push sin que te lo pidan.
+> - No traduzcas las coplas ni las palabras del habla; sí sus glosas. Nombres propios con `translate="no"`; palabras en español dentro del inglés con `lang="es"`.
+> - Todo texto nuevo, incluido el que escribe JavaScript en el navegador, sale del diccionario de idiomas; no escribas textos sueltos en los componentes.
+> - Mantén el estilo visual (afiche chicha) y los principios de accesibilidad que ya hay: foco visible, etiquetas en los campos, `prefers-reduced-motion`, objetivos táctiles de 44 px o más.
+> - Cada dato de la guía conserva su fuente y su aviso «Verifícalo». No agregues datos nuevos ni cambies cifras al traducir.
+> - Si algo del plan no se puede hacer o hay que decidir (ver «Cosas por decidir»), anótalo en PLAN.md y pregunta; no lo adivines.
+> - Antes de usar una API de Astro (i18n, rutas dinámicas), consulta la documentación actual con `npx ctx7@latest` (ver la skill `context7-cli`).
+>
+> **Al terminar cada fase:** resume qué cambió, qué quedó sin traducir y qué hay que revisar a mano.
+
+---
+
 ## Anuncios
 
 Para que la web se sostenga. Hay dos caminos, y se pueden combinar:
@@ -166,7 +218,7 @@ Antes de poner anuncios:
 
 - [ ] **Más coplas tradicionales con fuente.** Hoy hay 4 tradicionales y 14 escritas para el sitio. Las dos páginas de coplas de carnavalcajamarca.com son solo videos, sin versos escritos. Hay que buscar en cancioneros, notas de prensa o grabaciones con transcripción.
 - [ ] **Botón para compartir cada copla** del cancionero.
-- [ ] **Versión en inglés** para turistas, por lo menos de `/2027/` y de la guía.
+- [ ] **Versión en inglés:** movida a su propia sección, arriba («Versión en inglés»).
 - [ ] **Más fotos** con licencia libre, sobre todo de comparsas, del corso y de la yunza. La galería de carnavalcajamarca.com no sirve: son 4 entradas de 2021 («Rostros del Carnaval» 2018 a 2020 y el centro histórico), sin crédito ni licencia, en un sitio con todos los derechos reservados. No se pueden reutilizar.
 - [ ] **Noticias del carnaval.** Ese sitio tiene una sección de noticias, pero solo dos son de 2027 (el Gran Corso por la Vía de Evitamiento, ya en el mapa, y la serenata). El resto es de 2023 a 2026; lo útil (más del 90 % de los hoteles reservados en 2023) ya está en la web. Para novedades de 2027 conviene seguir la Municipalidad Provincial de Cajamarca y Andina.
 
