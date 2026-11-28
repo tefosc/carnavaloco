@@ -22,6 +22,33 @@ export const LOCALE_OG: Record<Idioma, string> = {
   en: 'en_US',
 };
 
+/** Nombre de cada idioma escrito en ese mismo idioma (para el selector). */
+export const NOMBRE_IDIOMA: Record<Idioma, string> = {
+  es: 'Español',
+  en: 'English',
+};
+
+const MESES = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+
+/**
+ * Las fechas de las fuentes están escritas en español («16 de julio de 2026», «agosto de 2024»).
+ * En otro idioma se devuelven con su formato; si no se reconoce la forma, quedan como están.
+ */
+export function fechaFuente(fecha: string, idioma: Idioma = 'es'): string {
+  if (idioma === 'es') return fecha;
+  const partes = fecha.trim().match(/^(?:(\d{1,2}) de )?(\p{L}+) de (\d{4})$/u);
+  if (!partes) return fecha;
+  const [, dia, nombreMes, anio] = partes;
+  const mes = MESES.indexOf(nombreMes.toLowerCase().replace('setiembre', 'septiembre'));
+  if (mes < 0) return fecha;
+  return new Intl.DateTimeFormat(LOCALE_INTL[idioma], {
+    timeZone: 'UTC',
+    year: 'numeric',
+    month: 'long',
+    ...(dia ? { day: 'numeric' as const } : {}),
+  }).format(new Date(Date.UTC(Number(anio), mes, Number(dia ?? 1))));
+}
+
 export function t(idioma: Idioma = 'es'): Diccionario {
   return DICCIONARIOS[idioma];
 }

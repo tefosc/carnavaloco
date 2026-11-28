@@ -6,7 +6,7 @@ import { fuentes as fuentesHistoria } from '../../data/carnaval';
 import { previasDe } from '../../data/carnaval2027';
 import { creditoFotos, fotos } from '../../data/fotos';
 import { fuentesGuia } from '../../data/guia';
-import { t, type Idioma } from '../../i18n';
+import { fechaFuente, t, type Idioma } from '../../i18n';
 
 interface Props {
   idioma?: Idioma;
@@ -21,7 +21,11 @@ interface Fuente {
   titulo?: string;
   url: string;
   nota?: string;
+  /** `es` si el título y el medio están en español (en /en/ se marcan con lang). */
+  lang?: string;
 }
+
+const enEspanol = <T extends object>(fuentes: T[]) => fuentes.map((fuente) => ({ ...fuente, lang: 'es' }));
 
 const coplas = await getCollection('coplas');
 const ediciones = await getCollection('ediciones');
@@ -42,6 +46,7 @@ const programa: Fuente[] = [
     medio: 'Municipalidad Provincial de Cajamarca',
     url: 'https://www.gob.pe/institucion/municajamarca/noticias/1334566-programa-oficial-del-carnaval-2026',
     nota: p.programaNota2026,
+    lang: 'es',
   },
   ...previasDe(idioma).flatMap((previa) => previa.fuente ? [{
     titulo: previa.titulo,
@@ -56,21 +61,21 @@ const programa: Fuente[] = [
 
 const secciones = [
   { id: 'programa', ...p.secciones.programa, fuentes: programa },
-  { id: 'barrios', ...p.secciones.barrios, fuentes: fuentesBarrios },
-  { id: 'historia', ...p.secciones.historia, fuentes: fuentesHistoria },
+  { id: 'barrios', ...p.secciones.barrios, fuentes: enEspanol(fuentesBarrios) },
+  { id: 'historia', ...p.secciones.historia, fuentes: enEspanol(fuentesHistoria) },
   {
     id: 'ediciones',
     ...p.secciones.ediciones,
     grupos: ediciones.map(({ data }) => data).sort((a, b) => b.anio - a.anio).map((edicion) => ({
-      id: 'edicion-' + edicion.anio, titulo: String(edicion.anio), fuentes: edicion.fuentes,
+      id: 'edicion-' + edicion.anio, titulo: String(edicion.anio), fuentes: enEspanol(edicion.fuentes),
     })),
   },
   {
     id: 'guia',
     ...p.secciones.guia,
-    fuentes: fuentesGuia.map((f) => ({ medio: f.medio, titulo: f.titulo, url: f.url, nota: f.fecha })),
+    fuentes: fuentesGuia.map((f) => ({ medio: f.medio, titulo: f.titulo, url: f.url, nota: f.fecha && fechaFuente(f.fecha, idioma), lang: 'es' })),
   },
-  { id: 'coplas', ...p.secciones.coplas, fuentes: [...referenciasCoplas.values()] },
+  { id: 'coplas', ...p.secciones.coplas, fuentes: enEspanol([...referenciasCoplas.values()]) },
   {
     id: 'creditos',
     ...p.secciones.creditos,
@@ -126,9 +131,9 @@ const archivo = secciones.map((seccion) => ({
             <ul class="referencias">
               {seccion.lista.map((fuente) => (
                 <li id={fuente.id}>
-                  <a href={fuente.enlace}>{fuente.titulo ?? fuente.medio}</a>
-                  {fuente.titulo && <span>{fuente.medio}</span>}
-                  {fuente.nota && <p>{fuente.nota}</p>}
+                  <a href={fuente.enlace} lang={fuente.lang}>{fuente.titulo ?? fuente.medio}</a>
+                  {fuente.titulo && <span lang={fuente.lang}>{fuente.medio}</span>}
+                  {fuente.nota && <p lang={seccion.id === 'coplas' ? 'es' : undefined}>{fuente.nota}</p>}
                 </li>
               ))}
             </ul>
@@ -139,8 +144,8 @@ const archivo = secciones.map((seccion) => ({
               <ul class="referencias">
                 {grupo.lista.map((fuente) => (
                   <li id={fuente.id}>
-                    <a href={fuente.enlace}>{fuente.titulo ?? fuente.medio}</a>
-                    {fuente.titulo && <span>{fuente.medio}</span>}
+                    <a href={fuente.enlace} lang={fuente.lang}>{fuente.titulo ?? fuente.medio}</a>
+                    {fuente.titulo && <span lang={fuente.lang}>{fuente.medio}</span>}
                   </li>
                 ))}
               </ul>

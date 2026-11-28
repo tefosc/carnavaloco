@@ -9,13 +9,17 @@ interface Props {
   color?: string;
   tinta?: string;
   giro?: number;
+  /** Idioma de los gritos, si no es el de la página (p. ej. `es` en /en/). */
+  lang?: string;
 }
 
-const { items, color = 'var(--amarillo)', tinta = 'var(--tinta)', giro = -2 } = Astro.props;
+const { items, color = 'var(--amarillo)', tinta = 'var(--tinta)', giro = -2, lang } = Astro.props;
+// Para el lector de pantalla: punto entre gritos, salvo si ya terminan en «!», «?» o «…»
+const leido = items.map((t) => (/[.!?…]$/.test(t) ? t : `${t}.`)).join(' ');
 ---
 
-<div class="cinta claro" style={`--cinta:${color};--cinta-tinta:${tinta};--giro:${giro}deg`}>
-  <p class="visualmente-oculto">{items.join('. ')}</p>
+<div class="cinta claro" style={`--cinta:${color};--cinta-tinta:${tinta};--giro:${giro}deg`} lang={lang}>
+  <p class="visualmente-oculto">{leido}</p>
   <div class="cinta__pista" aria-hidden="true">
     {
       [0, 1].map(() => (

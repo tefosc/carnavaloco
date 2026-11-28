@@ -1,5 +1,9 @@
 import type { Diccionario } from './es';
 
+/** En inglés, una oración no empieza con cifra: «Eight carnivals…». */
+const NUMEROS = ['Zero', 'One', 'Two', 'Three', 'Four', 'Five', 'Six', 'Seven', 'Eight', 'Nine', 'Ten'];
+const numeroEnLetras = (n: number) => NUMEROS[n] ?? String(n);
+
 export const en: Diccionario = {
   sitio: {
     nombre: 'Carnaval de Cajamarca',
@@ -7,6 +11,7 @@ export const en: Diccionario = {
     marcaChica: 'de Cajamarca',
     marcaAria: 'Carnaval de Cajamarca, home',
     ogAlt: (titulo: string) => `${titulo}: Carnaval de Cajamarca poster`,
+    mascara: 'Painted wire-mesh mask with a colorful cone hat, like the ones worn at the Carnaval de Cajamarca',
   },
   nav: {
     saltar: 'Skip to content',
@@ -16,7 +21,7 @@ export const en: Diccionario = {
     items: {
       '2027': '2027',
       guia: 'Guide',
-      'la-fiesta': 'The Party',
+      'la-fiesta': 'The Festival',
       ediciones: 'Editions',
       barrios: 'Neighborhoods',
       coplas: 'Coplas',
@@ -35,12 +40,12 @@ export const en: Diccionario = {
     quitar: 'Remove',
     quitarBorradorAria: 'Remove draft: ',
     borradorGuardado: 'Offline. Draft saved below so you can send it once signal returns.',
-    borradorSinEspacio: 'Offline. Could not save the draft in this browser.',
+    borradorSinEspacio: 'Offline. The draft stays below until you close this page.',
   },
   sinRed: {
     listo: 'Ready for offline use.',
     guardando: 'Saving for offline use…',
-    offlineListo: 'Offline. You are viewing the saved edition.',
+    offlineListo: 'Offline. You are viewing the saved version.',
     offlinePendiente: 'Download will finish once connection returns.',
     reintentar: 'Download will retry next time you open the site.',
   },
@@ -59,8 +64,8 @@ export const en: Diccionario = {
     hoy: 'Today',
     hoyComa: 'Today,',
     selloAnillo: 'Today at the carnival ✶ Today at the carnival ✶ ',
-    ya: 'Done!',
-    paso: 'ended',
+    ya: 'Over!',
+    paso: 'for this year',
     yaLlego: 'It is here:',
     asiFue: 'That was',
     verRecorrido: 'See parade route',
@@ -225,7 +230,7 @@ export const en: Diccionario = {
     fuentesYCreditos: 'Sources & credits',
   },
   laFiesta: {
-    title: 'The Party',
+    title: 'The Festival',
     description: 'The five days of Carnaval de Cajamarca, its characters (Ño Carnavalón, clones, widows, gitana), traditions, music, and local food.',
     intro: 'It begins weeks ahead with street proclamations and parades, then erupts into five central days: from Ño Carnavalón’s arrival on Saturday to his burning on Ash Wednesday. Afterward, each neighborhood dances around its own yunza tree.',
     diaUnoParaEmpezar: 'day until it starts',
@@ -258,7 +263,7 @@ export const en: Diccionario = {
     title: 'Past Carnival Editions',
     description: 'Carnaval de Cajamarca editions since 2017: dates, queens, numbers, and highlights from each year, with sources.',
     cabezaTitulo: 'Editions',
-    intro: (realizadas: number) => `${realizadas} carnivals and two silent Februaries, from 2017 to today. Each poster opens its year: the queen, the numbers, and what happened. The 2027 poster is already up with the day-by-day schedule.`,
+    intro: (realizadas: number) => `${numeroEnLetras(realizadas)} carnivals and two silent Februaries, from 2017 to today. Each poster links to its year: the queen, the numbers, and what happened. The 2027 poster is already up with the day-by-day schedule.`,
     muroAria: 'Posters by year',
     nota: 'Have official records for a missing detail, such as winning troupes? Official results are published by the Provincial Municipality of Cajamarca each February.',
     fuentesEdiciones: 'Sources by edition',
@@ -358,7 +363,7 @@ export const en: Diccionario = {
     armeP1Despues: ',” Spanish meter counts one extra syllable.',
     armeP2: 'The twist comes halfway through. The first two lines often paint an unrelated scene; the last two deliver the punchline. That’s why one opening couplet can power a thousand different coplas.',
     armeP3: 'They are sung with guitar in the streets and parades, day or night, rain or shine—teasing in-laws, politicians, lovers, and rival neighborhoods. Satire is the point.',
-    armeP4Antes: 'When sung, each line is repeated twice (“Lima, ciudad de los reyes, Lima, ciudad de los reyes”). Songbooks mark that with ',
+    armeP4Antes: 'When sung, each line is sung twice (“Lima, ciudad de los reyes, Lima, ciudad de los reyes”). Songbooks mark that with ',
     armeP4Despues: ' at the end of the line. When bis sits at the end of a pair, both lines repeat together.',
     contrapuntoTitulo: 'El Contrapunto (Verse Duel)',
     contrapuntoIntro: 'Two troupes face off in the street. One throws a copla, the other answers to the exact same melody—back and forth until someone runs out of comebacks. Here is an example duel written for this site:',
@@ -484,7 +489,7 @@ export const en: Diccionario = {
       '2027': '2027 schedule & parade routes',
       guia: 'Visitor guide',
       inicio: 'Home',
-      'la-fiesta': 'The Party: characters, music & food',
+      'la-fiesta': 'The Festival: characters, music & food',
       coplas: 'Coplas',
       habla: 'Cajamarca slang',
       barrios: 'Neighborhoods',

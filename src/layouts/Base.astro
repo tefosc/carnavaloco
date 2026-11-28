@@ -39,6 +39,14 @@ const canonica = new URL(Astro.url.pathname, Astro.site);
 const imagen = new URL(`/og/${og}.png`, Astro.site);
 const urlEs = idioma === 'es' ? canonica : new URL(alterna.href, Astro.site);
 const urlEn = idioma === 'en' ? canonica : new URL(alterna.href, Astro.site);
+
+// Cambio de idioma sin espera: cuando alguien se acerca al botón del otro idioma (el mouse
+// encima o, en el teléfono, el botón a la vista), el navegador deja esa página lista por detrás.
+// Navegadores sin Speculation Rules lo ignoran y cargan la página al tocar, como siempre.
+const reglasPrecarga = {
+  prerender: [{ where: { selector_matches: '[data-cambiar-idioma]' }, eagerness: 'moderate' }],
+  prefetch: [{ where: { selector_matches: '[data-cambiar-idioma]' }, eagerness: 'moderate' }],
+};
 ---
 
 <!doctype html>
@@ -79,6 +87,45 @@ const urlEn = idioma === 'en' ? canonica : new URL(alterna.href, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:image" content={imagen} />
     <title>{titulo}</title>
+    <script type="speculationrules" is:inline set:html={JSON.stringify(reglasPrecarga)} />
+    <script is:inline>
+      // Una página que el navegador dejó lista por adelantado (el otro idioma) no cuenta como
+      // visita hasta que alguien la abre. Si la analítica intenta contarla antes, se descarta
+      // y se cuenta al abrirla.
+      (() => {
+        if (!document.prerendering) return;
+        let descartada = false;
+        window.webAnalyticsBeforeSend = (evento) => {
+          if (!document.prerendering) return evento;
+          descartada = true;
+          return null;
+        };
+        document.addEventListener('prerenderingchange', () => {
+          if (!descartada) return;
+          const datos = document.querySelector('vercel-analytics')?.dataset ?? {};
+          const path = datos.pathname ?? location.pathname;
+          let route = path;
+          try {
+            for (const [clave, valor] of Object.entries(JSON.parse(datos.params ?? '{}'))) {
+              route = route.replace('/' + valor, '/[' + clave + ']');
+            }
+          } catch {}
+          window.va?.('pageview', { route, path });
+        }, { once: true });
+      })();
+
+      // Si se viene de cambiar de idioma, no pintar hasta saber a qué altura abrir (#idioma-lugar)
+      try {
+        const cambio = JSON.parse(localStorage.getItem('carnaval-cambio-idioma') ?? 'null');
+        if (cambio && cambio.destino === location.pathname && Date.now() - cambio.t < 15000) {
+          const espera = document.createElement('link');
+          espera.rel = 'expect';
+          espera.href = '#idioma-lugar';
+          espera.setAttribute('blocking', 'render');
+          document.head.append(espera);
+        }
+      } catch {}
+    </script>
     <Analytics />
   </head>
   <body>
@@ -97,6 +144,45 @@ const urlEn = idioma === 'en' ? canonica : new URL(alterna.href, Astro.site);
         <span aria-hidden="true">×</span>
       </button>
     </div>
+    <script is:inline id="idioma-lugar">
+      // Al cambiar de idioma, la otra versión se abre a la misma altura de lectura.
+      // El clic guarda la sección que estaba bajo la cabecera (ver lugarActual, abajo); las dos
+      // versiones comparten los id de sus secciones. Si la página se dejó lista por adelantado,
+      // se acomoda al abrirla.
+      (() => {
+        const restaurar = () => {
+          let cambio;
+          try {
+            cambio = JSON.parse(localStorage.getItem('carnaval-cambio-idioma') ?? 'null');
+            localStorage.removeItem('carnaval-cambio-idioma');
+          } catch {
+            return;
+          }
+          if (!cambio || cambio.destino !== location.pathname || Date.now() - cambio.t > 15000) return;
+          const ancla = cambio.id && document.getElementById(cambio.id);
+          const ir = () => {
+            const alto = document.documentElement.scrollHeight - innerHeight;
+            const y = ancla ? ancla.getBoundingClientRect().top + scrollY - cambio.desfase : cambio.proporcion * alto;
+            scrollTo({ top: Math.max(0, Math.min(y, alto)), behavior: 'instant' });
+            return scrollY;
+          };
+          ir();
+          // La letra del texto llega un momento después y cambia el alto de la página:
+          // se vuelve a acomodar, salvo que la persona ya se haya movido por su cuenta
+          let movida = false;
+          for (const evento of ['wheel', 'touchstart', 'keydown', 'pointerdown']) {
+            addEventListener(evento, () => (movida = true), { once: true, passive: true });
+          }
+          const reajustar = () => {
+            if (!movida) ir();
+          };
+          document.fonts?.ready.then(reajustar);
+          addEventListener('load', reajustar, { once: true });
+        };
+        if (document.prerendering) document.addEventListener('prerenderingchange', restaurar, { once: true });
+        else restaurar();
+      })();
+    </script>
   </body>
 </html>
 
@@ -106,16 +192,44 @@ const urlEn = idioma === 'en' ? canonica : new URL(alterna.href, Astro.site);
 
   const txt = t(idiomaEnNavegador());
 
-  // Recordar la elección manual de idioma (sin redirigir automáticamente)
+  // Recordar la elección manual de idioma (sin redirigir automáticamente) y la altura de
+  // lectura, para que la otra versión se abra en el mismo lugar (script #idioma-lugar)
   document.querySelectorAll<HTMLAnchorElement>('[data-cambiar-idioma]').forEach((enlace) => {
     enlace.addEventListener('click', () => {
       try {
         localStorage.setItem('carnaval-idioma', enlace.dataset.cambiarIdioma ?? 'es');
+        if (scrollY > 0) {
+          localStorage.setItem(
+            'carnaval-cambio-idioma',
+            JSON.stringify({ destino: enlace.pathname, t: Date.now(), ...lugarActual() }),
+          );
+        } else {
+          localStorage.removeItem('carnaval-cambio-idioma');
+        }
       } catch {
         // Sin almacenamiento disponible
       }
     });
   });
+
+  /**
+   * El elemento con id (sección, título…) que empieza más cerca de la línea de lectura, justo
+   * bajo la cabecera, y a cuántos píxeles del borde de arriba está. Cuanto más cerca, menos se
+   * corre al cambiar de idioma, aunque los textos tengan otro largo. Si no hay ninguno, la
+   * proporción recorrida de la página.
+   */
+  function lugarActual() {
+    const linea = parseFloat(getComputedStyle(document.documentElement).scrollPaddingTop) || 0;
+    let mejor: { id: string; top: number } | undefined;
+    for (const el of document.querySelectorAll<HTMLElement>('main [id]')) {
+      if (el.closest('svg, template')) continue;
+      const { top, bottom } = el.getBoundingClientRect();
+      if (top === bottom) continue;
+      if (!mejor || Math.abs(top - linea) < Math.abs(mejor.top - linea)) mejor = { id: el.id, top };
+    }
+    const alto = document.documentElement.scrollHeight - innerHeight;
+    return { id: mejor?.id, desfase: mejor?.top ?? 0, proporcion: alto > 0 ? scrollY / alto : 0 };
+  }
 
   // Botón flotante de instalar: si lo cierran, no vuelve a salir por dos semanas
   const flotante = document.querySelector<HTMLElement>('[data-instalar-flotante]');

@@ -150,7 +150,7 @@ La Municipalidad Provincial de Cajamarca presenta el afiche, el programa y la ca
   - `/` ↔ `/en/`
   - `/2027/` ↔ `/en/2027/`
   - `/guia/` ↔ `/en/guide/`
-  - `/la-fiesta/` ↔ `/en/the-party/`
+  - `/la-fiesta/` ↔ `/en/the-festival/` (antes `/en/the-party/`, que ahora redirige)
   - `/ediciones/` ↔ `/en/editions/` (y `/en/editions/[anio]/`)
   - `/barrios/` ↔ `/en/neighborhoods/` (y `/en/neighborhoods/[id]/`)
   - `/coplas/` ↔ `/en/coplas/`
@@ -158,7 +158,7 @@ La Municipalidad Provincial de Cajamarca presenta el afiche, el programa y la ca
   - `/historia/` ↔ `/en/history/`
   - `/fuentes/` ↔ `/en/sources/`
   - `/sin-conexion/` ↔ `/en/offline/`
-- **Botón «ES | EN»** en la cabecera (también dentro del menú del teléfono) y en el pie. Lleva a la misma página en el otro idioma; si esa página aún no existe en inglés, a `/en/`. Guarda la elección en `localStorage` y **no redirige automáticamente** según el idioma del navegador. Con `hreflang` en `<head>` (solo cuando la página par existe) y `lang` correcto en `<html>`.
+- **Selector de idioma** (`src/components/SelectorIdioma.astro`), con cada idioma nombrado en su propio idioma («Español», «English») y sin banderas. En la cabecera de escritorio es un botón con el otro idioma y un globito de diálogo amarillo con su código («EN», «ES»); en el menú del teléfono y en el pie salen los dos lado a lado, con el actual relleno. Lleva a la misma página en el otro idioma y la abre a la misma altura de lectura (las dos versiones comparten los `id` de sus secciones). En Chrome y Edge, la otra versión se deja lista por adelantado al acercarse al botón (Speculation Rules), así el cambio es instantáneo; esas precargas no cuentan como visita en Vercel Analytics hasta que se abren (ver `src/layouts/Base.astro`); si esa página aún no existe en inglés, a `/en/`. Guarda la elección en `localStorage` y **no redirige automáticamente** según el idioma del navegador. Con `hreflang` en `<head>` (solo cuando la página par existe) y `lang` correcto en `<html>`.
 - **Estructura de datos:** campos por idioma (`{ es, en }`) en los mismos archivos de datos para no duplicar fuentes, fechas, colores ni coordenadas.
 - **Qué NO se traduce:** las coplas (se pierde la rima) y las palabras del habla (`shulca`, `yunza`, `poto`…). Se dejan en español, marcadas con `lang="es"`, y se les agrega una glosa en inglés. Los nombres propios («Cajamarca», barrios, «Gran Corso»…) llevan `translate="no"`.
 - **«Arma tu copla» y «Completa la copla» en `/en/coplas/`:** se mantienen ambos con interfaz en inglés y una nota breve aclarando que las coplas y las rimas son en español.

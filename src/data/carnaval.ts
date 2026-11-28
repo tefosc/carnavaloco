@@ -175,7 +175,7 @@ export const programa: Array<{
       dia: 'Saturday',
       titulo: 'Arrival of Ño Carnavalón',
       texto:
-        'He enters through the Santa Elena neighborhood, the gateway to Cajamarca. It is the only day paint is used: blocks of water, paint, and talcum powder.',
+        'He enters through the Santa Elena neighborhood, the gateway to Cajamarca. It is the only day paint is allowed: whole blocks get soaked in water, paint, and talcum powder.',
     },
     color: 'fucsia',
   },

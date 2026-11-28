@@ -3,11 +3,14 @@
  * Ilustración: máscara de malla pintada, con cucurucho de clon y gola.
  * Inspirada en las máscaras de hilo metálico del carnaval cajamarquino.
  */
+import { idiomaDesdeUrl, t } from '../i18n';
+
 interface Props {
   class?: string;
   cucuruchoAlto?: boolean;
 }
 const { class: clase, cucuruchoAlto = false } = Astro.props;
+const idioma = idiomaDesdeUrl(Astro.url);
 
 // Golas (cuellos de vuelos) generadas con arcos.
 const vuelos = (x: number, y: number, n: number, ancho: number) =>
@@ -26,7 +29,7 @@ const lentejuelas = Array.from({ length: 9 }, (_, i) => {
 ---
 
 <svg class={clase} viewBox={cucuruchoAlto ? "0 -150 400 670" : "0 0 400 520"} role="img" aria-labelledby="mascara-titulo">
-  <title id="mascara-titulo">Máscara de malla pintada con cucurucho de colores, como las del carnaval de Cajamarca</title>
+  <title id="mascara-titulo">{t(idioma).sitio.mascara}</title>
   <defs>
     <pattern id="malla" width="7" height="7" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
       <path d="M0 0H7M0 0V7" stroke="#1f1235" stroke-opacity="0.2" stroke-width="1"></path>

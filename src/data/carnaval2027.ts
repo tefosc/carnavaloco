@@ -199,7 +199,7 @@ export const previas: Previa[] = [
     en: {
       cuando: 'Weeks before',
       titulo: 'Carnival Queen Pageants',
-      texto: 'Carnival Queen, Children’s Queen, Rural Districts Queen, and Integration Queen. The city queen is crowned at the Gran Qhapaq Ñan Coliseum.',
+      texto: 'Carnival Queen, Children’s Queen, Rural Communities Queen, and Integration Queen. The city queen is crowned at the Gran Qhapaq Ñan Coliseum.',
     },
   },
   {

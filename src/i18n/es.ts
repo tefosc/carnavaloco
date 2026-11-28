@@ -5,6 +5,7 @@ export const es = {
     marcaChica: 'de Cajamarca',
     marcaAria: 'Carnaval de Cajamarca, portada',
     ogAlt: (titulo: string) => `${titulo}: afiche del Carnaval de Cajamarca`,
+    mascara: 'Máscara de malla pintada con cucurucho de colores, como las del carnaval de Cajamarca',
   },
   nav: {
     saltar: 'Ir al contenido',
@@ -508,6 +509,7 @@ export type Diccionario = {
     marcaChica: string;
     marcaAria: string;
     ogAlt: (titulo: string) => string;
+    mascara: string;
   };
   nav: {
     saltar: string;
