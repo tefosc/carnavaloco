@@ -15,6 +15,11 @@ const dominio =
 // https://astro.build/config
 export default defineConfig({
   site: dominio,
+  // Direcciones viejas que ya se compartieron. En un sitio estático, Astro escribe
+  // una página que redirige sola (meta refresh) en la dirección vieja.
+  redirects: {
+    '/en/the-party': '/en/the-festival/',
+  },
   i18n: {
     defaultLocale: 'es',
     locales: ['es', 'en'],
@@ -27,7 +32,8 @@ export default defineConfig({
       filter: (pagina) =>
         !pagina.includes('/404') &&
         !pagina.includes('/sin-conexion') &&
-        !pagina.includes('/en/offline'),
+        !pagina.includes('/en/offline') &&
+        !pagina.includes('/en/the-party'),
       i18n: {
         defaultLocale: 'es',
         locales: {

@@ -333,7 +333,7 @@ export const centrosPoblados: Array<{ nombre: string; texto?: string; textoEn?: 
   {
     nombre: 'Pariamarca',
     texto: 'De aquí fueron las reinas de los centros poblados de 2025 y de 2026.',
-    textoEn: 'Home to both the 2025 and 2026 Rural Districts Carnival Queens.',
+    textoEn: 'Home to both the 2025 and 2026 Rural Communities Carnival Queens.',
   },
   { nombre: 'Huambocancha' },
   { nombre: 'Porcón' },

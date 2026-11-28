@@ -1,7 +1,8 @@
 ---
 import Chicha from './Chicha.astro';
 import { creditoFotos } from '../data/fotos';
-import { idiomaDesdeUrl, rutaAlterna, rutaDe, t, type Idioma } from '../i18n';
+import SelectorIdioma from './SelectorIdioma.astro';
+import { idiomaDesdeUrl, rutaDe, t, type Idioma } from '../i18n';
 
 interface Props {
   idioma?: Idioma;
@@ -9,9 +10,6 @@ interface Props {
 
 const idioma: Idioma = Astro.props.idioma ?? idiomaDesdeUrl(Astro.url);
 const txt = t(idioma);
-const ruta = Astro.url.pathname.replace(/\/?$/, '/');
-const rutaEs = idioma === 'es' ? ruta : rutaAlterna(ruta, 'es');
-const rutaEn = idioma === 'en' ? ruta : rutaAlterna(ruta, 'en');
 const licenciaUrl = idioma === 'en' ? creditoFotos.licenciaUrl.replace('/deed.es', '/deed.en') : creditoFotos.licenciaUrl;
 ---
 
@@ -25,25 +23,10 @@ const licenciaUrl = idioma === 'en' ? creditoFotos.licenciaUrl.replace('/deed.es
         relleno="var(--amarillo)"
         relleno2="var(--naranja)"
         sombra="var(--azul)"
+        lang="es"
       />
       <p class="pie__nota">{txt.pie.nota}</p>
-      <p class="pie__idioma" role="group" aria-label={txt.nav.idiomaAria}>
-        {
-          idioma === 'es' ? (
-            <span class="pie__idioma-actual" aria-current="true">ES</span>
-          ) : (
-            <a href={rutaEs} hreflang="es-PE" lang="es" data-cambiar-idioma="es">ES</a>
-          )
-        }
-        <span aria-hidden="true">|</span>
-        {
-          idioma === 'en' ? (
-            <span class="pie__idioma-actual" aria-current="true">EN</span>
-          ) : (
-            <a href={rutaEn} hreflang="en" lang="en" data-cambiar-idioma="en">EN</a>
-          )
-        }
-      </p>
+      <SelectorIdioma idioma={idioma} lugar="pie" />
     </div>
     <nav aria-label={txt.pie.navAria} class="pie__nav">
       <a href={rutaDe('2027', idioma)}>{txt.pie.carnaval2027}</a>
@@ -96,43 +79,6 @@ const licenciaUrl = idioma === 'en' ? creditoFotos.licenciaUrl.replace('/deed.es
     max-width: 44ch;
     margin-top: 1.5rem;
     font-weight: 500;
-  }
-
-  .pie__idioma {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    margin-top: 1.2rem;
-    font-family: var(--display);
-    font-weight: 900;
-    font-size: 1.35rem;
-    letter-spacing: 0.04em;
-  }
-
-  .pie__idioma a,
-  .pie__idioma-actual {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 44px;
-    min-height: 44px;
-    padding: 0.2rem 0.65rem 0.1rem;
-    border: 3px solid var(--tinta);
-    text-decoration: none;
-  }
-
-  .pie__idioma-actual {
-    background: var(--tinta);
-    color: var(--amarillo);
-  }
-
-  .pie__idioma a {
-    background: var(--blanco);
-    color: var(--tinta);
-  }
-
-  .pie__idioma a:hover {
-    background: var(--amarillo);
   }
 
   .pie__nav {

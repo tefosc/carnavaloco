@@ -17,7 +17,7 @@ export const RUTAS: Record<ClaveRuta, Record<Idioma, string>> = {
   inicio: { es: '/', en: '/en/' },
   '2027': { es: '/2027/', en: '/en/2027/' },
   guia: { es: '/guia/', en: '/en/guide/' },
-  'la-fiesta': { es: '/la-fiesta/', en: '/en/the-party/' },
+  'la-fiesta': { es: '/la-fiesta/', en: '/en/the-festival/' },
   ediciones: { es: '/ediciones/', en: '/en/editions/' },
   barrios: { es: '/barrios/', en: '/en/neighborhoods/' },
   coplas: { es: '/coplas/', en: '/en/coplas/' },

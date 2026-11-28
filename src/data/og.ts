@@ -75,7 +75,7 @@ export const ogPaginas: Record<string, DatosOg> = {
     sello: 'Coming up!',
   },
   'en-la-fiesta': {
-    titulo: 'The Party',
+    titulo: 'The Festival',
     bajada: 'Ño Carnavalón, clones, widows, music, and local food.',
     fondo: 'azul',
   },

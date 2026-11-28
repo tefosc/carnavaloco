@@ -14,6 +14,8 @@ interface Props {
   sombra?: string;
   class?: string;
   id?: string;
+  /** Idioma del texto, si no es el de la página. */
+  lang?: string;
 }
 
 const {
@@ -25,6 +27,7 @@ const {
   sombra = 'var(--fucsia)',
   class: clase,
   id,
+  lang,
 } = Astro.props;
 
 const estilo = [
@@ -35,7 +38,7 @@ const estilo = [
 ].join(';');
 ---
 
-<Etiqueta class:list={['chicha', clase]} style={estilo} id={id}>
+<Etiqueta class:list={['chicha', clase]} style={estilo} id={id} lang={lang}>
   <span class="chicha__capa chicha__sombra" aria-hidden="true">{texto}</span>
   <span class="chicha__capa chicha__contorno" aria-hidden="true">{texto}</span>
   <span class="chicha__capa chicha__frente">{texto}</span>

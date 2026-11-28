@@ -2,7 +2,7 @@
 import Base from '../../layouts/Base.astro';
 import CabezaPagina from '../CabezaPagina.astro';
 import { seccionesDe, revisadoEn, revisadoEnEn } from '../../data/guia';
-import { rutaDe, t, type Idioma } from '../../i18n';
+import { fechaFuente, rutaDe, t, type Idioma } from '../../i18n';
 
 interface Props {
   idioma?: Idioma;
@@ -69,7 +69,7 @@ const fechaRevision = idioma === 'en' ? revisadoEnEn : revisadoEn;
                     <a href={d.fuente.url} rel="noopener" lang="es">
                       {d.fuente.medio}: {d.fuente.titulo}
                     </a>
-                    {d.fuente.fecha && <span lang="es"> ({d.fuente.fecha})</span>}
+                    {d.fuente.fecha && <span> ({fechaFuente(d.fuente.fecha, idioma)})</span>}
                   </p>
                 )}
               </li>
